@@ -6,10 +6,10 @@
 Prosta i wygodna aplikacja do automatyzacji procesu rejestracji na oddawanie krwi oraz śledzenia postępu kolejki.
 
 ### 2. Skład zespołu
-**Klasa 3e:**
-- **Norbert Waszkowiak**  
-- **Patryk Serafin**  
-- **Michał Zimoń**
+**Klasa 3c:**
+- **Jakub Bisikiewicz**  
+- **Oliwia Grabowska**  
+- **Grzegorz Kornaszewski**
 
 ### 3. Cel główny projektu
 Celem aplikacji jest ułatwienie procesu zapisywania się na oddawanie krwi na Wojskowej Akademii Technicznej (WAT) oraz informowanie użytkownika o postępie kolejki w czasie rzeczywistym. Zamiast ręcznego wysyłania maili, aplikacja zautomatyzuje proces zapisów i zapewni wygodę poprzez dostarczanie użytkownikowi bieżących informacji na temat statusu kolejki, co pozwoli na optymalne wykorzystanie czasu i zminimalizowanie oczekiwania.
