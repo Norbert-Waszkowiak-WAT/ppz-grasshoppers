@@ -16,34 +16,38 @@ Celem aplikacji jest umożliwienie amatorskim jak i zaprawionym w bojach graczom
 
 Grupą docelową są wszyscy ludzie, którzy chcą grać w proste gry arkadowe. Nałóg zastąpi nałóg.
 
-//TODO: completed till here
-
 ### 4. Zakres funkcjonalności
 
 **Moduły:**
-1. **Moduł Rejestracji i Logowania**:  
-   - Rejestracja użytkowników i logowanie przez numer telefonu lub e-mail.  
+1. **Moduł Główny:**
+   - Zestawienie i wybór gier.
    
-2. **Moduł Zapisów**:  
-   - Zapis na dostępne terminy oddawania krwi, automatyczny wybór z dostępnych terminów.  
-   - Powiadomienia o zapisach oraz nadchodzących terminach.  
+2. **Moduł Flappy Bird:**
+   - Gra Flappy Bird.
+   - Zestawienie najlepszych wyników dla tej gry.
+   - Modyfikacja poziomu trudności gry.
    
-3. **Moduł Kolejki**:  
-   - Bieżące informacje o liczbie osób oczekujących przed użytkownikiem.  
-   - Aktualizacja kolejki w czasie rzeczywistym.  
+3. **Moduł Snake:**
+   - Gra Snake.
+   - Zestawienie najlepszych wyników dla tej gry.
+   - Modyfikacja poziomu trudności gry.
    
-4. **Moduł Powiadomień**:  
-   - Powiadomienia push o nowych terminach, potwierdzeniu zapisu oraz przypomnienia o oddawaniu krwi.  
+4. **Moduł Pacman:**
+   - Gra Pacman.
+   - Zestawienie najlepszych wyników dla tej gry.
+   - Modyfikacja poziomu trudności gry.
+
+5. **Moduł Breakout Bricks:**
+   - Gra Breaktout Bricks.
+   - Zestawienie najlepszych wyników dla tej gry.
+   - Modyfikacja poziomu trudności gry.
+
+//TODO: completed untill here, maybe change breakout bricks to another game?
 
 **Dodatkowe funkcjonalności:**
 - Historia oddań krwi i statystyki, np. liczba oddanej krwi.
 - Ranking krwiodawców z największą liczbą oddań.
 - Możliwość anulowania rezerwacji i wybierania nowych terminów.
-
-**MVP:**  
-- Rejestracja i logowanie.  
-- Zapis na termin oddawania krwi.  
-- Wyświetlanie liczby osób w kolejce przed użytkownikiem.
 
 ### 5. Technologie
 **Języki programowania:**
