@@ -1,9 +1,9 @@
 [![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg)](https://classroom.github.com/online_ide?assignment_repo_id=16106629&assignment_repo_type=AssignmentRepo)
-# ppz-Grasshoppers
+# PPZ-Grasshoppers
 
 ### 1. Tytuł projektu
-**"KrewApp – Zapis na Oddawanie Krwi na WAT"**
-Prosta i wygodna aplikacja do automatyzacji procesu rejestracji na oddawanie krwi oraz śledzenia postępu kolejki.
+**"AppPub – Platforma dostępu do gier arkadowych"**
+Prosta i wygodna aplikacja do grania w znane i lubiane gry arkadowe. Nie chlaj tylko graj!
 
 ### 2. Skład zespołu
 **Klasa 3c:**
@@ -12,9 +12,11 @@ Prosta i wygodna aplikacja do automatyzacji procesu rejestracji na oddawanie krw
 - **Grzegorz Kornaszewski**
 
 ### 3. Cel główny projektu
-Celem aplikacji jest ułatwienie procesu zapisywania się na oddawanie krwi na Wojskowej Akademii Technicznej (WAT) oraz informowanie użytkownika o postępie kolejki w czasie rzeczywistym. Zamiast ręcznego wysyłania maili, aplikacja zautomatyzuje proces zapisów i zapewni wygodę poprzez dostarczanie użytkownikowi bieżących informacji na temat statusu kolejki, co pozwoli na optymalne wykorzystanie czasu i zminimalizowanie oczekiwania.
+Celem aplikacji jest umożliwienie amatorskim jak i zaprawionym w bojach graczom nieograniczonego korzystania z prostych, znanych i lubianych gier arkadowych, które z pewnością przypomną użytkownikowi lata świetności.
 
-Grupą docelową są studenci i pracownicy WAT oraz inne osoby biorące udział w akcjach krwiodawstwa organizowanych na uczelni.
+Grupą docelową są wszyscy ludzie, którzy chcą grać w proste gry arkadowe. Nałóg zastąpi nałóg.
+
+//TODO: completed till here
 
 ### 4. Zakres funkcjonalności
 
