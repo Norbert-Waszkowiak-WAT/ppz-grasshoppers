@@ -37,6 +37,7 @@ Grupą docelową są wszyscy ludzie, którzy chcą grać w proste gry arkadowe. 
    - Zestawienie najlepszych wyników dla tej gry.
    - Modyfikacja poziomu trudności gry.
 
+@DEPRECATED
 5. **Moduł Breakout Bricks:**
    - Gra Breaktout Bricks.
    - Zestawienie najlepszych wyników dla tej gry.
