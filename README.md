@@ -43,12 +43,17 @@ Grupą docelową są wszyscy ludzie, którzy chcą grać w proste gry arkadowe. 
    - Zestawienie najlepszych wyników dla tej gry.
    - Modyfikacja poziomu trudności gry.
 
+**MVP:**
+- prosta strona główna z listą gier
+- co najmniej jedna gra
+
 //TODO: completed untill here, maybe change breakout bricks to another game?
 
 **Dodatkowe funkcjonalności:**
 - Historia oddań krwi i statystyki, np. liczba oddanej krwi.
 - Ranking krwiodawców z największą liczbą oddań.
 - Możliwość anulowania rezerwacji i wybierania nowych terminów.
+
 
 ### 5. Technologie
 **Języki programowania:**
