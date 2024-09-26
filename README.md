@@ -79,8 +79,8 @@ Grupą docelową są wszyscy ludzie, którzy chcą grać w proste gry arkadowe. 
 **Etap 2: Implementacja drugiej gry**
 **Zadania:**
    - Projektowanie grafiki drugiej gry - *Oliwia Grabowska*
-   - Implementacja drugiej gry – *Grzegorz Kornaszewski*
-   - Połączenie drugiej gry z menu głównym – *Jakub Bisikiewicz*
+   - Implementacja drugiej gry – *Jakub Bisikiewicz*
+   - Połączenie drugiej gry z menu głównym – *Grzegorz Kornaszewski*
    - Testy funkcjonalne drugiej gry – *Oliwia Grabowska*
 
 **Etap 3: Implementacja trzeciej gry**
@@ -93,8 +93,8 @@ Grupą docelową są wszyscy ludzie, którzy chcą grać w proste gry arkadowe. 
 **Etap 4: Implementacja czwartej gry i testy ogólne**
 **Zadania:**
    - Projektowanie grafiki czwartej gry - *Oliwia Grabowska*
-   - Implementacja czwartej gry – *Grzegorz Kornaszewski*
-   - Połączenie czwartej gry z menu głównym – *Jakub Bisikiewicz*
+   - Implementacja czwartej gry – *Jakub Bisikiewicz*
+   - Połączenie czwartej gry z menu głównym – *Grzegorz Kornaszewski*
    - Testy funkcjonalne czwartej gry – *Oliwia Grabowska*
    - Testy funkcjonalne całej aplikacji - *Jakub Bisikiewicz, Oliwia Grabowska, Grzegorz Kornaszewski*
 
