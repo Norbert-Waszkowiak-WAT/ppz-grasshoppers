@@ -67,7 +67,7 @@ Grupą docelową są wszyscy ludzie, którzy chcą grać w proste gry arkadowe. 
      
 ### 7. Harmonogram prac dla 4 etapów
 
-**Etap 1: Implementacja modułu głównego i pierwszej gry**
+**Etap 1: Implementacja modułu głównego i pierwszej gry**  
 **Zadania:**
    - Projektowanie menu głównego – *Oliwia Grabowska*
    - Implementacja menu głównego – *Jakub Bisikiewicz* i *Grzegorz Kornaszewski*
@@ -76,21 +76,21 @@ Grupą docelową są wszyscy ludzie, którzy chcą grać w proste gry arkadowe. 
    - Połączenie pierwszej gry z menu głównym – *Jakub Bisikiewicz*
    - Testy funkcjonalne menu głównego i pierwszej gry – *Oliwia Grabowska*
 
-**Etap 2: Implementacja drugiej gry**
+**Etap 2: Implementacja drugiej gry**  
 **Zadania:**
    - Projektowanie grafiki drugiej gry - *Oliwia Grabowska*
    - Implementacja drugiej gry – *Jakub Bisikiewicz*
    - Połączenie drugiej gry z menu głównym – *Grzegorz Kornaszewski*
    - Testy funkcjonalne drugiej gry – *Oliwia Grabowska*
 
-**Etap 3: Implementacja trzeciej gry**
+**Etap 3: Implementacja trzeciej gry**  
 **Zadania:**
    - Projektowanie grafiki trzeciej gry - *Oliwia Grabowska*
    - Implementacja trzeciej gry – *Grzegorz Kornaszewski*
    - Połączenie trzeciej gry z menu głównym – *Jakub Bisikiewicz*
    - Testy funkcjonalne trzeciej gry – *Oliwia Grabowska*
 
-**Etap 4: Implementacja czwartej gry i testy ogólne**
+**Etap 4: Implementacja czwartej gry i testy ogólne**  
 **Zadania:**
    - Projektowanie grafiki czwartej gry - *Oliwia Grabowska*
    - Implementacja czwartej gry – *Jakub Bisikiewicz*
