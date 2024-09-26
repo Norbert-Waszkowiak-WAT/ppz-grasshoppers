@@ -43,7 +43,7 @@ Grupą docelową są wszyscy ludzie, którzy chcą grać w proste gry arkadowe. 
 - co najmniej jedna gra
 
 **Dodatkowe funkcjonalności:**
-- Dla każdej gry zestawienie najlepszych wyników.
+- Zestawienie najlepszych wyników poszczególnych gier.
 
 ### 5. Technologie
 **Języki programowania:**
@@ -63,53 +63,46 @@ Grupą docelową są wszyscy ludzie, którzy chcą grać w proste gry arkadowe. 
      - Baza danych (plik np. .csv, .txt).
 
 **Opis:**
-   - Aplikacja zarządza uruchamianiem gier z poziomu menu. Każda gra ze swojego poziomu zapisuje w bazie danych najlepszy wynik.
-
-//TODO: completed untill here
+   - Aplikacja zarządza uruchamianiem gier z poziomu menu. Każda gra ze swojego poziomu zapisuje w bazie danych najlepszy wynik oraz wybrany poziom trudności.
      
 ### 7. Harmonogram prac dla 4 etapów
 
-**Etap 1: Implementacja modułu rejestracji i logowania**  
+**Etap 1: Implementacja modułu głównego i pierwszej gry**
 **Zadania:**
-   - Projektowanie modelu użytkownika (baza danych) – *Michał Zimoń*  
-   - Implementacja systemu rejestracji (formularze, walidacja) – *Norbert Waszkowiak*  
-   - Implementacja logowania i uwierzytelniania (OAuth lub Firebase Auth) – *Patryk Serafin*  
-   - Konfiguracja Firebase dla autoryzacji – *Patryk Serafin*  
-   - Połączenie z backendem – *Norbert Waszkowiak*  
-   - Testy funkcjonalne logowania i rejestracji – *Michał Zimoń*  
+   - Projektowanie menu głównego – *Oliwia Grabowska*
+   - Implementacja menu głównego – *Jakub Bisikiewicz* i *Grzegorz Kornaszewski*
+   - Projektowanie grafiki pierwszej gry - *Oliwia Grabowska*
+   - Implementacja pierwszej gry – *Grzegorz Kornaszewski*
+   - Połączenie pierwszej gry z menu głównym – *Jakub Bisikiewicz*
+   - Testy funkcjonalne menu głównego i pierwszej gry – *Oliwia Grabowska*
 
-**Etap 2: Implementacja modułu zapisów na terminy**  
+**Etap 2: Implementacja drugiej gry**
 **Zadania:**
-   - Stworzenie modelu danych dla terminów oddawania krwi (backend) – *Michał Zimoń*  
-   - Stworzenie widoku dostępnych terminów w aplikacji – *Patryk Serafin*  
-   - Mechanizm automatycznego przypisywania terminów użytkownikom – *Norbert Waszkowiak*  
-   - Integracja z bazą danych (pobieranie i zapisywanie terminów) – *Michał Zimoń*  
-   - Powiadomienia o potwierdzeniu zapisu – *Norbert Waszkowiak*  
-   - Testy funkcjonalne zapisu na terminy – *Patryk Serafin*  
+   - Projektowanie grafiki drugiej gry - *Oliwia Grabowska*
+   - Implementacja drugiej gry – *Grzegorz Kornaszewski*
+   - Połączenie drugiej gry z menu głównym – *Jakub Bisikiewicz*
+   - Testy funkcjonalne drugiej gry – *Oliwia Grabowska*
 
-**Etap 3: Implementacja modułu kolejki**  
+**Etap 3: Implementacja trzeciej gry**
 **Zadania:**
-   - Stworzenie algorytmu śledzenia kolejki w czasie rzeczywistym – *Michał Zimoń*  
-   - Backend: aktualizacja liczby osób w kolejce – *Norbert Waszkowiak*  
-   - Frontend: wyświetlanie postępu kolejki – *Patryk Serafin*  
-   - Powiadomienia push o zbliżającej się kolejce – *Norbert Waszkowiak*  
-   - Testy działania kolejki w różnych scenariuszach – *Michał Zimoń*  
+   - Projektowanie grafiki trzeciej gry - *Oliwia Grabowska*
+   - Implementacja trzeciej gry – *Grzegorz Kornaszewski*
+   - Połączenie trzeciej gry z menu głównym – *Jakub Bisikiewicz*
+   - Testy funkcjonalne trzeciej gry – *Oliwia Grabowska*
 
-**Etap 4: Integracja modułu powiadomień i historii oddań krwi**  
+**Etap 4: Implementacja czwartej gry i testy ogólne**
 **Zadania:**
-   - Implementacja powiadomień push (Firebase Cloud Messaging) – *Norbert Waszkowiak*  
-   - Stworzenie systemu przypomnień o nadchodzących terminach – *Patryk Serafin*  
-   - Backend: zapis historii oddań krwi użytkowników – *Michał Zimoń*  
-   - Frontend: wyświetlanie historii w aplikacji – *Patryk Serafin*  
-   - Testy funkcji powiadomień i historii – *Michał Zimoń*  
+   - Projektowanie grafiki czwartej gry - *Oliwia Grabowska*
+   - Implementacja czwartej gry – *Grzegorz Kornaszewski*
+   - Połączenie czwartej gry z menu głównym – *Jakub Bisikiewicz*
+   - Testy funkcjonalne czwartej gry – *Oliwia Grabowska*
+   - Testy funkcjonalne całej aplikacji - *Jakub Bisikiewicz, Oliwia Grabowska, Grzegorz Kornaszewski*
 
 ### 8. Kryteria sukcesu
-   - Zalogowani użytkownicy mogą zapisywać się na dostępne terminy oddawania krwi.
-   - Powiadomienia push o zapisach i postępie kolejki działają bez opóźnień.
-   - Kolejka aktualizuje się w czasie rzeczywistym.
-   - Użytkownicy mogą przeglądać historię swoich oddań krwi.
+   - Użytkownik może dowolnie wybierać grę i w nią grać
+   - Użytkownik może modyfikować poziom trudności gier
 
-### 9. Potencjalne ryzyka
+<!-- ### 9. Potencjalne ryzyka
    - Problemy z synchronizacją kolejki (mitigacja: regularne testowanie serwera).
    - Awaria systemu powiadomień (mitigacja: backupowe rozwiązanie oparte na SMS-ach).
-   - Niska adopcja aplikacji (mitigacja: kampanie promocyjne na WAT).
+   - Niska adopcja aplikacji (mitigacja: kampanie promocyjne na WAT). -->
