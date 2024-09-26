@@ -1,4 +1,4 @@
-[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg)](https://classroom.github.com/online_ide?assignment_repo_id=16106629&assignment_repo_type=AssignmentRepo)
+![image](https://github.com/user-attachments/assets/e974dc83-f9dc-4531-afba-cd188403db36)[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg)](https://classroom.github.com/online_ide?assignment_repo_id=16106629&assignment_repo_type=AssignmentRepo)
 # PPZ-Grasshoppers
 
 ### 1. Tytuł projektu
@@ -24,49 +24,37 @@ Grupą docelową są wszyscy ludzie, którzy chcą grać w proste gry arkadowe. 
    
 2. **Moduł Flappy Bird:**
    - Gra Flappy Bird.
-   - Zestawienie najlepszych wyników dla tej gry.
    - Modyfikacja poziomu trudności gry.
    
 3. **Moduł Snake:**
    - Gra Snake.
-   - Zestawienie najlepszych wyników dla tej gry.
    - Modyfikacja poziomu trudności gry.
    
 4. **Moduł Pacman:**
    - Gra Pacman.
-   - Zestawienie najlepszych wyników dla tej gry.
    - Modyfikacja poziomu trudności gry.
 
-@DEPRECATED
-5. **Moduł Breakout Bricks:**
-   - Gra Breaktout Bricks.
-   - Zestawienie najlepszych wyników dla tej gry.
+5. **Moduł Knife Hit:**
+   - Gra Knife Hit.
    - Modyfikacja poziomu trudności gry.
 
 **MVP:**
 - prosta strona główna z listą gier
 - co najmniej jedna gra
 
-//TODO: completed untill here, maybe change breakout bricks to another game?
-
 **Dodatkowe funkcjonalności:**
-- Historia oddań krwi i statystyki, np. liczba oddanej krwi.
-- Ranking krwiodawców z największą liczbą oddań.
-- Możliwość anulowania rezerwacji i wybierania nowych terminów.
-
+- Dla każdej gry zestawienie najlepszych wyników.
 
 ### 5. Technologie
 **Języki programowania:**
    - Kotlin (Android).
-   - Java (backend).
-
-**Frameworki:**
-   - SpringBoot
 
 **Narzędzia:**
-   - Firebase (autoryzacja, baza danych, powiadomienia).
+   - Android Studio (środowisko programistyczne).
    - Git (kontrola wersji).
-   - PostgreSQL (baza danych).
+   - Program do projektowania grafik i interfejsu użytkownika
+
+//TODO: completed untill here
 
 ### 6. Architektura systemu
 
