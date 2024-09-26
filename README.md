@@ -61,11 +61,11 @@ Grupą docelową są wszyscy ludzie, którzy chcą grać w proste gry arkadowe. 
      - Frontend (interfejs użytkownika),
      - Backend (program odpowiedzialny za łączenie UI i logiki programu),
      - Baza danych (plik np. .csv, .txt).
-    
-//TODO: completed untill here
 
 **Opis:**
-   - Aplikacja mobilna komunikuje się z serwerem (backendem), który zarządza dostępnością terminów oraz śledzi stan kolejki. Backend zapisuje dane w bazie danych, a użytkownicy otrzymują powiadomienia o zmianach kolejki za pomocą Firebase Cloud Messaging.
+   - Aplikacja zarządza uruchamianiem gier z poziomu menu. Każda gra ze swojego poziomu zapisuje w bazie danych najlepszy wynik.
+
+//TODO: completed untill here
      
 ### 7. Harmonogram prac dla 4 etapów
 
