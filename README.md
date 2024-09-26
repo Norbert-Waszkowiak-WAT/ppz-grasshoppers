@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/e974dc83-f9dc-4531-afba-cd188403db36)[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg)](https://classroom.github.com/online_ide?assignment_repo_id=16106629&assignment_repo_type=AssignmentRepo)
+[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg)](https://classroom.github.com/online_ide?assignment_repo_id=16106629&assignment_repo_type=AssignmentRepo)
 # PPZ-Grasshoppers
 
 ### 1. Tytuł projektu
@@ -54,15 +54,15 @@ Grupą docelową są wszyscy ludzie, którzy chcą grać w proste gry arkadowe. 
    - Git (kontrola wersji).
    - Program do projektowania grafik i interfejsu użytkownika
 
-//TODO: completed untill here
-
 ### 6. Architektura systemu
 
 **Diagram:**
    - Diagram powinien przedstawiać warstwy aplikacji, w tym:
-     - Frontend (aplikacja mobilna),
-     - Backend (serwer odpowiedzialny za zapisy i przetwarzanie kolejki),
-     - Baza danych (np. Firebase/PostgreSQL).
+     - Frontend (interfejs użytkownika),
+     - Backend (program odpowiedzialny za łączenie UI i logiki programu),
+     - Baza danych (plik np. .csv, .txt).
+    
+//TODO: completed untill here
 
 **Opis:**
    - Aplikacja mobilna komunikuje się z serwerem (backendem), który zarządza dostępnością terminów oraz śledzi stan kolejki. Backend zapisuje dane w bazie danych, a użytkownicy otrzymują powiadomienia o zmianach kolejki za pomocą Firebase Cloud Messaging.
