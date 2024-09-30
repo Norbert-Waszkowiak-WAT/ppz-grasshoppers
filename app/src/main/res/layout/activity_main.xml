@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/buttonKnife"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/knife_button_bg_picture"
+        app:backgroundTint="@null"
+        android:gravity="bottom|center_horizontal"
+        android:paddingBottom="8dp"
+        android:text="Knife Hit"
+        android:textColor="@color/menu_button_text"
+        android:textSize="@dimen/button_text_size"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toStartOf="@+id/buttonSnake"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.45" />
+
+    <Button
+        android:id="@+id/buttonSnake"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:backgroundTint="@null"
+        android:background="@drawable/snake_button_bg_picture"
+        android:gravity="bottom|center_horizontal"
+        android:paddingBottom="8dp"
+        android:text="Snake"
+        android:textColor="@color/menu_button_text"
+        android:textSize="@dimen/button_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonKnife"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/buttonKnife"
+        app:layout_constraintTop_toTopOf="@+id/buttonKnife"
+        app:layout_constraintWidth_percent="0.45" />
+
+    <Button
+        android:id="@+id/buttonBird"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:backgroundTint="@null"
+        android:background="@drawable/bird_button_bg_picture"
+        android:gravity="top|center_horizontal"
+        android:paddingBottom="8dp"
+        android:text="Flappy Bird"
+        android:textColor="@color/menu_button_text"
+        android:textSize="@dimen/button_text_size"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toStartOf="@+id/buttonPacman"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonKnife"
+        app:layout_constraintWidth_percent="0.45" />
+
+    <Button
+        android:id="@+id/buttonPacman"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:backgroundTint="@null"
+        android:background="@drawable/pacman_button_bg_picture"
+        android:gravity="top|center_horizontal"
+        android:paddingBottom="8dp"
+        android:text="Pac-Man"
+        android:textColor="@color/menu_button_text"
+        android:textSize="@dimen/button_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonBird"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/buttonBird"
+        app:layout_constraintTop_toTopOf="@+id/buttonBird"
+        app:layout_constraintWidth_percent="0.45" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
