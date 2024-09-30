@@ -2,18 +2,36 @@ package woli.grasshoppers.apppub
 
 import android.app.Activity
 import android.content.Intent
+import android.media.Image
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
+import android.widget.FrameLayout
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import java.util.Timer
 
 class BirdActivity : AppCompatActivity() {
+
+    var tickTimer = Timer()
+    var tickCount = 0
+
+    var birdVelocity = 0f
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bird)
 
         hideSystemBars()
-        val diffLevel = getDiff()
+
+        tickTimer = kotlin.concurrent.timer(initialDelay = 100, period = 100){
+            tick()
+        }
+
+        val base = findViewById<FrameLayout>(R.id.birdGameBase)
+
+        base.setOnClickListener {
+            birdVelocity = 40f
+        }
     }
 
     override fun onBackPressed() {
@@ -48,5 +66,32 @@ class BirdActivity : AppCompatActivity() {
 
     private fun getDiff(): Int {
         return intent.getIntExtra("bird_diff", 50)
+    }
+
+    fun tick(){
+        val bird = findViewById<ImageView>(R.id.bird)
+        val base = findViewById<FrameLayout>(R.id.birdGameBase)
+
+        if (tickCount % 2 == 1){
+            bird.setImageResource(R.drawable.bird_texture_wings_up)
+        }
+        else if (tickCount % 2 == 0){
+            bird.setImageResource(R.drawable.bird_texture_wings_down)
+        }
+
+
+        if (birdVelocity < 0 && bird.y < base.bottom - bird.height){
+            bird.y -= birdVelocity
+            bird.rotation = 15f
+        }
+        else if (birdVelocity > 0 && bird.y > base.top){
+            bird.y -= birdVelocity
+            bird.rotation = -15f
+        }
+
+        birdVelocity -= 2
+
+
+        tickCount++
     }
 }
