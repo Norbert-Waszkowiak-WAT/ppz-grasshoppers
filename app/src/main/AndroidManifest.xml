@@ -23,6 +23,34 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".BirdActivity"
+            android:parentActivityName="woli.grasshoppers.apppub.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="woli.grasshoppers.apppub.MainActivity" />
+        </activity>
+        <activity
+            android:name=".KnifeActivity"
+            android:parentActivityName="woli.grasshoppers.apppub.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="woli.grasshoppers.apppub.MainActivity" />
+        </activity>
+        <activity
+            android:name=".PacmanActivity"
+            android:parentActivityName="woli.grasshoppers.apppub.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="woli.grasshoppers.apppub.MainActivity" />
+        </activity>
+        <activity
+            android:name=".SnakeActivity"
+            android:parentActivityName="woli.grasshoppers.apppub.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="woli.grasshoppers.apppub.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

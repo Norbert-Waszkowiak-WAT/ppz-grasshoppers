@@ -1,5 +1,6 @@
 package woli.grasshoppers.apppub
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
@@ -16,19 +17,23 @@ class MainActivity : AppCompatActivity() {
         val pacmanButton = findViewById<Button>(R.id.buttonPacman)
 
         birdButton.setOnClickListener {
-            Toast.makeText(this, "Bird button clicked!", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, BirdActivity::class.java)
+            startActivity(intent)
         }
 
         knifeButton.setOnClickListener {
-            Toast.makeText(this, "Knife button clicked!", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, KnifeActivity::class.java)
+            startActivity(intent)
         }
 
         snakeButton.setOnClickListener {
-            Toast.makeText(this, "Snake button clicked!", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, SnakeActivity::class.java)
+            startActivity(intent)
         }
 
         pacmanButton.setOnClickListener {
-            Toast.makeText(this, "Pacman button clicked!", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, PacmanActivity::class.java)
+            startActivity(intent)
         }
     }
 }
