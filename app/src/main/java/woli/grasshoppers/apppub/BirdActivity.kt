@@ -2,7 +2,6 @@ package woli.grasshoppers.apppub
 
 import android.app.Activity
 import android.content.Intent
-import android.media.Image
 import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
@@ -23,15 +22,19 @@ class BirdActivity : AppCompatActivity() {
 
         hideSystemBars()
 
-        tickTimer = kotlin.concurrent.timer(initialDelay = 100, period = 100){
+        tickTimer = kotlin.concurrent.timer(initialDelay = 100, period = 50){
             tick()
         }
 
         val base = findViewById<FrameLayout>(R.id.birdGameBase)
+        val bird = findViewById<ImageView>(R.id.bird)
 
         base.setOnClickListener {
-            birdVelocity = 40f
+            birdVelocity = 20f
         }
+
+
+        bird.x = 50f
     }
 
     override fun onBackPressed() {
@@ -72,10 +75,10 @@ class BirdActivity : AppCompatActivity() {
         val bird = findViewById<ImageView>(R.id.bird)
         val base = findViewById<FrameLayout>(R.id.birdGameBase)
 
-        if (tickCount % 2 == 1){
+        if (tickCount % 4 == 0){
             bird.setImageResource(R.drawable.bird_texture_wings_up)
         }
-        else if (tickCount % 2 == 0){
+        else if (tickCount % 4 == 2){
             bird.setImageResource(R.drawable.bird_texture_wings_down)
         }
 
@@ -89,7 +92,7 @@ class BirdActivity : AppCompatActivity() {
             bird.rotation = -15f
         }
 
-        birdVelocity -= 2
+        birdVelocity -= 1.5f
 
 
         tickCount++
