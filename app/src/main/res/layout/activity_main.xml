@@ -12,7 +12,7 @@
         android:id="@+id/buttonKnife"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:background="@drawable/knife_button_bg_picture"
         android:gravity="bottom|center_horizontal"
         android:paddingBottom="8dp"
