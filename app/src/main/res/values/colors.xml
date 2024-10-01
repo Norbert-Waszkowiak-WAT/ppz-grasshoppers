@@ -8,4 +8,5 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="menu_button_text">#F35500</color>
+    <color name="streak_text">#D67601</color>
 </resources>

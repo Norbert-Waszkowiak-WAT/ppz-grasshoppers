@@ -14,16 +14,16 @@
         android:layout_height="0dp"
         android:layout_marginTop="32dp"
         android:background="@drawable/knife_button_bg_picture"
-        app:backgroundTint="@null"
         android:gravity="bottom|center_horizontal"
         android:paddingBottom="8dp"
         android:text="Knife Hit"
         android:textColor="@color/menu_button_text"
         android:textSize="@dimen/button_text_size"
+        app:backgroundTint="@null"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@+id/buttonSnake"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/getPlayingTextView"
         app:layout_constraintWidth_percent="0.45" />
 
     <Button
@@ -79,5 +79,39 @@
         app:layout_constraintStart_toEndOf="@+id/buttonBird"
         app:layout_constraintTop_toTopOf="@+id/buttonBird"
         app:layout_constraintWidth_percent="0.45" />
+
+    <ImageView
+        android:id="@+id/streakImageView"
+        android:layout_width="30sp"
+        android:layout_height="30sp"
+        android:layout_marginTop="16dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toStartOf="@+id/streakTextView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/fire_picture" />
+
+    <TextView
+        android:id="@+id/streakTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/streak_text"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="@+id/streakImageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/streakImageView"
+        tools:text="n day streak" />
+
+    <TextView
+        android:id="@+id/getPlayingTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/streak_text"
+        android:textSize="15sp"
+        android:text="Get playing!"
+        app:layout_constraintEnd_toEndOf="@+id/streakTextView"
+        app:layout_constraintStart_toStartOf="@+id/streakImageView"
+        app:layout_constraintTop_toBottomOf="@+id/streakTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
