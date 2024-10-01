@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
         val pacmanButton = findViewById<Button>(R.id.buttonPacman)
         val streakImg = findViewById<ImageView>(R.id.streakImageView)
         val streakTxt = findViewById<TextView>(R.id.streakTextView)
+        val getPlayingTxt = findViewById<TextView>(R.id.getPlayingTextView)
 
         val currentDate = getCurrentDate()
 
@@ -39,22 +40,25 @@ class MainActivity : AppCompatActivity() {
             if (streakContinues) {
                 streakCount++
             } else if (!isSameDay(lastLaunchDate, currentDate)) {
-                streakCount = 1
+                streakCount = 0
             }
 
-            if (streakCount > 1) {
-                streakImg.visibility = ImageView.VISIBLE
-                streakTxt.visibility = TextView.VISIBLE
-                streakTxt.text = "$streakCount day streak"
+            streakImg.visibility = ImageView.VISIBLE
+            streakTxt.visibility = TextView.VISIBLE
+            streakTxt.text = "$streakCount day streak"
+
+            if (streakCount == 0 || streakCount == 1) {
+                getPlayingTxt.visibility = TextView.VISIBLE
             } else {
-                streakImg.visibility = ImageView.GONE
-                streakTxt.visibility = TextView.GONE
+                getPlayingTxt.visibility = TextView.GONE
             }
 
         } else {
             streakCount = 1
-            streakImg.visibility = ImageView.GONE
-            streakTxt.visibility = TextView.GONE
+            streakImg.visibility = ImageView.VISIBLE
+            streakTxt.visibility = TextView.VISIBLE
+            streakTxt.text = "$streakCount day streak"
+            getPlayingTxt.visibility = TextView.VISIBLE
         }
 
         sharedPreferences.edit().apply {
