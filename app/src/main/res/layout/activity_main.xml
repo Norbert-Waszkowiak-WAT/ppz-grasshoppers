@@ -31,9 +31,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginBottom="8dp"
+        android:elevation="4dp"
         android:textColor="@color/menu_button_text"
         android:textSize="@dimen/best_score_size"
-        android:elevation="4dp"
         app:layout_constraintBottom_toBottomOf="@+id/buttonKnife"
         app:layout_constraintStart_toStartOf="@+id/buttonKnife"
         tools:text="20" />

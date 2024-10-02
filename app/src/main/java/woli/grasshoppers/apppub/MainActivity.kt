@@ -38,6 +38,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var streakTxt: TextView
     private lateinit var getPlayingTxt: TextView
     private lateinit var jokeTxt: TextView
+    private lateinit var knifeBestTxt: TextView
+    private lateinit var snakeBestTxt: TextView
+    private lateinit var birdBestTxt: TextView
+    private lateinit var pacmanBestTxt: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +73,11 @@ class MainActivity : AppCompatActivity() {
         streakTxt = findViewById(R.id.streakTextView)
         getPlayingTxt = findViewById(R.id.getPlayingTextView)
         jokeTxt = findViewById(R.id.jokeTextView)
+        knifeBestTxt = findViewById(R.id.knifeScoreTextView)
+        snakeBestTxt = findViewById(R.id.snakeScoreTextView)
+        birdBestTxt = findViewById(R.id.birdScoreTextView)
+        pacmanBestTxt= findViewById(R.id.pacmanScoreTextView)
+
     }
 
     private fun handleStreak() {
@@ -125,6 +134,22 @@ class MainActivity : AppCompatActivity() {
 
         pacmanButton.setOnClickListener {
             startActivity(Intent(this, PacmanActivity::class.java))
+        }
+
+        birdBestTxt.setOnClickListener {
+            showToast("That's your best score in this game, you bastard, get back playing!")
+        }
+
+        knifeBestTxt.setOnClickListener {
+            showToast("That's your best score in this game, you bastard, get back playing!")
+        }
+
+        snakeBestTxt.setOnClickListener {
+            showToast("That's your best score in this game, you bastard, get back playing!")
+        }
+
+        pacmanBestTxt.setOnClickListener {
+            showToast("That's your best score in this game, you bastard, get back playing!")
         }
     }
 
