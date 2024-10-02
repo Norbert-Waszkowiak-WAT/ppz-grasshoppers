@@ -26,6 +26,19 @@
         app:layout_constraintWidth_percent="0.45" />
 
     <TextView
+        android:id="@+id/knifeScoreTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:textColor="@color/menu_button_text"
+        android:textSize="@dimen/best_score_size"
+        android:elevation="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonKnife"
+        app:layout_constraintStart_toStartOf="@+id/buttonKnife"
+        tools:text="20" />
+
+    <TextView
         android:id="@+id/knifeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -53,6 +66,19 @@
         app:layout_constraintStart_toEndOf="@+id/buttonKnife"
         app:layout_constraintTop_toTopOf="@+id/buttonKnife"
         app:layout_constraintWidth_percent="0.45" />
+
+    <TextView
+        android:id="@+id/snakeScoreTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:textColor="@color/menu_button_text"
+        android:textSize="@dimen/best_score_size"
+        android:elevation="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonSnake"
+        app:layout_constraintEnd_toEndOf="@+id/buttonSnake"
+        tools:text="20" />
 
     <TextView
         android:id="@+id/snakeTextView"
@@ -84,6 +110,19 @@
         app:layout_constraintWidth_percent="0.45" />
 
     <TextView
+        android:id="@+id/birdScoreTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/menu_button_text"
+        android:textSize="@dimen/best_score_size"
+        android:elevation="4dp"
+        app:layout_constraintTop_toTopOf="@+id/buttonBird"
+        app:layout_constraintStart_toStartOf="@+id/buttonBird"
+        tools:text="20" />
+
+    <TextView
         android:id="@+id/birdTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -111,6 +150,19 @@
         app:layout_constraintStart_toEndOf="@+id/buttonBird"
         app:layout_constraintTop_toTopOf="@+id/buttonBird"
         app:layout_constraintWidth_percent="0.45" />
+
+    <TextView
+        android:id="@+id/pacmanScoreTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/menu_button_text"
+        android:textSize="@dimen/best_score_size"
+        android:elevation="4dp"
+        app:layout_constraintTop_toTopOf="@+id/buttonPacman"
+        app:layout_constraintEnd_toEndOf="@+id/buttonPacman"
+        tools:text="20" />
 
     <TextView
         android:id="@+id/pacmanTextView"
@@ -166,7 +218,7 @@
         android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="24dp"
-        android:background="@color/navy"
+        android:background="@drawable/rounded_text_view"
         android:elevation="4dp"
         android:gravity="center"
         android:lineSpacingExtra="8dp"
