@@ -125,7 +125,7 @@ class BirdActivity : AppCompatActivity() {
             pipe.x -= 10
         }
 
-        var pipeGapWidth = 300
+        var pipeGapWidth = 400
         var topPipeOffset = random.nextInt(
             from = -resources.displayMetrics.heightPixels + pipeGapWidth,
             until = -2 * pipeGapWidth
