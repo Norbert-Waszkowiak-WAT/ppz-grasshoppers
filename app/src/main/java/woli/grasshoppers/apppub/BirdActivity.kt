@@ -110,14 +110,18 @@ class BirdActivity : AppCompatActivity() {
         }
 
 
-        if (birdVelocity < 0 && bird.y < base.bottom - bird.height){
-            bird.y -= birdVelocity
+        if (bird.y >= base.bottom - bird.height){
+            tickTimer.cancel()
+        }
+
+        if (birdVelocity < 0){
             bird.rotation = 15f
         }
-        else if (birdVelocity > 0 && bird.y > base.top){
-            bird.y -= birdVelocity
+        else if (birdVelocity > 0){
             bird.rotation = -15f
         }
+
+        bird.y -= birdVelocity
 
         birdVelocity -= 1.5f
 
