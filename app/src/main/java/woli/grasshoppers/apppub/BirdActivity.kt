@@ -66,7 +66,7 @@ class BirdActivity : AppCompatActivity() {
 
 
     override fun onBackPressed() {
-        passScore(10)//TODO: real score value
+        passScore(score)
         super.onBackPressed()
     }
 
