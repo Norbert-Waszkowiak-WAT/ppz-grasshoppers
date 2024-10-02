@@ -30,9 +30,6 @@ class BirdActivity : AppCompatActivity() {
         hideSystemBars()
 
 
-        base.setOnClickListener {
-            birdVelocity = 20f
-        }
         base = findViewById(R.id.birdGameBase)
         bird = findViewById(R.id.bird)
 
@@ -59,11 +56,11 @@ class BirdActivity : AppCompatActivity() {
             newPipe2.x = resources.displayMetrics.widthPixels + 0f
         }
 
-
-        tickTimer = kotlin.concurrent.timer(initialDelay = 100, period = 50){
-            tick()
+        base.setOnClickListener {
+            startGame()
         }
     }
+
 
     override fun onBackPressed() {
         passScore(10)//TODO: real score value
@@ -97,6 +94,16 @@ class BirdActivity : AppCompatActivity() {
 
     private fun getDiff(): Int {
         return intent.getIntExtra("bird_diff", 50)
+    }
+
+    fun startGame(){
+        base.setOnClickListener {
+            birdVelocity = 20f
+        }
+
+        tickTimer = kotlin.concurrent.timer(initialDelay = 50, period = 50){
+            tick()
+        }
     }
 
     fun tick(){
@@ -145,6 +152,13 @@ class BirdActivity : AppCompatActivity() {
             pipes[0].y = topPipeOffset + 0f
             pipes[1].y = pipes[0].y + pipes[0].height + pipeGapWidth + 0f
         }
+
+        if (pipes[0].x < bird.x && bird.x < pipes[0].x + pipes[0].width){
+            if (bird.y < pipes[0].y + pipes[0].height || bird.y + bird.height > pipes[1].y){
+                tickTimer.cancel()
+            }
+        }
+
 
 
         tickCount++
