@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
 
         handleJokes()
 
-        setButtonListeners()
+        setOnClickListeners()
     }
 
     private fun handleJokes() {
@@ -119,7 +119,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setButtonListeners() {
+    private fun setOnClickListeners() {
         birdButton.setOnClickListener {
             startActivity(Intent(this, BirdActivity::class.java))
         }
