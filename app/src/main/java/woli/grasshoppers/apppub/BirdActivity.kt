@@ -28,10 +28,6 @@ class BirdActivity : AppCompatActivity() {
 
         hideSystemBars()
 
-        tickTimer = kotlin.concurrent.timer(initialDelay = 100, period = 50){
-            tick()
-        }
-
         val base = findViewById<FrameLayout>(R.id.birdGameBase)
         val bird = findViewById<ImageView>(R.id.bird)
 
@@ -63,6 +59,9 @@ class BirdActivity : AppCompatActivity() {
         }
 
 
+        tickTimer = kotlin.concurrent.timer(initialDelay = 100, period = 50){
+            tick()
+        }
     }
 
     override fun onBackPressed() {
