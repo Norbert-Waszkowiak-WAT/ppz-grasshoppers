@@ -13,6 +13,9 @@ import kotlin.random.Random
 
 class BirdActivity : AppCompatActivity() {
 
+    lateinit var bird: ImageView
+    lateinit var base: FrameLayout
+
     var tickTimer = Timer()
     var tickCount = 0
 
@@ -20,20 +23,18 @@ class BirdActivity : AppCompatActivity() {
 
     var pipes = mutableListOf<View>()
 
-    val random = Random(100) // todo: use time as seed
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bird)
 
         hideSystemBars()
 
-        val base = findViewById<FrameLayout>(R.id.birdGameBase)
-        val bird = findViewById<ImageView>(R.id.bird)
 
         base.setOnClickListener {
             birdVelocity = 20f
         }
+        base = findViewById(R.id.birdGameBase)
+        bird = findViewById(R.id.bird)
 
 
         bird.x = 50f
@@ -99,9 +100,6 @@ class BirdActivity : AppCompatActivity() {
     }
 
     fun tick(){
-        val bird = findViewById<ImageView>(R.id.bird)
-        val base = findViewById<FrameLayout>(R.id.birdGameBase)
-
         if (tickCount % 4 == 0){
             bird.setImageResource(R.drawable.bird_texture_wings_up)
         }
@@ -130,7 +128,7 @@ class BirdActivity : AppCompatActivity() {
         }
 
         var pipeGapWidth = 400
-        var topPipeOffset = random.nextInt(
+        var topPipeOffset = Random.nextInt(
             from = -resources.displayMetrics.heightPixels + pipeGapWidth,
             until = -2 * pipeGapWidth
         )
@@ -140,7 +138,7 @@ class BirdActivity : AppCompatActivity() {
             pipes[1].y = pipes[0].y + pipes[0].height + pipeGapWidth + 0f
         }
 
-        if (pipes[0].x < 0){
+        if (pipes[0].x + pipes[0].width < 0){
             pipes[0].x = resources.displayMetrics.widthPixels + 0f
             pipes[1].x = resources.displayMetrics.widthPixels + 0f
 
