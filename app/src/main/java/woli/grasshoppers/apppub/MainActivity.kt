@@ -2,12 +2,22 @@ package woli.grasshoppers.apppub
 
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.gson.Gson
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -17,20 +27,52 @@ class MainActivity : AppCompatActivity() {
         getSharedPreferences("streak_prefs", Context.MODE_PRIVATE)
     }
 
+    private val client = OkHttpClient()
+    private val gson = Gson()
+
+    private lateinit var birdButton: Button
+    private lateinit var knifeButton: Button
+    private lateinit var snakeButton: Button
+    private lateinit var pacmanButton: Button
+    private lateinit var streakImg: ImageView
+    private lateinit var streakTxt: TextView
+    private lateinit var getPlayingTxt: TextView
+    private lateinit var jokeTxt: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val birdButton = findViewById<Button>(R.id.buttonBird)
-        val knifeButton = findViewById<Button>(R.id.buttonKnife)
-        val snakeButton = findViewById<Button>(R.id.buttonSnake)
-        val pacmanButton = findViewById<Button>(R.id.buttonPacman)
-        val streakImg = findViewById<ImageView>(R.id.streakImageView)
-        val streakTxt = findViewById<TextView>(R.id.streakTextView)
-        val getPlayingTxt = findViewById<TextView>(R.id.getPlayingTextView)
+        initUIElements()
 
+        handleStreak()
+
+        handleJokes()
+
+        setButtonListeners()
+    }
+
+    private fun handleJokes() {
+        if (isNetworkAvailable()) {
+            fetchRandomJoke()
+        } else {
+            showJoke("No internet connection. Please check your network settings.")
+        }
+    }
+
+    private fun initUIElements() {
+        birdButton = findViewById(R.id.buttonBird)
+        knifeButton = findViewById(R.id.buttonKnife)
+        snakeButton = findViewById(R.id.buttonSnake)
+        pacmanButton = findViewById(R.id.buttonPacman)
+        streakImg = findViewById(R.id.streakImageView)
+        streakTxt = findViewById(R.id.streakTextView)
+        getPlayingTxt = findViewById(R.id.getPlayingTextView)
+        jokeTxt = findViewById(R.id.jokeTextView)
+    }
+
+    private fun handleStreak() {
         val currentDate = getCurrentDate()
-
         val lastLaunchDate = sharedPreferences.getString("last_launch_date", null)
         var streakCount = sharedPreferences.getInt("streak_count", 0)
 
@@ -43,22 +85,10 @@ class MainActivity : AppCompatActivity() {
                 streakCount = 0
             }
 
-            streakImg.visibility = ImageView.VISIBLE
-            streakTxt.visibility = TextView.VISIBLE
-            streakTxt.text = "$streakCount day streak"
-
-            if (streakCount == 0 || streakCount == 1) {
-                getPlayingTxt.visibility = TextView.VISIBLE
-            } else {
-                getPlayingTxt.visibility = TextView.GONE
-            }
-
+            updateStreakUI(streakCount)
         } else {
             streakCount = 1
-            streakImg.visibility = ImageView.VISIBLE
-            streakTxt.visibility = TextView.VISIBLE
-            streakTxt.text = "$streakCount day streak"
-            getPlayingTxt.visibility = TextView.VISIBLE
+            updateStreakUI(streakCount)
         }
 
         sharedPreferences.edit().apply {
@@ -66,27 +96,35 @@ class MainActivity : AppCompatActivity() {
             putInt("streak_count", streakCount)
             apply()
         }
+    }
 
-        hideSystemBars()
+    private fun updateStreakUI(streakCount: Int) {
+        streakImg.visibility = View.VISIBLE
+        streakTxt.visibility = View.VISIBLE
+        streakTxt.text = "$streakCount day streak"
 
+        getPlayingTxt.visibility = if (streakCount == 0 || streakCount == 1) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
+    }
+
+    private fun setButtonListeners() {
         birdButton.setOnClickListener {
-            val intent = Intent(this, BirdActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, BirdActivity::class.java))
         }
 
         knifeButton.setOnClickListener {
-            val intent = Intent(this, KnifeActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, KnifeActivity::class.java))
         }
 
         snakeButton.setOnClickListener {
-            val intent = Intent(this, SnakeActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, SnakeActivity::class.java))
         }
 
         pacmanButton.setOnClickListener {
-            val intent = Intent(this, PacmanActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, PacmanActivity::class.java))
         }
     }
 
@@ -127,5 +165,56 @@ class MainActivity : AppCompatActivity() {
                 or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 or View.SYSTEM_UI_FLAG_FULLSCREEN
         )
+    }
+
+    private fun fetchRandomJoke() {
+        val request = Request.Builder()
+            .url("https://official-joke-api.appspot.com/random_joke")
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+                showToast("Failed to fetch joke")
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                response.use {
+                    if (!response.isSuccessful) {
+                        showToast("Failed to fetch joke: ${response.message}")
+                        return
+                    }
+
+                    val responseBody = response.body
+                    if (responseBody != null) {
+                        val randomJoke = gson.fromJson(responseBody.string(), RandomJoke::class.java)
+                        runOnUiThread {
+                            showJoke(randomJoke)
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    private fun showJoke(joke: RandomJoke) {
+        val jokeText = "${joke.setup}\n${joke.punchline}"
+        showJoke(jokeText)
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
+    private fun showJoke(joke: String) {
+        jokeTxt.text = joke
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkCapabilities = connectivityManager.activeNetwork?.let {
+            connectivityManager.getNetworkCapabilities(it)
+        }
+        return networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
     }
 }
