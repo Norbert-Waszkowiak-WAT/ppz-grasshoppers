@@ -19,7 +19,6 @@ class BirdActivity : AppCompatActivity() {
     var birdVelocity = 0f
 
     var pipes = mutableListOf<View>()
-    var pipeGapWidth = 300f
 
     val random = Random(100) // todo: use time as seed
 
@@ -43,17 +42,24 @@ class BirdActivity : AppCompatActivity() {
 
         bird.x = 50f
 
-        for (i in 1..2){
-            var newPipe = LayoutInflater.from(this).inflate(R.layout.bird_pipe, null)
+        val pipeWidth = 100
+        val pipeHeight = resources.displayMetrics.heightPixels
 
-            val width = 100
-            val height = 1000
+        val params = FrameLayout.LayoutParams(pipeWidth,pipeHeight)
 
-            var params = FrameLayout.LayoutParams(width,height)
+        for (i in 1..2 step 2){
+            val newPipe1 = LayoutInflater.from(this).inflate(R.layout.bird_pipe, null)
+            val newPipe2 = LayoutInflater.from(this).inflate(R.layout.bird_pipe, null)
 
-            base.addView(newPipe, params)
+            base.addView(newPipe1, params)
+            base.addView(newPipe2, params)
+            pipes.add(newPipe1)
+            pipes.add(newPipe2)
 
-            pipes.add(newPipe)
+
+            newPipe1.rotation = 180f
+            newPipe1.x = resources.displayMetrics.widthPixels + 0f
+            newPipe2.x = resources.displayMetrics.widthPixels + 0f
         }
 
 
@@ -116,26 +122,27 @@ class BirdActivity : AppCompatActivity() {
 
         birdVelocity -= 1.5f
 
+        for (pipe in pipes){
+            pipe.x -= 10
+        }
 
-        pipes[0].x -= 10
-        pipes[1].x -= 10
+        var pipeGapWidth = 300
+        var topPipeOffset = random.nextInt(
+            from = -resources.displayMetrics.heightPixels + pipeGapWidth,
+            until = -2 * pipeGapWidth
+        )
 
         if (tickCount == 0){
-            pipes[0].x = resources.displayMetrics.widthPixels + 0f
-            pipes[1].x = resources.displayMetrics.widthPixels + 0f
-
-            pipes[0].rotation = 180f
-
-            pipes[0].y = random.nextInt(-800,800) + 0f
-            pipes[1].y = pipes[0].y + pipes[0].height + pipeGapWidth
+            pipes[0].y = topPipeOffset + 0f
+            pipes[1].y = pipes[0].y + pipes[0].height + pipeGapWidth + 0f
         }
 
         if (pipes[0].x < 0){
             pipes[0].x = resources.displayMetrics.widthPixels + 0f
             pipes[1].x = resources.displayMetrics.widthPixels + 0f
 
-            pipes[0].y = random.nextInt(-800,800) + 0f
-            pipes[1].y = pipes[0].y + pipes[0].height + pipeGapWidth
+            pipes[0].y = topPipeOffset + 0f
+            pipes[1].y = pipes[0].y + pipes[0].height + pipeGapWidth + 0f
         }
 
 
