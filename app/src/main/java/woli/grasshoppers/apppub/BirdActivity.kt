@@ -23,6 +23,9 @@ class BirdActivity : AppCompatActivity() {
 
     var pipes = mutableListOf<View>()
 
+    var score = 0
+    var isBetweenPipes = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bird)
@@ -106,6 +109,10 @@ class BirdActivity : AppCompatActivity() {
         }
     }
 
+    fun endGame(){
+        tickTimer.cancel()
+    }
+
     fun tick(){
         if (tickCount % 4 == 0){
             bird.setImageResource(R.drawable.bird_texture_wings_up)
@@ -116,7 +123,7 @@ class BirdActivity : AppCompatActivity() {
 
 
         if (bird.y >= base.bottom - bird.height){
-            tickTimer.cancel()
+            endGame()
         }
 
         if (birdVelocity < 0){
@@ -153,12 +160,16 @@ class BirdActivity : AppCompatActivity() {
             pipes[1].y = pipes[0].y + pipes[0].height + pipeGapWidth + 0f
         }
 
-        if (pipes[0].x < bird.x && bird.x < pipes[0].x + pipes[0].width){
+        if (pipes[0].x < bird.x + bird.width && bird.x < pipes[0].x + pipes[0].width){
             if (bird.y < pipes[0].y + pipes[0].height || bird.y + bird.height > pipes[1].y){
-                tickTimer.cancel()
+                endGame()
             }
+            isBetweenPipes = true
         }
-
+        else if (isBetweenPipes){
+            score++
+            isBetweenPipes = false
+        }
 
 
         tickCount++
