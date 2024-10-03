@@ -1,5 +1,7 @@
 package woli.grasshoppers.apppub
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -12,11 +14,23 @@ class BirdActivity : AppCompatActivity() {
         hideSystemBars()
     }
 
+    override fun onBackPressed() {
+        passScore(10)//TODO: real score value
+        super.onBackPressed()
+    }
+
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) {
             hideSystemBars()
         }
+    }
+
+    private fun passScore(score: Int) {
+        val data = Intent()
+        data.putExtra("score", score.toString())
+        setResult(Activity.RESULT_OK, data)
+        finish()
     }
 
     private fun hideSystemBars() {

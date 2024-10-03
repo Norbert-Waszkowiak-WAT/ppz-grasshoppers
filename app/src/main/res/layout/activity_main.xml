@@ -16,7 +16,6 @@
         android:background="@drawable/knife_button_bg_picture"
         android:gravity="bottom|center_horizontal"
         android:paddingBottom="8dp"
-        android:text="Knife Hit"
         android:textColor="@color/menu_button_text"
         android:textSize="@dimen/button_text_size"
         app:backgroundTint="@null"
@@ -26,6 +25,31 @@
         app:layout_constraintTop_toBottomOf="@+id/getPlayingTextView"
         app:layout_constraintWidth_percent="0.45" />
 
+    <TextView
+        android:id="@+id/knifeScoreTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:elevation="4dp"
+        android:textColor="@color/menu_button_text"
+        android:textSize="@dimen/best_score_size"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonKnife"
+        app:layout_constraintStart_toStartOf="@+id/buttonKnife"
+        tools:text="20" />
+
+    <TextView
+        android:id="@+id/knifeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Knife Hit"
+        android:textColor="@color/menu_button_text"
+        android:textSize="@dimen/button_text_size"
+        app:layout_constraintEnd_toEndOf="@+id/buttonKnife"
+        app:layout_constraintStart_toStartOf="@+id/buttonKnife"
+        app:layout_constraintTop_toBottomOf="@+id/buttonKnife" />
+
     <Button
         android:id="@+id/buttonSnake"
         android:layout_width="0dp"
@@ -34,7 +58,6 @@
         android:background="@drawable/snake_button_bg_picture"
         android:gravity="bottom|center_horizontal"
         android:paddingBottom="8dp"
-        android:text="Snake"
         android:textColor="@color/menu_button_text"
         android:textSize="@dimen/button_text_size"
         app:layout_constraintBottom_toBottomOf="@+id/buttonKnife"
@@ -44,23 +67,72 @@
         app:layout_constraintTop_toTopOf="@+id/buttonKnife"
         app:layout_constraintWidth_percent="0.45" />
 
+    <TextView
+        android:id="@+id/snakeScoreTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:textColor="@color/menu_button_text"
+        android:textSize="@dimen/best_score_size"
+        android:elevation="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonSnake"
+        app:layout_constraintEnd_toEndOf="@+id/buttonSnake"
+        tools:text="20" />
+
+    <TextView
+        android:id="@+id/snakeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Snake"
+        android:textColor="@color/menu_button_text"
+        android:textSize="@dimen/button_text_size"
+        app:layout_constraintEnd_toEndOf="@+id/buttonSnake"
+        app:layout_constraintStart_toStartOf="@+id/buttonSnake"
+        app:layout_constraintTop_toBottomOf="@+id/buttonSnake" />
+
     <Button
         android:id="@+id/buttonBird"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
-        app:backgroundTint="@null"
         android:background="@drawable/bird_button_bg_picture"
         android:gravity="top|center_horizontal"
         android:paddingBottom="8dp"
-        android:text="Flappy Bird"
         android:textColor="@color/menu_button_text"
         android:textSize="@dimen/button_text_size"
+        app:backgroundTint="@null"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@+id/buttonPacman"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonKnife"
+        app:layout_constraintTop_toBottomOf="@+id/knifeTextView"
         app:layout_constraintWidth_percent="0.45" />
+
+    <TextView
+        android:id="@+id/birdScoreTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/menu_button_text"
+        android:textSize="@dimen/best_score_size"
+        android:elevation="4dp"
+        app:layout_constraintTop_toTopOf="@+id/buttonBird"
+        app:layout_constraintStart_toStartOf="@+id/buttonBird"
+        tools:text="20" />
+
+    <TextView
+        android:id="@+id/birdTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Flappy Bird"
+        android:textColor="@color/menu_button_text"
+        android:textSize="@dimen/button_text_size"
+        app:layout_constraintEnd_toEndOf="@+id/buttonBird"
+        app:layout_constraintStart_toStartOf="@+id/buttonBird"
+        app:layout_constraintTop_toBottomOf="@+id/buttonBird" />
 
     <Button
         android:id="@+id/buttonPacman"
@@ -70,7 +142,6 @@
         android:background="@drawable/pacman_button_bg_picture"
         android:gravity="top|center_horizontal"
         android:paddingBottom="8dp"
-        android:text="Pac-Man"
         android:textColor="@color/menu_button_text"
         android:textSize="@dimen/button_text_size"
         app:layout_constraintBottom_toBottomOf="@+id/buttonBird"
@@ -79,6 +150,31 @@
         app:layout_constraintStart_toEndOf="@+id/buttonBird"
         app:layout_constraintTop_toTopOf="@+id/buttonBird"
         app:layout_constraintWidth_percent="0.45" />
+
+    <TextView
+        android:id="@+id/pacmanScoreTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/menu_button_text"
+        android:textSize="@dimen/best_score_size"
+        android:elevation="4dp"
+        app:layout_constraintTop_toTopOf="@+id/buttonPacman"
+        app:layout_constraintEnd_toEndOf="@+id/buttonPacman"
+        tools:text="20" />
+
+    <TextView
+        android:id="@+id/pacmanTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Pac-Man"
+        android:textColor="@color/menu_button_text"
+        android:textSize="@dimen/button_text_size"
+        app:layout_constraintEnd_toEndOf="@+id/buttonPacman"
+        app:layout_constraintStart_toStartOf="@+id/buttonPacman"
+        app:layout_constraintTop_toBottomOf="@+id/buttonPacman" />
 
     <ImageView
         android:id="@+id/streakImageView"
@@ -113,5 +209,30 @@
         app:layout_constraintEnd_toEndOf="@+id/streakTextView"
         app:layout_constraintStart_toStartOf="@+id/streakImageView"
         app:layout_constraintTop_toBottomOf="@+id/streakTextView" />
+
+    <TextView
+        android:id="@+id/jokeTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/rounded_text_view"
+        android:elevation="4dp"
+        android:gravity="center"
+        android:lineSpacingExtra="8dp"
+        android:padding="16dp"
+        android:shadowColor="@android:color/darker_gray"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="4"
+        android:textColor="@color/menu_button_text"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/birdTextView"
+        tools:text="Some jokes Lorem ipsum dolor sit amet galia est omnis divisa in partes tres" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
