@@ -1,12 +1,10 @@
 package woli.grasshoppers.apppub
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -80,6 +78,10 @@ class MainActivity : AppCompatActivity() {
         birdBestTxt = findViewById(R.id.birdScoreTextView)
         pacmanBestTxt= findViewById(R.id.pacmanScoreTextView)
 
+        knifeBestTxt.text = sharedPreferences.getInt("knife_best_score", 0).toString()
+        snakeBestTxt.text = sharedPreferences.getInt("snake_best_score", 0).toString()
+        birdBestTxt.text = sharedPreferences.getInt("bird_best_score", 0).toString()
+        pacmanBestTxt.text = sharedPreferences.getInt("pacman_best_score", 0).toString()
     }
 
     private fun handleStreak() {
@@ -158,43 +160,54 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
             super.onActivityResult(requestCode, resultCode, data)
 
-            if (requestCode == 0) { //bird
+            if (requestCode == 0) {
                 if (resultCode == RESULT_OK) {
                     if (data != null) {
-                        if (birdBestTxt.text.isNullOrEmpty() || birdBestTxt.text.isNullOrBlank() || birdBestTxt.text.toString().toInt() < data.getStringExtra("score").toString().toInt()
-                        ) {
+                        if (birdBestTxt.text.isNullOrEmpty() || birdBestTxt.text.isNullOrBlank() || birdBestTxt.text.toString().toInt() < data.getStringExtra("score").toString().toInt()) {
                             birdBestTxt.text = data.getStringExtra("score").toString()
-                            //TODO: gdzieś to zapisać mądrze
+                            sharedPreferences.edit().apply {
+                                putInt("bird_best_score", data.getStringExtra("score").toString().toInt())
+                                apply()
+                            }
                         }
                     }
                 }
             }
-            if (requestCode == 1) { //knife
+            if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
                     if (knifeBestTxt.text.isNullOrEmpty() || knifeBestTxt.text.isNullOrBlank() || knifeBestTxt.text.toString().toInt() < data.getStringExtra("score").toString().toInt()) {
                         knifeBestTxt.text = data.getStringExtra("score").toString()
-                        //TODO: gdzieś to zapisać mądrze
+                        sharedPreferences.edit().apply {
+                            putInt("knife_best_score", data.getStringExtra("score").toString().toInt())
+                            apply()
+                        }
                     }
                 }
             }
         }
-        if (requestCode == 2) { //snake
+        if (requestCode == 2) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
                     if (snakeBestTxt.text.isNullOrEmpty() || snakeBestTxt.text.isNullOrBlank() || snakeBestTxt.text.toString().toInt() < data.getStringExtra("score").toString().toInt()) {
                         snakeBestTxt.text = data.getStringExtra("score").toString()
-                        //TODO: gdzieś to zapisać mądrze
+                        sharedPreferences.edit().apply {
+                            putInt("snake_best_score", data.getStringExtra("score").toString().toInt())
+                            apply()
+                        }
                     }
                 }
             }
         }
-        if (requestCode == 3) { //pacman
+        if (requestCode == 3) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
                     if (pacmanBestTxt.text.isNullOrEmpty() || pacmanBestTxt.text.isNullOrBlank() || pacmanBestTxt.text.toString().toInt() < data.getStringExtra("score").toString().toInt()) {
                         pacmanBestTxt.text = data.getStringExtra("score").toString()
-                        //TODO: gdzieś to zapisać mądrze
+                        sharedPreferences.edit().apply {
+                            putInt("pacman_best_score", data.getStringExtra("score").toString().toInt())
+                            apply()
+                        }
                     }
                 }
             }
