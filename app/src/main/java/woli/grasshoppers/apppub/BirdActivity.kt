@@ -22,6 +22,7 @@ class BirdActivity : AppCompatActivity() {
     var birdVelocity = 0f
 
     var pipes = mutableListOf<View>()
+    var displayedPipes = mutableListOf<View>()
 
     var score = 0
     var isBetweenPipes = false
@@ -44,7 +45,7 @@ class BirdActivity : AppCompatActivity() {
 
         val params = FrameLayout.LayoutParams(pipeWidth,pipeHeight)
 
-        for (i in 1..2 step 2){
+        for (i in 1..6 step 2){
             val newPipe1 = LayoutInflater.from(this).inflate(R.layout.bird_pipe, null)
             val newPipe2 = LayoutInflater.from(this).inflate(R.layout.bird_pipe, null)
 
@@ -113,11 +114,49 @@ class BirdActivity : AppCompatActivity() {
         tickTimer.cancel()
     }
 
-    fun tick(){
-        if (tickCount % 4 == 0){
-            bird.setImageResource(R.drawable.bird_texture_wings_up)
+    fun showPipe(){
+        if (pipes.size < 2){
+            return
         }
-        else if (tickCount % 4 == 2){
+
+        val upperPipe = pipes[0]
+        val lowerPipe = pipes[1]
+
+        var pipeGapWidth = 600
+        var topPipeOffset = Random.nextInt(
+            from = -resources.displayMetrics.heightPixels + pipeGapWidth,
+            until = -2 * pipeGapWidth
+        )
+
+        upperPipe.y = topPipeOffset + 0f
+        lowerPipe.y = pipes[0].y + pipes[0].height + pipeGapWidth + 0f
+
+        upperPipe.x = resources.displayMetrics.widthPixels + 0f
+        lowerPipe.x = resources.displayMetrics.widthPixels + 0f
+
+        displayedPipes.add(upperPipe)
+        displayedPipes.add(lowerPipe)
+
+        pipes.remove(upperPipe)
+        pipes.remove(lowerPipe)
+    }
+
+    fun hidePipe(i: Int){
+        val upperPipe = displayedPipes[i]
+        val lowerPipe = displayedPipes[i+1]
+
+        displayedPipes.remove(upperPipe)
+        displayedPipes.remove(lowerPipe)
+
+        pipes.add(upperPipe)
+        pipes.add(lowerPipe)
+    }
+
+
+    fun tick() {
+        if (tickCount % 4 == 0) {
+            bird.setImageResource(R.drawable.bird_texture_wings_up)
+        } else if (tickCount % 4 == 2) {
             bird.setImageResource(R.drawable.bird_texture_wings_down)
         }
 
@@ -137,31 +176,24 @@ class BirdActivity : AppCompatActivity() {
 
         birdVelocity -= 1.5f
 
-        for (pipe in pipes){
+        for (pipe in displayedPipes){
             pipe.x -= 10
         }
 
-        var pipeGapWidth = 400
-        var topPipeOffset = Random.nextInt(
-            from = -resources.displayMetrics.heightPixels + pipeGapWidth,
-            until = -2 * pipeGapWidth
-        )
-
-        if (tickCount == 0){
-            pipes[0].y = topPipeOffset + 0f
-            pipes[1].y = pipes[0].y + pipes[0].height + pipeGapWidth + 0f
+        if (tickCount % 40 == 0){
+            showPipe()
         }
 
-        if (pipes[0].x + pipes[0].width < 0){
-            pipes[0].x = resources.displayMetrics.widthPixels + 0f
-            pipes[1].x = resources.displayMetrics.widthPixels + 0f
+        val upperPipe = displayedPipes[0]
+        val lowerPipe = displayedPipes[1]
 
-            pipes[0].y = topPipeOffset + 0f
-            pipes[1].y = pipes[0].y + pipes[0].height + pipeGapWidth + 0f
+        if (lowerPipe.x + lowerPipe.width < 0){
+            hidePipe(0)
         }
 
-        if (pipes[0].x < bird.x + bird.width && bird.x < pipes[0].x + pipes[0].width){
-            if (bird.y < pipes[0].y + pipes[0].height || bird.y + bird.height > pipes[1].y){
+
+        if (upperPipe.x < bird.x + upperPipe.width && bird.x < upperPipe.x + upperPipe.width){
+            if (bird.y < upperPipe.y + upperPipe.height || bird.y + bird.height > lowerPipe.y){
                 endGame()
             }
             isBetweenPipes = true
