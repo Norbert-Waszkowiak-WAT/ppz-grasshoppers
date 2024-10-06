@@ -261,13 +261,15 @@ class MainActivity : AppCompatActivity() {
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 e.printStackTrace()
-                showToast("Failed to fetch joke")
+                //showToast("Failed to fetch joke")
+                showJoke("Failed to fetch joke")
             }
 
             override fun onResponse(call: Call, response: Response) {
                 response.use {
                     if (!response.isSuccessful) {
-                        showToast("Failed to fetch joke: ${response.message}")
+                        //showToast("Failed to fetch joke: ${response.message}")
+                        showJoke("Failed to fetch joke: ${response.message}")
                         return
                     }
 
