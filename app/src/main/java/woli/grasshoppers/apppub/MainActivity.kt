@@ -76,12 +76,14 @@ class MainActivity : AppCompatActivity() {
         knifeBestTxt = findViewById(R.id.knifeScoreTextView)
         snakeBestTxt = findViewById(R.id.snakeScoreTextView)
         birdBestTxt = findViewById(R.id.birdScoreTextView)
-        pacmanBestTxt= findViewById(R.id.pacmanScoreTextView)
+        pacmanBestTxt = findViewById(R.id.pacmanScoreTextView)
 
         knifeBestTxt.text = sharedPreferences.getInt("knife_best_score", 0).toString()
         snakeBestTxt.text = sharedPreferences.getInt("snake_best_score", 0).toString()
         birdBestTxt.text = sharedPreferences.getInt("bird_best_score", 0).toString()
         pacmanBestTxt.text = sharedPreferences.getInt("pacman_best_score", 0).toString()
+
+        jokeTxt.text = "Lołding jor dżołk"
     }
 
     private fun handleStreak() {
@@ -158,28 +160,38 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-            super.onActivityResult(requestCode, resultCode, data)
+        super.onActivityResult(requestCode, resultCode, data)
 
-            if (requestCode == 0) {
-                if (resultCode == RESULT_OK) {
-                    if (data != null) {
-                        if (birdBestTxt.text.isNullOrEmpty() || birdBestTxt.text.isNullOrBlank() || birdBestTxt.text.toString().toInt() < data.getStringExtra("score").toString().toInt()) {
-                            birdBestTxt.text = data.getStringExtra("score").toString()
-                            sharedPreferences.edit().apply {
-                                putInt("bird_best_score", data.getStringExtra("score").toString().toInt())
-                                apply()
-                            }
+        if (requestCode == 0) {
+            if (resultCode == RESULT_OK) {
+                if (data != null) {
+                    if (birdBestTxt.text.isNullOrEmpty() || birdBestTxt.text.isNullOrBlank() || birdBestTxt.text.toString()
+                            .toInt() < data.getStringExtra("score").toString().toInt()
+                    ) {
+                        birdBestTxt.text = data.getStringExtra("score").toString()
+                        sharedPreferences.edit().apply {
+                            putInt(
+                                "bird_best_score",
+                                data.getStringExtra("score").toString().toInt()
+                            )
+                            apply()
                         }
                     }
                 }
             }
-            if (requestCode == 1) {
+        }
+        if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
-                    if (knifeBestTxt.text.isNullOrEmpty() || knifeBestTxt.text.isNullOrBlank() || knifeBestTxt.text.toString().toInt() < data.getStringExtra("score").toString().toInt()) {
+                    if (knifeBestTxt.text.isNullOrEmpty() || knifeBestTxt.text.isNullOrBlank() || knifeBestTxt.text.toString()
+                            .toInt() < data.getStringExtra("score").toString().toInt()
+                    ) {
                         knifeBestTxt.text = data.getStringExtra("score").toString()
                         sharedPreferences.edit().apply {
-                            putInt("knife_best_score", data.getStringExtra("score").toString().toInt())
+                            putInt(
+                                "knife_best_score",
+                                data.getStringExtra("score").toString().toInt()
+                            )
                             apply()
                         }
                     }
@@ -189,10 +201,15 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == 2) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
-                    if (snakeBestTxt.text.isNullOrEmpty() || snakeBestTxt.text.isNullOrBlank() || snakeBestTxt.text.toString().toInt() < data.getStringExtra("score").toString().toInt()) {
+                    if (snakeBestTxt.text.isNullOrEmpty() || snakeBestTxt.text.isNullOrBlank() || snakeBestTxt.text.toString()
+                            .toInt() < data.getStringExtra("score").toString().toInt()
+                    ) {
                         snakeBestTxt.text = data.getStringExtra("score").toString()
                         sharedPreferences.edit().apply {
-                            putInt("snake_best_score", data.getStringExtra("score").toString().toInt())
+                            putInt(
+                                "snake_best_score",
+                                data.getStringExtra("score").toString().toInt()
+                            )
                             apply()
                         }
                     }
@@ -202,10 +219,15 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == 3) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
-                    if (pacmanBestTxt.text.isNullOrEmpty() || pacmanBestTxt.text.isNullOrBlank() || pacmanBestTxt.text.toString().toInt() < data.getStringExtra("score").toString().toInt()) {
+                    if (pacmanBestTxt.text.isNullOrEmpty() || pacmanBestTxt.text.isNullOrBlank() || pacmanBestTxt.text.toString()
+                            .toInt() < data.getStringExtra("score").toString().toInt()
+                    ) {
                         pacmanBestTxt.text = data.getStringExtra("score").toString()
                         sharedPreferences.edit().apply {
-                            putInt("pacman_best_score", data.getStringExtra("score").toString().toInt())
+                            putInt(
+                                "pacman_best_score",
+                                data.getStringExtra("score").toString().toInt()
+                            )
                             apply()
                         }
                     }
@@ -244,13 +266,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun hideSystemBars() {
         window.decorView.systemUiVisibility = (
-            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN
-        )
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_FULLSCREEN
+                )
     }
 
     private fun fetchRandomJoke() {
@@ -275,7 +297,8 @@ class MainActivity : AppCompatActivity() {
 
                     val responseBody = response.body
                     if (responseBody != null) {
-                        val randomJoke = gson.fromJson(responseBody.string(), RandomJoke::class.java)
+                        val randomJoke =
+                            gson.fromJson(responseBody.string(), RandomJoke::class.java)
                         runOnUiThread {
                             showJoke(randomJoke)
                         }
@@ -299,7 +322,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun isNetworkAvailable(): Boolean {
-        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkCapabilities = connectivityManager.activeNetwork?.let {
             connectivityManager.getNetworkCapabilities(it)
         }
