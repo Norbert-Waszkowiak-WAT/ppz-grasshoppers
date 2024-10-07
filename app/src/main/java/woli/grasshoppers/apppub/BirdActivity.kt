@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import java.util.Timer
 import kotlin.random.Random
@@ -17,6 +18,7 @@ class BirdActivity : AppCompatActivity() {
     lateinit var bird: ImageView
     lateinit var background: FrameLayout
     lateinit var button: Button
+    lateinit var scoreView: TextView
 
     var tickTimer = Timer()
     var tickCount = 0
@@ -39,6 +41,7 @@ class BirdActivity : AppCompatActivity() {
         background = findViewById(R.id.birdBackground)
         bird = findViewById(R.id.bird)
         button = findViewById(R.id.birdButtonStartGame)
+        scoreView = findViewById(R.id.birdScoreTextView)
 
 
         bird.x = 50f
@@ -217,27 +220,41 @@ class BirdActivity : AppCompatActivity() {
             showPipe()
         }
 
+
+
+        var upperPipe = displayedPipes[0]
+        var lowerPipe = displayedPipes[1]
+
+        if (lowerPipe.x + lowerPipe.width < 0) {
+            hidePipe(0)
+        }
+
+        if (bird.x + bird.width > upperPipe.x  && bird.x < upperPipe.x + upperPipe.width) {
+            if (bird.y < upperPipe.y + upperPipe.height || bird.y + bird.height > lowerPipe.y) {
+                endGame()
+            }
+            isBetweenPipes = true
+        } else if (isBetweenPipes) {
+            score++
+            isBetweenPipes = false
+        }
+
         var i = 0
         while (i < displayedPipes.size-1) {
-            val upperPipe = displayedPipes[i]
-            val lowerPipe = displayedPipes[i + 1]
-
-            if (lowerPipe.x + lowerPipe.width < 0) {
-                hidePipe(0)
-                i -= 2
-            }
+            upperPipe = displayedPipes[i]
+            lowerPipe = displayedPipes[i + 1]
 
             if (bird.x + bird.width > upperPipe.x  && bird.x < upperPipe.x + upperPipe.width) {
                 if (bird.y < upperPipe.y + upperPipe.height || bird.y + bird.height > lowerPipe.y) {
                     endGame()
                 }
-                isBetweenPipes = true
-            } else if (isBetweenPipes) {
-                score++
-                isBetweenPipes = false
             }
 
             i+=2
+        }
+
+        this.runOnUiThread {
+            scoreView.text = score.toString()
         }
 
 
