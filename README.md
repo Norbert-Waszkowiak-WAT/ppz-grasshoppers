@@ -70,31 +70,31 @@ Grupą docelową są wszyscy ludzie, którzy chcą grać w proste gry arkadowe. 
 **Etap 1: Implementacja modułu głównego i pierwszej gry**  
 **Zadania:**
    - Projektowanie menu głównego – *Oliwia Grabowska*
-   - Implementacja menu głównego – *Jakub Bisikiewicz* i *Grzegorz Kornaszewski*
+   - Implementacja menu głównego – *Grzegorz Kornaszewski*
    - Projektowanie grafiki pierwszej gry - *Oliwia Grabowska*
-   - Implementacja pierwszej gry – *Grzegorz Kornaszewski*
-   - Połączenie pierwszej gry z menu głównym – *Jakub Bisikiewicz*
+   - Implementacja pierwszej gry – *Jakub Bisikiewicz*
+   - Połączenie pierwszej gry z menu głównym – *Grzegorz Kornaszewski*
    - Testy funkcjonalne menu głównego i pierwszej gry – *Oliwia Grabowska*
 
 **Etap 2: Implementacja drugiej gry**  
 **Zadania:**
    - Projektowanie grafiki drugiej gry - *Oliwia Grabowska*
-   - Implementacja drugiej gry – *Jakub Bisikiewicz*
-   - Połączenie drugiej gry z menu głównym – *Grzegorz Kornaszewski*
+   - Implementacja drugiej gry – *Grzegorz Kornaszewski*
+   - Połączenie drugiej gry z menu głównym – *Jakub Bisikiewicz*
    - Testy funkcjonalne drugiej gry – *Oliwia Grabowska*
 
 **Etap 3: Implementacja trzeciej gry**  
 **Zadania:**
    - Projektowanie grafiki trzeciej gry - *Oliwia Grabowska*
-   - Implementacja trzeciej gry – *Grzegorz Kornaszewski*
-   - Połączenie trzeciej gry z menu głównym – *Jakub Bisikiewicz*
+   - Implementacja trzeciej gry – *Jakub Bisikiewicz*
+   - Połączenie trzeciej gry z menu głównym – *Grzegorz Kornaszewski*
    - Testy funkcjonalne trzeciej gry – *Oliwia Grabowska*
 
 **Etap 4: Implementacja czwartej gry i testy ogólne**  
 **Zadania:**
    - Projektowanie grafiki czwartej gry - *Oliwia Grabowska*
-   - Implementacja czwartej gry – *Jakub Bisikiewicz*
-   - Połączenie czwartej gry z menu głównym – *Grzegorz Kornaszewski*
+   - Implementacja czwartej gry – *Grzegorz Kornaszewski*
+   - Połączenie czwartej gry z menu głównym – *Jakub Bisikiewicz*
    - Testy funkcjonalne czwartej gry – *Oliwia Grabowska*
    - Testy funkcjonalne całej aplikacji - *Jakub Bisikiewicz, Oliwia Grabowska, Grzegorz Kornaszewski*
 
