@@ -12,6 +12,7 @@ class SnakeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_snake)
 
         hideSystemBars()
+        val diffLevel = getDiff()
     }
 
     override fun onBackPressed() {
@@ -42,5 +43,9 @@ class SnakeActivity : AppCompatActivity() {
         data.putExtra("score", score.toString())
         setResult(Activity.RESULT_OK, data)
         finish()
+    }
+
+    private fun getDiff(): Int {
+        return intent.getIntExtra("pacman_diff", 50)
     }
 }

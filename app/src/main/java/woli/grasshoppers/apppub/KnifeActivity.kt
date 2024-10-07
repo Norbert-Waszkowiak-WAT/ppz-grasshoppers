@@ -12,6 +12,7 @@ class KnifeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_knife)
 
         hideSystemBars()
+        val diffLevel = getDiff()
     }
 
     override fun onBackPressed() {
@@ -42,5 +43,9 @@ class KnifeActivity : AppCompatActivity() {
         data.putExtra("score", score.toString())
         setResult(Activity.RESULT_OK, data)
         finish()
+    }
+
+    private fun getDiff(): Int {
+        return intent.getIntExtra("knife_diff", 50)
     }
 }
