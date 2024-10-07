@@ -216,23 +216,27 @@ class BirdActivity : AppCompatActivity() {
             showPipe()
         }
 
-        val upperPipe = displayedPipes[0]
-        val lowerPipe = displayedPipes[1]
+        var i = 0
+        while (i < displayedPipes.size-1) {
+            val upperPipe = displayedPipes[i]
+            val lowerPipe = displayedPipes[i + 1]
 
-        if (lowerPipe.x + lowerPipe.width < 0){
-            hidePipe(0)
-        }
-
-
-        if (upperPipe.x < bird.x + upperPipe.width && bird.x < upperPipe.x + upperPipe.width){
-            if (bird.y < upperPipe.y + upperPipe.height || bird.y + bird.height > lowerPipe.y){
-                endGame()
+            if (lowerPipe.x + lowerPipe.width < 0) {
+                hidePipe(0)
+                i -= 2
             }
-            isBetweenPipes = true
-        }
-        else if (isBetweenPipes){
-            score++
-            isBetweenPipes = false
+
+            if (upperPipe.x < bird.x + upperPipe.width && bird.x < upperPipe.x + upperPipe.width) {
+                if (bird.y < upperPipe.y + upperPipe.height || bird.y + bird.height > lowerPipe.y) {
+                    endGame()
+                }
+                isBetweenPipes = true
+            } else if (isBetweenPipes) {
+                score++
+                isBetweenPipes = false
+            }
+
+            i+=2
         }
 
 
