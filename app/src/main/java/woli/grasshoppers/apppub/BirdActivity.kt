@@ -4,14 +4,16 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
-class BirdActivity(diffLevel: Int) : AppCompatActivity() {
+class BirdActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bird)
 
         hideSystemBars()
+        val diffLevel = getDiff()
     }
 
     override fun onBackPressed() {
@@ -42,5 +44,9 @@ class BirdActivity(diffLevel: Int) : AppCompatActivity() {
                 or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 or View.SYSTEM_UI_FLAG_FULLSCREEN
         )
+    }
+
+    private fun getDiff(): Int {
+        return intent.getIntExtra("bird_diff", 50)
     }
 }

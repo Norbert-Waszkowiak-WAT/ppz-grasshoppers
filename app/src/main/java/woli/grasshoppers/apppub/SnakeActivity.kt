@@ -6,12 +6,13 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 
-class SnakeActivity(diffLevel: Int) : AppCompatActivity() {
+class SnakeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_snake)
 
         hideSystemBars()
+        val diffLevel = getDiff()
     }
 
     override fun onBackPressed() {
@@ -42,5 +43,9 @@ class SnakeActivity(diffLevel: Int) : AppCompatActivity() {
         data.putExtra("score", score.toString())
         setResult(Activity.RESULT_OK, data)
         finish()
+    }
+
+    private fun getDiff(): Int {
+        return intent.getIntExtra("pacman_diff", 50)
     }
 }

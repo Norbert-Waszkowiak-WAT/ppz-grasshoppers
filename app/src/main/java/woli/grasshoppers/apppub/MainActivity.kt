@@ -142,19 +142,27 @@ class MainActivity : AppCompatActivity() {
 
     private fun setOnClickListeners() {
         birdButton.setOnClickListener {
-            startActivityForResult(Intent(this, BirdActivity(birdDiff)::class.java), 0)
+            val intent = Intent(this, BirdActivity::class.java)
+            intent.putExtra("bird_diff", birdDiff)
+            startActivityForResult(intent, 0)
         }
 
         knifeButton.setOnClickListener {
-            startActivityForResult(Intent(this, KnifeActivity(knifeDiff)::class.java), 1)
+            val intent = Intent(this, KnifeActivity::class.java)
+            intent.putExtra("knife_diff", knifeDiff)
+            startActivityForResult(intent, 1)
         }
 
         snakeButton.setOnClickListener {
-            startActivityForResult(Intent(this, SnakeActivity(snakeDiff)::class.java), 2)
+            val intent = Intent(this, SnakeActivity::class.java)
+            intent.putExtra("snake_diff", snakeDiff)
+            startActivityForResult(intent, 2)
         }
 
         pacmanButton.setOnClickListener {
-            startActivityForResult(Intent(this, PacmanActivity(pacmanDiff)::class.java), 3)
+            val intent = Intent(this, PacmanActivity::class.java)
+            intent.putExtra("pacman_diff", pacmanDiff)
+            startActivityForResult(intent, 3)
         }
 
         birdBestTxt.setOnClickListener {
