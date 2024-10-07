@@ -119,6 +119,7 @@ class BirdActivity : AppCompatActivity() {
 
         background.setOnClickListener{
             button.visibility = Button.VISIBLE
+            button.text = "Restart"
         }
 
         button.setOnClickListener {
