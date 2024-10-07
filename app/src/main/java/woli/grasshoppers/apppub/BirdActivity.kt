@@ -108,6 +108,12 @@ class BirdActivity : AppCompatActivity() {
     }
 
     fun startGame(){
+        score = 0
+        tickCount = 0
+        bird.y = resources.displayMetrics.heightPixels / 2 +0f
+        birdVelocity = 0f
+        isBetweenPipes = false
+
         background.setOnClickListener {
             birdVelocity = 20f
         }
@@ -120,19 +126,13 @@ class BirdActivity : AppCompatActivity() {
     fun endGame(){
         tickTimer.cancel()
 
-        background.setOnClickListener{
+        this.runOnUiThread{
             button.visibility = Button.VISIBLE
             button.text = "Restart"
         }
 
         button.setOnClickListener {
             button.visibility = Button.INVISIBLE
-
-            score = 0
-            tickCount = 0
-            bird.y = resources.displayMetrics.heightPixels / 2 +0f
-            birdVelocity = 0f
-            isBetweenPipes = false
 
             for (i in 0 .. displayedPipes.size step 2){
                 hidePipe(0)
