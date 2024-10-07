@@ -20,6 +20,9 @@ import okhttp3.Response
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import android.widget.SeekBar
+import android.widget.ImageButton
+import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class MainActivity : AppCompatActivity() {
 
@@ -42,6 +45,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var snakeBestTxt: TextView
     private lateinit var birdBestTxt: TextView
     private lateinit var pacmanBestTxt: TextView
+    private lateinit var diffLevelBtn: ImageButton
+
+    private var knifeDiff: Int = 0
+    private var snakeDiff: Int = 0
+    private var birdDiff: Int = 0
+    private var pacmanDiff: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,6 +86,7 @@ class MainActivity : AppCompatActivity() {
         snakeBestTxt = findViewById(R.id.snakeScoreTextView)
         birdBestTxt = findViewById(R.id.birdScoreTextView)
         pacmanBestTxt = findViewById(R.id.pacmanScoreTextView)
+        diffLevelBtn = findViewById(R.id.diffLevelBtn)
 
         knifeBestTxt.text = sharedPreferences.getInt("knife_best_score", 0).toString()
         snakeBestTxt.text = sharedPreferences.getInt("snake_best_score", 0).toString()
@@ -84,6 +94,11 @@ class MainActivity : AppCompatActivity() {
         pacmanBestTxt.text = sharedPreferences.getInt("pacman_best_score", 0).toString()
 
         jokeTxt.text = "Lołding jor dżołk"
+
+        knifeDiff = sharedPreferences.getInt("knife_diff_level", 50)
+        snakeDiff = sharedPreferences.getInt("snake_diff_level", 50)
+        birdDiff = sharedPreferences.getInt("bird_diff_level", 50)
+        pacmanDiff = sharedPreferences.getInt("pacman_diff_level", 50)
     }
 
     private fun handleStreak() {
@@ -127,19 +142,19 @@ class MainActivity : AppCompatActivity() {
 
     private fun setOnClickListeners() {
         birdButton.setOnClickListener {
-            startActivityForResult(Intent(this, BirdActivity::class.java), 0)
+            startActivityForResult(Intent(this, BirdActivity(birdDiff)::class.java), 0)
         }
 
         knifeButton.setOnClickListener {
-            startActivityForResult(Intent(this, KnifeActivity::class.java), 1)
+            startActivityForResult(Intent(this, KnifeActivity(knifeDiff)::class.java), 1)
         }
 
         snakeButton.setOnClickListener {
-            startActivityForResult(Intent(this, SnakeActivity::class.java), 2)
+            startActivityForResult(Intent(this, SnakeActivity(snakeDiff)::class.java), 2)
         }
 
         pacmanButton.setOnClickListener {
-            startActivityForResult(Intent(this, PacmanActivity::class.java), 3)
+            startActivityForResult(Intent(this, PacmanActivity(pacmanDiff)::class.java), 3)
         }
 
         birdBestTxt.setOnClickListener {
@@ -156,6 +171,10 @@ class MainActivity : AppCompatActivity() {
 
         pacmanBestTxt.setOnClickListener {
             showToast("That's your best score in this game, you bastard, get back playing!")
+        }
+
+        diffLevelBtn.setOnClickListener {
+            showBottomSheetMenu()
         }
     }
 
@@ -328,5 +347,75 @@ class MainActivity : AppCompatActivity() {
             connectivityManager.getNetworkCapabilities(it)
         }
         return networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+    }
+
+    private fun showBottomSheetMenu() {
+        val bottomSheetDialog = BottomSheetDialog(this)
+        val view = layoutInflater.inflate(R.layout.bottom_sheet_menu, null)
+
+        val seekBar1 = view.findViewById<SeekBar>(R.id.seekBar1)
+        val seekBar2 = view.findViewById<SeekBar>(R.id.seekBar2)
+        val seekBar3 = view.findViewById<SeekBar>(R.id.seekBar3)
+        val seekBar4 = view.findViewById<SeekBar>(R.id.seekBar4)
+
+        seekBar1.progress = knifeDiff
+        seekBar2.progress = snakeDiff
+        seekBar3.progress = birdDiff
+        seekBar4.progress = pacmanDiff
+
+        seekBar1.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                knifeDiff = seekBar1.progress
+                sharedPreferences.edit().apply {
+                    putInt("knife_diff_level", knifeDiff)
+                    apply()
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
+        seekBar2.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                snakeDiff = seekBar2.progress
+                sharedPreferences.edit().apply {
+                    putInt("snake_diff_level", snakeDiff)
+                    apply()
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
+        seekBar3.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                birdDiff = seekBar3.progress
+                sharedPreferences.edit().apply {
+                    putInt("bird_diff_level", birdDiff)
+                    apply()
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
+        seekBar4.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                pacmanDiff = seekBar4.progress
+                sharedPreferences.edit().apply {
+                    putInt("pacman_diff_level", pacmanDiff)
+                    apply()
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
+        bottomSheetDialog.setContentView(view)
+        bottomSheetDialog.show()
     }
 }
