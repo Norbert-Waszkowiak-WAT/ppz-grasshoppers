@@ -226,7 +226,7 @@ class BirdActivity : AppCompatActivity() {
                 i -= 2
             }
 
-            if (upperPipe.x < bird.x + upperPipe.width && bird.x < upperPipe.x + upperPipe.width) {
+            if (bird.x + bird.width > upperPipe.x  && bird.x < upperPipe.x + upperPipe.width) {
                 if (bird.y < upperPipe.y + upperPipe.height || bird.y + bird.height > lowerPipe.y) {
                     endGame()
                 }
