@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
@@ -14,7 +15,8 @@ import kotlin.random.Random
 class BirdActivity : AppCompatActivity() {
 
     lateinit var bird: ImageView
-    lateinit var base: FrameLayout
+    lateinit var background: FrameLayout
+    lateinit var button: Button
 
     var tickTimer = Timer()
     var tickCount = 0
@@ -34,8 +36,9 @@ class BirdActivity : AppCompatActivity() {
         hideSystemBars()
 
 
-        base = findViewById(R.id.birdGameBase)
+        background = findViewById(R.id.birdBackground)
         bird = findViewById(R.id.bird)
+        button = findViewById(R.id.birdButtonStartGame)
 
 
         bird.x = 50f
@@ -49,8 +52,8 @@ class BirdActivity : AppCompatActivity() {
             val newPipe1 = LayoutInflater.from(this).inflate(R.layout.bird_pipe, null)
             val newPipe2 = LayoutInflater.from(this).inflate(R.layout.bird_pipe, null)
 
-            base.addView(newPipe1, params)
-            base.addView(newPipe2, params)
+            background.addView(newPipe1, params)
+            background.addView(newPipe2, params)
             pipes.add(newPipe1)
             pipes.add(newPipe2)
 
@@ -60,7 +63,8 @@ class BirdActivity : AppCompatActivity() {
             newPipe2.x = resources.displayMetrics.widthPixels + 0f
         }
 
-        base.setOnClickListener {
+        button.setOnClickListener {
+            button.visibility = Button.INVISIBLE
             startGame()
         }
     }
@@ -101,7 +105,7 @@ class BirdActivity : AppCompatActivity() {
     }
 
     fun startGame(){
-        base.setOnClickListener {
+        background.setOnClickListener {
             birdVelocity = 20f
         }
 
@@ -112,6 +116,26 @@ class BirdActivity : AppCompatActivity() {
 
     fun endGame(){
         tickTimer.cancel()
+
+        background.setOnClickListener{
+            button.visibility = Button.VISIBLE
+        }
+
+        button.setOnClickListener {
+            button.visibility = Button.INVISIBLE
+
+            score = 0
+            tickCount = 0
+            bird.y = resources.displayMetrics.heightPixels / 2 +0f
+            birdVelocity = 0f
+            isBetweenPipes = false
+
+            for (i in 0 .. displayedPipes.size step 2){
+                hidePipe(0)
+            }
+
+            startGame()
+        }
     }
 
     fun showPipe(){
@@ -142,8 +166,16 @@ class BirdActivity : AppCompatActivity() {
     }
 
     fun hidePipe(i: Int){
+        if (displayedPipes.size < 2){
+            return
+        }
+
         val upperPipe = displayedPipes[i]
         val lowerPipe = displayedPipes[i+1]
+
+        upperPipe.x = resources.displayMetrics.widthPixels + 0f
+        lowerPipe.x = resources.displayMetrics.widthPixels + 0f
+
 
         displayedPipes.remove(upperPipe)
         displayedPipes.remove(lowerPipe)
@@ -161,7 +193,7 @@ class BirdActivity : AppCompatActivity() {
         }
 
 
-        if (bird.y >= base.bottom - bird.height){
+        if (bird.y >= background.bottom - bird.height){
             endGame()
         }
 

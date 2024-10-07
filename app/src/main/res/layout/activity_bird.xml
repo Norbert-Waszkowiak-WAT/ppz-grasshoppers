@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/birdGameBase"
+    android:id="@+id/birdBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -12,4 +12,14 @@
         android:layout_height="200px"
         android:layout_gravity="center_vertical"
         app:srcCompat="@drawable/bird_texture_wings_down" />
+
+    <Button
+        android:id="@+id/birdButtonStartGame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="Button" />
+
+
 </FrameLayout>
