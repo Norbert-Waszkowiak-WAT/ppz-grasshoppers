@@ -31,6 +31,7 @@ class BirdActivity : AppCompatActivity() {
     var displayedPipes = mutableListOf<View>()
 
     var score = 0
+    var maxScore = 0
     var isBetweenPipes = false
 
     var difficulty = 50
@@ -154,6 +155,10 @@ class BirdActivity : AppCompatActivity() {
 
     fun endGame(){
         tickTimer.cancel()
+
+        if (score > maxScore){
+            maxScore = score
+        }
 
         this.runOnUiThread{
             button.visibility = Button.VISIBLE
