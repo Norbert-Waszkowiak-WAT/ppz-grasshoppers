@@ -20,6 +20,7 @@ class BirdActivity : AppCompatActivity() {
     lateinit var button: Button
     lateinit var scoreView: TextView
 
+    val tickPeriod = 50
     var tickTimer = Timer()
     var tickCount = 0
 
@@ -30,6 +31,11 @@ class BirdActivity : AppCompatActivity() {
 
     var score = 0
     var isBetweenPipes = false
+
+    val birdSize = 200
+    var pipeGapWidth = 500f
+    var speed = 10
+    var jumpVelocity = 20f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +57,7 @@ class BirdActivity : AppCompatActivity() {
 
         val params = FrameLayout.LayoutParams(pipeWidth,pipeHeight)
 
-        for (i in 1..6 step 2){
+        for (i in 1..3){
             val newPipe1 = LayoutInflater.from(this).inflate(R.layout.bird_pipe, null)
             val newPipe2 = LayoutInflater.from(this).inflate(R.layout.bird_pipe, null)
 
@@ -115,10 +121,10 @@ class BirdActivity : AppCompatActivity() {
         isBetweenPipes = false
 
         background.setOnClickListener {
-            birdVelocity = 20f
+            birdVelocity = jumpVelocity
         }
 
-        tickTimer = kotlin.concurrent.timer(initialDelay = 50, period = 50){
+        tickTimer = kotlin.concurrent.timer(initialDelay = tickPeriod.toLong(), period = tickPeriod.toLong()){
             tick()
         }
     }
@@ -150,12 +156,36 @@ class BirdActivity : AppCompatActivity() {
         val upperPipe = pipes[0]
         val lowerPipe = pipes[1]
 
-        var pipeGapWidth = 600
-        var topPipeOffset = Random.nextInt(
-            from = -resources.displayMetrics.heightPixels + pipeGapWidth,
-            until = -2 * pipeGapWidth
-        )
+        val maxPipeOffset = -1.5f * pipeGapWidth
+        val minPipeOffset = -resources.displayMetrics.heightPixels + 0.5f * pipeGapWidth
+        var randomFrom = 0f
+        var randomUntil = 0f
 
+        if (displayedPipes.size < 2){
+            randomUntil = maxPipeOffset
+            randomFrom = minPipeOffset
+        }
+        else {
+            val lastUpperPipe = displayedPipes[displayedPipes.size-2]
+
+            val time = (resources.displayMetrics.widthPixels - lastUpperPipe.x - birdSize) / speed
+            val maxFallDistance = (gravity * time * time) / 2
+            val maxJumpDistance = jumpVelocity * time
+
+            randomFrom = lastUpperPipe.y - maxJumpDistance
+            randomUntil = lastUpperPipe.y + maxFallDistance
+
+            if (randomFrom >= randomUntil) {
+                randomFrom = lastUpperPipe.y - pipeGapWidth
+                randomUntil = lastUpperPipe.y + pipeGapWidth
+            }
+        }
+
+        if (randomFrom < minPipeOffset) { randomFrom = minPipeOffset }
+        if (randomUntil > maxPipeOffset) { randomUntil = maxPipeOffset }
+
+
+        val topPipeOffset = Random.nextInt(randomFrom.toInt(), randomUntil.toInt())
         upperPipe.y = topPipeOffset + 0f
         lowerPipe.y = pipes[0].y + pipes[0].height + pipeGapWidth + 0f
 
@@ -210,10 +240,10 @@ class BirdActivity : AppCompatActivity() {
 
         bird.y -= birdVelocity
 
-        birdVelocity -= 1.5f
+        birdVelocity -= gravity
 
         for (pipe in displayedPipes){
-            pipe.x -= 10
+            pipe.x -= speed
         }
 
         if (tickCount % 40 == 0){
