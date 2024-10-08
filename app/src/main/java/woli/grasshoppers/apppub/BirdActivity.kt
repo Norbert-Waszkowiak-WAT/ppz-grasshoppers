@@ -102,7 +102,7 @@ class BirdActivity : AppCompatActivity() {
 
 
     override fun onBackPressed() {
-        passScore(score)
+        passScore(maxScore)
         super.onBackPressed()
     }
 
