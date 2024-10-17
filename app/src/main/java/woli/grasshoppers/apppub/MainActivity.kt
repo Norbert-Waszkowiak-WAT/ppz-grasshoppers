@@ -66,6 +66,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleJokes() {
+        jokeTxt.text = "Lołding jor dżołk"
         if (isNetworkAvailable()) {
             fetchRandomJoke()
         } else {
@@ -183,6 +184,10 @@ class MainActivity : AppCompatActivity() {
 
         diffLevelBtn.setOnClickListener {
             showBottomSheetMenu()
+        }
+
+        jokeTxt.setOnClickListener {
+            handleJokes()
         }
     }
 
