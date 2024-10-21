@@ -140,6 +140,7 @@ class BirdActivity : AppCompatActivity() {
         tickCount = 0
         nextPipeTick = 0
         bird.y = resources.displayMetrics.heightPixels / 2 +0f
+        bird.rotation = 0f
         birdVelocity = 0f
         isBetweenPipes = false
 
@@ -148,6 +149,7 @@ class BirdActivity : AppCompatActivity() {
             birdVelocity = jumpVelocity
         }
 
+        tickTimer.cancel()
         tickTimer = kotlin.concurrent.timer(initialDelay = tickPeriod.toLong(), period = tickPeriod.toLong()){
             tick()
         }
@@ -155,6 +157,20 @@ class BirdActivity : AppCompatActivity() {
 
     fun endGame(){
         tickTimer.cancel()
+
+        tickTimer = kotlin.concurrent.timer(initialDelay = tickPeriod.toLong(), period = tickPeriod.toLong()){
+            if (bird.y + bird.height > resources.displayMetrics.heightPixels){
+                tickTimer.cancel()
+                tickTimer = Timer()
+            }
+            else{
+                bird.y += 100;
+                if (bird.rotation < 90){
+                    bird.rotation += 10f
+                }
+
+            }
+        }
 
         if (score > maxScore){
             maxScore = score
