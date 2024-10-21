@@ -16,7 +16,12 @@ import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
 
 class KnifeActivity : AppCompatActivity() {
 
@@ -24,12 +29,16 @@ class KnifeActivity : AppCompatActivity() {
     private lateinit var scoreTextView: TextView
     private lateinit var target: ImageView
     private lateinit var screenView: View
-    private var isKnifeThrown = false
     private var score = 0
     private var diffLevel: Int = 50
     private var targetY: Int = 200
-    private var isKnifeStuck: Boolean = false
+    //private var isKnifeStuck: Boolean = false
+    private val stuckKnives = mutableListOf<ImageView>()
     private var knifeAngle: Float = 0f
+    private val knifeAngles = mutableListOf<Float>()
+    private val knives = mutableListOf<ImageView>()
+    private var currentKnifeIndex = 0
+    private val maxKnifeAmount: Int = 20 //TODO: niemożność rzucenia większej ilości
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,13 +64,33 @@ class KnifeActivity : AppCompatActivity() {
         knife = findViewById(R.id.knife)
         scoreTextView = findViewById(R.id.score_text)
         screenView = findViewById(R.id.screen_view)
+
+        for (i in 0 until maxKnifeAmount) {
+            val newKnife = ImageView(this).apply {
+                layoutParams = ConstraintLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
+                    startToStart = ConstraintLayout.LayoutParams.PARENT_ID
+                    endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
+                    val density = resources.displayMetrics.density
+                    bottomMargin = (32 * density).toInt()
+                    horizontalBias = 0.5f
+                }
+                setImageResource(R.drawable.knifebeer)
+                visibility = View.GONE
+            }
+            (screenView as ViewGroup).addView(newKnife)
+            knives.add(newKnife)
+        }
     }
 
     private fun initTarget() { //TODO: pewnie tutaj jedno z kilku użyć współczynnika trudności
         val randomDuration = (1000..3000).random().toLong()
         val randomRotation = (30..720).random().toFloat()
         val finalRotation = if ((0..1).random() == 0) randomRotation else -randomRotation
-        val interpolator = when ((0..4).random()) { //TODO: usunąć niektóre ruchy
+        val interpolator = when ((0..4).random()) { //TODO: usunąć niektóre ruchy?
             0 -> LinearInterpolator()
             1 -> AccelerateInterpolator()
             2 -> DecelerateInterpolator()
@@ -69,27 +98,27 @@ class KnifeActivity : AppCompatActivity() {
             else -> BounceInterpolator()
         }
 
-        fun startRotationAnimation() { //TODO: współczynnik trudności reguluje ilość obrotów do czasu
+        fun startRotationAnimation() { //TODO: współczynnik trudności reguluje np. ilość obrotów do czasu
             val currentRotation = target.rotation
             val animator = ObjectAnimator.ofFloat(target, "rotation", currentRotation, currentRotation + finalRotation)
             animator.duration = randomDuration
             animator.interpolator = interpolator
 
             animator.addUpdateListener { animation ->
-                if (isKnifeStuck) {
+                stuckKnives.forEachIndexed { index, knife ->
                     val centerX = target.x + target.width / 2
                     val centerY = target.y + target.height / 2
                     val radius = target.width / 2
 
-                    val currentAngle = Math.toRadians(target.rotation.toDouble() + knifeAngle)
+                    val currentAngle = Math.toRadians(target.rotation.toDouble() + knifeAngles[index])
 
-                    val knifeX = centerX + radius * Math.cos(currentAngle).toFloat() - knife.width / 2
-                    val knifeY = centerY + radius * Math.sin(currentAngle).toFloat() - knife.height / 2
+                    val knifeX = centerX + radius * cos(currentAngle).toFloat() - knife.width / 2
+                    val knifeY = centerY + radius * sin(currentAngle).toFloat() - knife.height / 2
 
                     knife.x = knifeX
                     knife.y = knifeY
 
-                    knife.rotation = target.rotation + knifeAngle - 90f
+                    knife.rotation = target.rotation + knifeAngles[index] - 90f
                 }
             }
 
@@ -112,23 +141,25 @@ class KnifeActivity : AppCompatActivity() {
 
     private fun initKnife() {
         screenView.setOnClickListener {
-            if (!isKnifeThrown) {
-                throwKnife()
+            if (currentKnifeIndex < knives.size && knives[currentKnifeIndex].visibility == View.VISIBLE) {
+                throwKnife(knives[currentKnifeIndex])
+            } else {
+                throwKnife(knife)
             }
         }
     }
 
-    private fun throwKnife() {
-        isKnifeThrown = true
-        val targetKnifePosition = targetY + knife.height
-        val knifeAnimator = ObjectAnimator.ofFloat(knife, "translationY", knife.translationY, -targetKnifePosition.toFloat())
+    private fun throwKnife(knifeToThrow: ImageView) {
+        knifeToThrow.visibility = View.VISIBLE
+        val targetKnifePosition = targetY + knifeToThrow.height
+        val knifeAnimator = ObjectAnimator.ofFloat(knifeToThrow, "translationY", knifeToThrow.translationY, -targetKnifePosition.toFloat())
         knifeAnimator.duration = 200
 
         knifeAnimator.addListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator) {}
 
             override fun onAnimationEnd(animation: Animator) {
-                checkHit()
+                checkHit(knifeToThrow)
             }
 
             override fun onAnimationCancel(animation: Animator) {}
@@ -139,36 +170,42 @@ class KnifeActivity : AppCompatActivity() {
         knifeAnimator.start()
     }
 
-    private fun checkHit() {
+    private fun checkHit(knifeToCheck: ImageView) {
         val knifeBounds = Rect()
-        knife.getGlobalVisibleRect(knifeBounds)
+        knifeToCheck.getGlobalVisibleRect(knifeBounds)
 
         val targetBounds = Rect()
         target.getGlobalVisibleRect(targetBounds)
 
         if (Rect.intersects(knifeBounds, targetBounds)) {
-            isKnifeStuck = true
+            if (!stuckKnives.contains(knifeToCheck)) {
+                stuckKnives.add(knifeToCheck)
+            }
 
             val centerX = target.x + target.width / 2
             val centerY = target.y + target.height / 2
-            val dx = knife.x + knife.width / 2 - centerX
-            val dy = knife.y + knife.height / 2 - centerY
+            val dx = knifeToCheck.x + knifeToCheck.width / 2 - centerX
+            val dy = knifeToCheck.y + knifeToCheck.height / 2 - centerY
 
-            val relativeAngle = Math.toDegrees(Math.atan2(dy.toDouble(), dx.toDouble())).toFloat()
+            val relativeAngle = Math.toDegrees(atan2(dy.toDouble(), dx.toDouble())).toFloat()
             knifeAngle = (relativeAngle - target.rotation) % 360
+            knifeAngles.add(knifeAngle)
 
             val radius = target.width / 2
-            val knifeX = centerX + radius * Math.cos(Math.toRadians((knifeAngle + target.rotation).toDouble())).toFloat() - knife.width / 2
-            val knifeY = centerY + radius * Math.sin(Math.toRadians((knifeAngle + target.rotation).toDouble())).toFloat() - knife.height / 2
+            val knifeX = centerX + radius * cos(Math.toRadians((knifeAngle + target.rotation).toDouble())).toFloat() - knifeToCheck.width / 2
+            val knifeY = centerY + radius * sin(Math.toRadians((knifeAngle + target.rotation).toDouble())).toFloat() - knifeToCheck.height / 2
 
-            knife.x = knifeX
-            knife.y = knifeY
+            knifeToCheck.x = knifeX
+            knifeToCheck.y = knifeY
 
             updateScore()
 
-            //TODO: New knife
+            currentKnifeIndex++
+            if (currentKnifeIndex < maxKnifeAmount) {
+                knives[currentKnifeIndex].visibility = View.VISIBLE
+            }
         } else {
-            resetKnife()
+            resetKnife(knifeToCheck)
         }
     }
 
@@ -177,9 +214,9 @@ class KnifeActivity : AppCompatActivity() {
         scoreTextView.text = score.toString()
     }
 
-    private fun resetKnife() {
-        knife.translationY = 0f
-        isKnifeThrown = false
+    private fun resetKnife(knifeToReset: ImageView) {
+        knifeToReset.translationY = 0f
+        Toast.makeText(this, "Reset called", Toast.LENGTH_LONG).show()
     }
 
     @Deprecated("Deprecated in Java")
