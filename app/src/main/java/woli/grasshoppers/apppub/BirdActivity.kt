@@ -37,6 +37,7 @@ class BirdActivity : AppCompatActivity() {
     var difficulty = 50
 
     val birdSize = 200
+    val pipeWidth = 200
     var pipeGapWidth = 0f
     var speed = 10
     var gravity = 1.5f
@@ -73,18 +74,18 @@ class BirdActivity : AppCompatActivity() {
 
         bird.x = 50f
 
-        val pipeWidth = 100
         val pipeHeight = resources.displayMetrics.heightPixels
 
-        val params = FrameLayout.LayoutParams(pipeWidth,pipeHeight)
+        val params1 = FrameLayout.LayoutParams(pipeWidth,pipeHeight)
+        val params2 = FrameLayout.LayoutParams(pipeWidth,pipeHeight)
 
         val pipeCount = resources.displayMetrics.widthPixels / pipeWidth
         for (i in 1..pipeCount){
             val newPipe1 = LayoutInflater.from(this).inflate(R.layout.bird_pipe, null)
             val newPipe2 = LayoutInflater.from(this).inflate(R.layout.bird_pipe, null)
 
-            background.addView(newPipe1, params)
-            background.addView(newPipe2, params)
+            background.addView(newPipe1, params1)
+            background.addView(newPipe2, params2)
             pipes.add(newPipe1)
             pipes.add(newPipe2)
 
@@ -200,14 +201,14 @@ class BirdActivity : AppCompatActivity() {
         val upperPipe = pipes[0]
         val lowerPipe = pipes[1]
 
-        val maxPipeOffset = -1.5f * pipeGapWidth
-        val minPipeOffset = -resources.displayMetrics.heightPixels + 0.5f * pipeGapWidth
+        val minUpperPipeHeight = 0.5f * pipeGapWidth
+        val maxUpperPipeHeight = resources.displayMetrics.heightPixels - 1.5f * pipeGapWidth
         var randomFrom = 0f
         var randomUntil = 0f
 
         if (displayedPipes.size < 2){
-            randomUntil = maxPipeOffset
-            randomFrom = minPipeOffset
+            randomUntil = maxUpperPipeHeight
+            randomFrom = minUpperPipeHeight
         }
         else {
             val lastUpperPipe = displayedPipes[displayedPipes.size-2]
@@ -225,13 +226,21 @@ class BirdActivity : AppCompatActivity() {
             }
         }
 
-        if (randomFrom < minPipeOffset) { randomFrom = minPipeOffset }
-        if (randomUntil > maxPipeOffset) { randomUntil = maxPipeOffset }
+        if (randomFrom < minUpperPipeHeight) { randomFrom = minUpperPipeHeight }
+        if (randomUntil > maxUpperPipeHeight) { randomUntil = maxUpperPipeHeight }
 
 
-        val topPipeOffset = Random.nextInt(randomFrom.toInt(), randomUntil.toInt())
-        upperPipe.y = topPipeOffset + 0f
-        lowerPipe.y = pipes[0].y + pipes[0].height + pipeGapWidth + 0f
+        val upperPipeHeight = Random.nextInt(randomFrom.toInt(), randomUntil.toInt())
+        upperPipe.y = 0f
+        lowerPipe.y = upperPipeHeight + pipeGapWidth + 0f
+
+        val lowerParams = FrameLayout.LayoutParams(pipeWidth,resources.displayMetrics.heightPixels - lowerPipe.y.toInt())
+        val upperParams = FrameLayout.LayoutParams(pipeWidth, upperPipeHeight)
+        runOnUiThread {
+            lowerPipe.layoutParams = lowerParams
+            upperPipe.layoutParams = upperParams
+        }
+
 
         upperPipe.x = resources.displayMetrics.widthPixels + 0f
         lowerPipe.x = resources.displayMetrics.widthPixels + 0f
