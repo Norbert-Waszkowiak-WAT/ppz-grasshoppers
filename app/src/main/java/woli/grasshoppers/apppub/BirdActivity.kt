@@ -37,7 +37,9 @@ class BirdActivity : AppCompatActivity() {
     var difficulty = 50
 
     val birdSize = 150
-    val pipeWidth = 200
+    val pipeWidth = 300
+    val foamHeight = 300
+    val foamOffset = 100
     var pipeGapWidth = 0f
     var speed = 10
     var gravity = 1.5f
@@ -79,7 +81,7 @@ class BirdActivity : AppCompatActivity() {
         val params1 = FrameLayout.LayoutParams(pipeWidth,pipeHeight)
         val params2 = FrameLayout.LayoutParams(pipeWidth,pipeHeight)
 
-        val pipeCount = resources.displayMetrics.widthPixels / pipeWidth
+        val pipeCount = 6
         for (i in 1..pipeCount){
             val newPipe1 = LayoutInflater.from(this).inflate(R.layout.bird_pipe, null)
             val newPipe2 = LayoutInflater.from(this).inflate(R.layout.bird_pipe, null)
@@ -201,7 +203,7 @@ class BirdActivity : AppCompatActivity() {
         val upperPipe = pipes[0]
         val lowerPipe = pipes[1]
 
-        val minUpperPipeHeight = 0.5f * pipeGapWidth
+        val minUpperPipeHeight = 1f * pipeGapWidth
         val maxUpperPipeHeight = resources.displayMetrics.heightPixels - 1.5f * pipeGapWidth
         var randomFrom = 0f
         var randomUntil = 0f
@@ -217,12 +219,12 @@ class BirdActivity : AppCompatActivity() {
             val maxFallDistance = (gravity * time * time) / 2
             val maxJumpDistance = jumpVelocity * time
 
-            randomFrom = lastUpperPipe.y - maxJumpDistance + ((100 - difficulty) / 100) * birdSize
-            randomUntil = lastUpperPipe.y + maxFallDistance - ((100 - difficulty) / 100) * birdSize
+            randomFrom = lastUpperPipe.height - maxJumpDistance + ((100 - difficulty) / 100) * birdSize
+            randomUntil = lastUpperPipe.height + maxFallDistance - ((100 - difficulty) / 100) * birdSize
 
             if (randomFrom >= randomUntil) {
-                randomFrom = lastUpperPipe.y - pipeGapWidth
-                randomUntil = lastUpperPipe.y + pipeGapWidth
+                randomFrom = lastUpperPipe.height - pipeGapWidth
+                randomUntil = lastUpperPipe.height + pipeGapWidth
             }
         }
 
@@ -232,7 +234,7 @@ class BirdActivity : AppCompatActivity() {
 
         val upperPipeHeight = Random.nextInt(randomFrom.toInt(), randomUntil.toInt())
         upperPipe.y = 0f
-        lowerPipe.y = upperPipeHeight + pipeGapWidth + 0f
+        lowerPipe.y = upperPipeHeight + pipeGapWidth - 2*foamOffset + 0f
 
         val lowerParams = FrameLayout.LayoutParams(pipeWidth,resources.displayMetrics.heightPixels - lowerPipe.y.toInt())
         val upperParams = FrameLayout.LayoutParams(pipeWidth, upperPipeHeight)
@@ -293,7 +295,10 @@ class BirdActivity : AppCompatActivity() {
             bird.rotation = -15f
         }
 
-        bird.y -= birdVelocity
+        runOnUiThread {
+            bird.y -= birdVelocity
+        }
+
 
         birdVelocity -= gravity
 
@@ -318,7 +323,7 @@ class BirdActivity : AppCompatActivity() {
         }
 
         if (bird.x + bird.width > upperPipe.x  && bird.x < upperPipe.x + upperPipe.width) {
-            if (bird.y < upperPipe.y + upperPipe.height || bird.y + bird.height > lowerPipe.y) {
+            if (bird.y < upperPipe.y + upperPipe.height - foamHeight || bird.y + bird.height > lowerPipe.y + foamHeight) {
                 endGame()
             }
             isBetweenPipes = true
@@ -333,7 +338,7 @@ class BirdActivity : AppCompatActivity() {
             lowerPipe = displayedPipes[i + 1]
 
             if (bird.x + bird.width > upperPipe.x  && bird.x < upperPipe.x + upperPipe.width) {
-                if (bird.y < upperPipe.y + upperPipe.height || bird.y + bird.height > lowerPipe.y) {
+                if (bird.y < upperPipe.y + upperPipe.height - foamHeight || bird.y + bird.height > lowerPipe.y + foamHeight) {
                     endGame()
                 }
             }
