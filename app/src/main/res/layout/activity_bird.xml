@@ -8,10 +8,10 @@
 
     <ImageView
         android:id="@+id/bird"
-        android:layout_width="200px"
-        android:layout_height="200px"
+        android:layout_width="150px"
+        android:layout_height="105px"
         android:layout_gravity="center_vertical"
-        app:srcCompat="@drawable/bird_texture_wings_down" />
+        app:srcCompat="@drawable/bird_wings_flat" />
 
     <Button
         android:id="@+id/birdButtonStartGame"

@@ -36,7 +36,7 @@ class BirdActivity : AppCompatActivity() {
 
     var difficulty = 50
 
-    val birdSize = 200
+    val birdSize = 150
     val pipeWidth = 200
     var pipeGapWidth = 0f
     var speed = 10
@@ -273,10 +273,12 @@ class BirdActivity : AppCompatActivity() {
 
 
     fun tick() {
-        if (tickCount % 4 == 0) {
-            bird.setImageResource(R.drawable.bird_texture_wings_up)
-        } else if (tickCount % 4 == 2) {
-            bird.setImageResource(R.drawable.bird_texture_wings_down)
+        if (tickCount % 6 == 0) {
+            bird.setImageResource(R.drawable.bird_wings_flat)
+        } else if (tickCount % 6 == 2) {
+            bird.setImageResource(R.drawable.bird_wings_up)
+        } else if (tickCount % 6 == 5){
+            bird.setImageResource(R.drawable.bird_wings_down)
         }
 
 
