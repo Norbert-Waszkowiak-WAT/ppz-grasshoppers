@@ -19,6 +19,7 @@ class BirdActivity : AppCompatActivity() {
     lateinit var background: FrameLayout
     lateinit var button: Button
     lateinit var scoreView: TextView
+    lateinit var pauseBack: ImageView
 
     val tickPeriod = 50
     var tickTimer = Timer()
@@ -59,6 +60,12 @@ class BirdActivity : AppCompatActivity() {
         bird = findViewById(R.id.bird)
         button = findViewById(R.id.birdButtonStartGame)
         scoreView = findViewById(R.id.birdScoreTextView)
+        pauseBack = findViewById(R.id.birdButtonPauseBack)
+
+
+        pauseBack.setOnClickListener{
+            onBackPressed()
+        }
 
 
         difficulty = getDiff()
@@ -147,6 +154,9 @@ class BirdActivity : AppCompatActivity() {
         birdVelocity = 0f
         isBetweenPipes = false
 
+        this.runOnUiThread {
+            pauseBack.visibility = ImageView.INVISIBLE
+        }
 
         background.setOnClickListener {
             birdVelocity = jumpVelocity
@@ -182,6 +192,8 @@ class BirdActivity : AppCompatActivity() {
         this.runOnUiThread{
             button.visibility = Button.VISIBLE
             button.text = "Restart"
+
+            pauseBack.visibility = ImageView.VISIBLE
         }
 
         button.setOnClickListener {

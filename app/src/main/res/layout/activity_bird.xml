@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/birdBackground"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/bird_background">
 
     <ImageView
         android:id="@+id/bird"
@@ -27,7 +28,16 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right|top"
         android:text="0"
-        android:textSize="60sp" />
+        android:textSize="60sp"
+        android:translationZ="500px" />
+
+    <ImageView
+        android:id="@+id/birdButtonPauseBack"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:gravity="top|left"
+        android:translationZ="500px"
+        app:srcCompat="@android:drawable/ic_menu_revert" />
 
 
 </FrameLayout>
