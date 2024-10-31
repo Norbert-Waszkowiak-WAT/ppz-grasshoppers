@@ -72,7 +72,7 @@ class BirdActivity : AppCompatActivity() {
 
         gravity = 1.5f
         jumpVelocity = 20f
-        speed = 10
+        speed = 10 * (1 + (difficulty / 100))
 
         val jumpHeight = (gravity * (jumpVelocity/gravity) * (jumpVelocity/gravity)) / 2
         pipeGapWidth = jumpHeight + birdSize * (1.5f + ((50 - difficulty) / 100))
