@@ -102,7 +102,13 @@ Grupą docelową są wszyscy ludzie, którzy chcą grać w proste gry arkadowe. 
    - Użytkownik może dowolnie wybierać grę i w nią grać
    - Użytkownik może modyfikować poziom trudności gier
 
-<!-- ### 9. Potencjalne ryzyka
+### 9. Postęp
+**Etap 1**
+   - Menu
+     <!-- ![alt](path/file.photo) -->
+   - Gra Flappy Bird
+
+<!-- ### 10. Potencjalne ryzyka
    - Problemy z synchronizacją kolejki (mitigacja: regularne testowanie serwera).
    - Awaria systemu powiadomień (mitigacja: backupowe rozwiązanie oparte na SMS-ach).
    - Niska adopcja aplikacji (mitigacja: kampanie promocyjne na WAT). -->
