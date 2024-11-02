@@ -104,7 +104,7 @@ Grupą docelową są wszyscy ludzie, którzy chcą grać w proste gry arkadowe. 
 
 ### 9. Postęp
 **Etap 1**
-   - Menu
+   - Menu\
      ![Menu](screenshots/Menu.png)
      ![Difficulty preferences](screenshots/Menudiff.png)
    - Gra Flappy Bird
