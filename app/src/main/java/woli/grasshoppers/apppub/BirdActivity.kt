@@ -48,6 +48,9 @@ class BirdActivity : AppCompatActivity() {
     var maxPipeDistance = 0
     var minPipeDistance = 0
 
+    var screenHeight = 0
+    var screenWidth = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +70,13 @@ class BirdActivity : AppCompatActivity() {
             onBackPressed()
         }
 
+        screenWidth = resources.displayMetrics.widthPixels
+        screenHeight = resources.displayMetrics.heightPixels
+        val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+        if (resourceId > 0){
+            screenHeight += resources.getDimensionPixelSize(resourceId)
+        }
+
 
         difficulty = getDiff()
 
@@ -83,7 +93,7 @@ class BirdActivity : AppCompatActivity() {
 
         bird.x = 50f
 
-        val pipeHeight = resources.displayMetrics.heightPixels
+        val pipeHeight = screenHeight
 
         val params1 = FrameLayout.LayoutParams(pipeWidth,pipeHeight)
         val params2 = FrameLayout.LayoutParams(pipeWidth,pipeHeight)
@@ -100,8 +110,8 @@ class BirdActivity : AppCompatActivity() {
 
 
             newPipe1.rotation = 180f
-            newPipe1.x = resources.displayMetrics.widthPixels + 0f
-            newPipe2.x = resources.displayMetrics.widthPixels + 0f
+            newPipe1.x = screenWidth + 0f
+            newPipe2.x = screenWidth + 0f
         }
 
         button.setOnClickListener {
@@ -149,7 +159,7 @@ class BirdActivity : AppCompatActivity() {
         score = 0
         tickCount = 0
         nextPipeTick = 0
-        bird.y = resources.displayMetrics.heightPixels / 2 +0f
+        bird.y = screenHeight / 2 +0f
         bird.rotation = 0f
         birdVelocity = 0f
         isBetweenPipes = false
@@ -172,7 +182,7 @@ class BirdActivity : AppCompatActivity() {
         tickTimer.cancel()
 
         tickTimer = kotlin.concurrent.timer(initialDelay = tickPeriod.toLong(), period = tickPeriod.toLong()){
-            if (bird.y + bird.height > resources.displayMetrics.heightPixels){
+            if (bird.y + bird.height > screenHeight){
                 tickTimer.cancel()
                 tickTimer = Timer()
             }
@@ -216,7 +226,7 @@ class BirdActivity : AppCompatActivity() {
         val lowerPipe = pipes[1]
 
         val minUpperPipeHeight = 1f * pipeGapWidth
-        val maxUpperPipeHeight = resources.displayMetrics.heightPixels - 1.5f * pipeGapWidth
+        val maxUpperPipeHeight = screenHeight - 1.5f * pipeGapWidth
         var randomFrom = 0f
         var randomUntil = 0f
 
@@ -227,7 +237,7 @@ class BirdActivity : AppCompatActivity() {
         else {
             val lastUpperPipe = displayedPipes[displayedPipes.size-2]
 
-            val time = (resources.displayMetrics.widthPixels - lastUpperPipe.x - birdSize) / speed
+            val time = (screenWidth - lastUpperPipe.x - birdSize) / speed
             val maxFallDistance = (gravity * time * time) / 2
             val maxJumpDistance = jumpVelocity * time
 
@@ -248,7 +258,7 @@ class BirdActivity : AppCompatActivity() {
         upperPipe.y = 0f
         lowerPipe.y = upperPipeHeight + pipeGapWidth - 2*foamOffset + 0f
 
-        val lowerParams = FrameLayout.LayoutParams(pipeWidth,resources.displayMetrics.heightPixels - lowerPipe.y.toInt())
+        val lowerParams = FrameLayout.LayoutParams(pipeWidth, screenHeight - lowerPipe.y.toInt())
         val upperParams = FrameLayout.LayoutParams(pipeWidth, upperPipeHeight)
         runOnUiThread {
             lowerPipe.layoutParams = lowerParams
@@ -256,8 +266,8 @@ class BirdActivity : AppCompatActivity() {
         }
 
 
-        upperPipe.x = resources.displayMetrics.widthPixels + 0f
-        lowerPipe.x = resources.displayMetrics.widthPixels + 0f
+        upperPipe.x = screenWidth + 0f
+        lowerPipe.x = screenWidth + 0f
 
         displayedPipes.add(upperPipe)
         displayedPipes.add(lowerPipe)
@@ -274,8 +284,8 @@ class BirdActivity : AppCompatActivity() {
         val upperPipe = displayedPipes[i]
         val lowerPipe = displayedPipes[i+1]
 
-        upperPipe.x = resources.displayMetrics.widthPixels + 0f
-        lowerPipe.x = resources.displayMetrics.widthPixels + 0f
+        upperPipe.x = screenWidth + 0f
+        lowerPipe.x = screenWidth + 0f
 
 
         displayedPipes.remove(upperPipe)
