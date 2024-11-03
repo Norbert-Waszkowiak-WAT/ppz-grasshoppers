@@ -107,7 +107,10 @@ Grupą docelową są wszyscy ludzie, którzy chcą grać w proste gry arkadowe. 
    - Menu\
      ![Menu](screenshots/Menu.png)
      ![Difficulty preferences](screenshots/Menudiff.png)
-   - Gra Flappy Bird
+   - Gra Flappy Bird\
+     ![Flappy Bird start screen](screenshots/FlappyBird-start.png)
+     ![Flappy Bird gameplay](screenshots/FlappyBird-gameplay.png)
+     ![Flappy Bird restart screen](screenshots/FlappyBird-restart.png)
 
 <!-- ### 10. Potencjalne ryzyka
    - Problemy z synchronizacją kolejki (mitigacja: regularne testowanie serwera).
