@@ -17,7 +17,7 @@ class BirdActivity : AppCompatActivity() {
 
     lateinit var bird: ImageView
     lateinit var background: FrameLayout
-    lateinit var button: Button
+    lateinit var button: ImageView
     lateinit var scoreView: TextView
     lateinit var pauseBack: ImageView
 
@@ -191,7 +191,7 @@ class BirdActivity : AppCompatActivity() {
 
         this.runOnUiThread{
             button.visibility = Button.VISIBLE
-            button.text = "Restart"
+            button.setImageResource(R.drawable.bird_restart)
 
             pauseBack.visibility = ImageView.VISIBLE
         }

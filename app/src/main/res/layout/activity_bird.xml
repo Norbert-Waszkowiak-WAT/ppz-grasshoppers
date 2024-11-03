@@ -14,13 +14,14 @@
         android:layout_gravity="center_vertical"
         app:srcCompat="@drawable/bird_wings_flat" />
 
-    <Button
+    <ImageView
         android:id="@+id/birdButtonStartGame"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:layout_gravity="center"
         android:gravity="center"
-        android:text="Start" />
+        android:src="@drawable/bird_start"
+        android:translationZ="500px"/>
 
     <TextView
         android:id="@+id/birdScoreTextView"
