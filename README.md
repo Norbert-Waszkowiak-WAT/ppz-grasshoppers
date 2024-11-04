@@ -105,6 +105,7 @@ Grupą docelową są wszyscy ludzie, którzy chcą grać w proste gry arkadowe. 
 ### 9. Postęp
 **Etap 1**
    - Menu\
+     Guzik gry otwiera okno danej gry, liczba w rogu guzika gry to najwyższy wynik w niej osiągnięty. Ikonka zielonego trybika otwiera pole zmiany poziomu trodności gry (widoczne na drugim obrazku). Na dole ekranu wyświetla się losowy żart pozyskiwany z internetu - jest dodana obsługa niemożliwości pozyskania żartu, kliknięcie na to pole załąduje inny losowy żart.\
      ![Menu](screenshots/Menu.png)
      ![Difficulty preferences](screenshots/Menudiff.png)
    - Gra Flappy Bird\
