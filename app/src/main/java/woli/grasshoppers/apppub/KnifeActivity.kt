@@ -182,7 +182,7 @@ class KnifeActivity : AppCompatActivity() {
 
     private fun checkHit(knifeToCheck: ImageView) {
         val knifeBounds = Rect()
-        knifeToCheck.getGlobalVisibleRect(knifeBounds)//TODO: czy to powinna na pewno być ta funkcja...?
+        knifeToCheck.getGlobalVisibleRect(knifeBounds)//TODO: czy to powinna na pewno być ta funkcja...? raczej zdecydowanie nie
 
         for (stuckKnife in stuckKnives) {
             val stuckKnifeBounds = Rect()
@@ -190,9 +190,6 @@ class KnifeActivity : AppCompatActivity() {
 
             if (Rect.intersects(knifeBounds, stuckKnifeBounds)) {
                 val isRotatingClockwise = target.rotation > 0
-                val centerX = target.x + target.width / 2
-                val centerY = target.y + target.height / 2
-                val angleInRadians = Math.toRadians(target.rotation.toDouble())
                 val offsetX = if (isRotatingClockwise) -1000f else 1000f
                 val offsetY = 2f
 
@@ -213,7 +210,7 @@ class KnifeActivity : AppCompatActivity() {
                     override fun onAnimationEnd(animation: Animator) {
                         knifeToCheck.visibility = View.GONE
                         knifeThrown = false
-                        //TODO: jakieś zakończenie lub możliwość kontynuowania
+                        //TODO: jakieś zakończenie lub możliwość kontynuowania za piwa
                     }
 
                     override fun onAnimationCancel(animation: Animator) {}
