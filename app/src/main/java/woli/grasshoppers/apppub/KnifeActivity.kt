@@ -49,6 +49,7 @@ class KnifeActivity : AppCompatActivity() {
         initUI()
         initTarget()
         initKnife()
+        //TODO: master function initLevel()
 
         diffLevel = getDiff()
 
@@ -181,7 +182,52 @@ class KnifeActivity : AppCompatActivity() {
 
     private fun checkHit(knifeToCheck: ImageView) {
         val knifeBounds = Rect()
-        knifeToCheck.getGlobalVisibleRect(knifeBounds)
+        knifeToCheck.getGlobalVisibleRect(knifeBounds)//TODO: czy to powinna na pewno być ta funkcja...?
+
+        for (stuckKnife in stuckKnives) {
+            val stuckKnifeBounds = Rect()
+            stuckKnife.getGlobalVisibleRect(stuckKnifeBounds)
+
+            if (Rect.intersects(knifeBounds, stuckKnifeBounds)) {
+                val isRotatingClockwise = target.rotation > 0
+                val centerX = target.x + target.width / 2
+                val centerY = target.y + target.height / 2
+                val angleInRadians = Math.toRadians(target.rotation.toDouble())
+                val offsetX = if (isRotatingClockwise) -1000f else 1000f
+                val offsetY = 2f
+
+                val targetX = knifeToCheck.x + offsetX
+                val targetY = knifeToCheck.y + offsetY
+
+                val knifeAnimator = ObjectAnimator.ofFloat(knifeToCheck, "translationX", knifeToCheck.translationX, targetX)
+                val knifeAnimatorY = ObjectAnimator.ofFloat(knifeToCheck, "translationY", knifeToCheck.translationY, targetY)
+                val rotationAnimator = ObjectAnimator.ofFloat(knifeToCheck, "rotation", knifeToCheck.rotation, knifeToCheck.rotation + 720)
+
+                knifeAnimator.duration = 500
+                knifeAnimatorY.duration = 500
+                rotationAnimator.duration = 500
+
+                knifeAnimator.addListener(object : Animator.AnimatorListener {
+                    override fun onAnimationStart(animation: Animator) {}
+
+                    override fun onAnimationEnd(animation: Animator) {
+                        knifeToCheck.visibility = View.GONE
+                        knifeThrown = false
+                        //TODO: jakieś zakończenie lub możliwość kontynuowania
+                    }
+
+                    override fun onAnimationCancel(animation: Animator) {}
+
+                    override fun onAnimationRepeat(animation: Animator) {}
+                })
+
+                knifeAnimator.start()
+                knifeAnimatorY.start()
+                rotationAnimator.start()
+
+                return
+            }
+        }
 
         val targetBounds = Rect()
         target.getGlobalVisibleRect(targetBounds)
@@ -208,16 +254,16 @@ class KnifeActivity : AppCompatActivity() {
             knifeToCheck.y = knifeY
 
             updateScore()
+            knifeThrown = false
 
             currentKnifeIndex++
             if (currentKnifeIndex < knives.size) {
                 knives[currentKnifeIndex].visibility = View.VISIBLE
             }
-        } else {
-            //resetKnife(knifeToCheck)
-            //TODO: end level but above if must be to levels knife number
+            else {
+                //TODO: peaceful level end but above if must be to levels knife number (this happens when all knifes are thrown)
+            }
         }
-        knifeThrown = false
     }
 
     private fun updateScore() {
