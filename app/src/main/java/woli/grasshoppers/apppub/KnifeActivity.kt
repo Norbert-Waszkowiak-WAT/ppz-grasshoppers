@@ -22,7 +22,7 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 
-//TODO list: levels, control knife numbers to through -> small graphics, apples, difficulty, dziwne przesunięcie podczas rzutu po wbiciu, background image
+//TODO list: levels, control knife numbers to through -> small graphics, apples, difficulty, dziwne przesunięcie podczas rzutu po wbiciu, background image, knifes intersection
 
 class KnifeActivity : AppCompatActivity() {
 
@@ -49,7 +49,7 @@ class KnifeActivity : AppCompatActivity() {
         initUI()
         initTarget()
         initKnife()
-        //TODO: master function initLevel()
+        //TODO: master function initLevel() which contains initTarget and initKnife
 
         diffLevel = getDiff()
 
