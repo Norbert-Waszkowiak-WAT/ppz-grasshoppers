@@ -16,12 +16,13 @@ import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
+
+//TODO list: levels, control knife numbers to through -> small graphics, apples, difficulty, dziwne przesunięcie podczas rzutu po wbiciu, background image
 
 class KnifeActivity : AppCompatActivity() {
 
@@ -32,13 +33,13 @@ class KnifeActivity : AppCompatActivity() {
     private var score = 0
     private var diffLevel: Int = 50
     private var targetY: Int = 200
-    //private var isKnifeStuck: Boolean = false
     private val stuckKnives = mutableListOf<ImageView>()
     private var knifeAngle: Float = 0f
     private val knifeAngles = mutableListOf<Float>()
     private val knives = mutableListOf<ImageView>()
     private var currentKnifeIndex = 0
-    private val maxKnifeAmount: Int = 20 //TODO: niemożność rzucenia większej ilości
+    private val knivesAmount: Int = 20 //TODO: niemożność rzucenia większej ilości //To powinna być tablica dla odpowiednich poziomów
+    private var knifeThrown: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +66,9 @@ class KnifeActivity : AppCompatActivity() {
         scoreTextView = findViewById(R.id.score_text)
         screenView = findViewById(R.id.screen_view)
 
-        for (i in 0 until maxKnifeAmount) {
+        knives.add(0, knife)
+
+        for (i in 0 until knivesAmount-1) {
             val newKnife = ImageView(this).apply {
                 layoutParams = ConstraintLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -104,7 +107,7 @@ class KnifeActivity : AppCompatActivity() {
             animator.duration = randomDuration
             animator.interpolator = interpolator
 
-            animator.addUpdateListener { animation ->
+            animator.addUpdateListener {
                 stuckKnives.forEachIndexed { index, knife ->
                     val centerX = target.x + target.width / 2
                     val centerY = target.y + target.height / 2
@@ -143,31 +146,37 @@ class KnifeActivity : AppCompatActivity() {
         screenView.setOnClickListener {
             if (currentKnifeIndex < knives.size && knives[currentKnifeIndex].visibility == View.VISIBLE) {
                 throwKnife(knives[currentKnifeIndex])
-            } else {
-                throwKnife(knife)
             }
         }
     }
 
     private fun throwKnife(knifeToThrow: ImageView) {
-        knifeToThrow.visibility = View.VISIBLE
-        val targetKnifePosition = targetY + knifeToThrow.height
-        val knifeAnimator = ObjectAnimator.ofFloat(knifeToThrow, "translationY", knifeToThrow.translationY, -targetKnifePosition.toFloat())
-        knifeAnimator.duration = 200
+        if (!knifeThrown) {
+            knifeToThrow.visibility = View.VISIBLE
+            val targetKnifePosition = targetY + knifeToThrow.height
+            val knifeAnimator = ObjectAnimator.ofFloat(
+                knifeToThrow,
+                "translationY",
+                knifeToThrow.translationY,
+                -targetKnifePosition.toFloat()
+            )
+            knifeAnimator.duration = 100
+            knifeThrown = true;
 
-        knifeAnimator.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator) {}
+            knifeAnimator.addListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(animation: Animator) {}
 
-            override fun onAnimationEnd(animation: Animator) {
-                checkHit(knifeToThrow)
-            }
+                override fun onAnimationEnd(animation: Animator) {
+                    checkHit(knifeToThrow)
+                }
 
-            override fun onAnimationCancel(animation: Animator) {}
+                override fun onAnimationCancel(animation: Animator) {}
 
-            override fun onAnimationRepeat(animation: Animator) {}
-        })
+                override fun onAnimationRepeat(animation: Animator) {}
+            })
 
-        knifeAnimator.start()
+            knifeAnimator.start()
+        }
     }
 
     private fun checkHit(knifeToCheck: ImageView) {
@@ -201,12 +210,14 @@ class KnifeActivity : AppCompatActivity() {
             updateScore()
 
             currentKnifeIndex++
-            if (currentKnifeIndex < maxKnifeAmount) {
+            if (currentKnifeIndex < knives.size) {
                 knives[currentKnifeIndex].visibility = View.VISIBLE
             }
         } else {
-            resetKnife(knifeToCheck)
+            //resetKnife(knifeToCheck)
+            //TODO: end level but above if must be to levels knife number
         }
+        knifeThrown = false
     }
 
     private fun updateScore() {
@@ -214,11 +225,7 @@ class KnifeActivity : AppCompatActivity() {
         scoreTextView.text = score.toString()
     }
 
-    private fun resetKnife(knifeToReset: ImageView) {
-        knifeToReset.translationY = 0f
-        Toast.makeText(this, "Reset called", Toast.LENGTH_LONG).show()
-    }
-
+    @Suppress("DEPRECATION")
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         passScore(score)//TODO: pewnie kilka wartośći (wynik, ilość noży, jabłka)
@@ -232,6 +239,7 @@ class KnifeActivity : AppCompatActivity() {
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun hideSystemBars() {
         window.decorView.systemUiVisibility = (
             View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
