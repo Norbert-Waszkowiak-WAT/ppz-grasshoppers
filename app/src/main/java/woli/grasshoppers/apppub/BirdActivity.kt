@@ -15,41 +15,41 @@ import kotlin.random.Random
 
 class BirdActivity : AppCompatActivity() {
 
-    lateinit var bird: ImageView
-    lateinit var background: FrameLayout
-    lateinit var button: ImageView
-    lateinit var scoreView: TextView
-    lateinit var pauseBack: ImageView
+    lateinit private var bird: ImageView
+    lateinit private var background: FrameLayout
+    lateinit private var button: ImageView
+    lateinit private var scoreView: TextView
+    lateinit private var pauseBack: ImageView
 
-    val tickPeriod = 50
-    var tickTimer = Timer()
-    var tickCount = 0
-    var nextPipeTick = 0
+    private val tickPeriod = 50
+    private var tickTimer = Timer()
+    private var tickCount = 0
+    private var nextPipeTick = 0
 
-    var birdVelocity = 0f
+    private var birdVelocity = 0f
 
-    var pipes = mutableListOf<View>()
-    var displayedPipes = mutableListOf<View>()
+    private var pipes = mutableListOf<View>()
+    private var displayedPipes = mutableListOf<View>()
 
-    var score = 0
-    var maxScore = 0
-    var isBetweenPipes = false
+    private var score = 0
+    private var maxScore = 0
+    private var isBetweenPipes = false
 
-    var difficulty = 50
+    private var difficulty = 50
 
-    val birdSize = 150
-    val pipeWidth = 300
-    val foamHeight = 300
-    val foamOffset = 100
-    var pipeGapWidth = 0f
-    var speed = 10
-    var gravity = 1.5f
-    var jumpVelocity = 20f
-    var maxPipeDistance = 0
-    var minPipeDistance = 0
+    private val birdSize = 150
+    private val pipeWidth = 300
+    private val foamHeight = 300
+    private val foamOffset = 100
+    private var pipeGapWidth = 0f
+    private var speed = 10
+    private var gravity = 1.5f
+    private var jumpVelocity = 20f
+    private var maxPipeDistance = 0
+    private var minPipeDistance = 0
 
-    var screenHeight = 0
-    var screenWidth = 0
+    private var screenHeight = 0
+    private var screenWidth = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
