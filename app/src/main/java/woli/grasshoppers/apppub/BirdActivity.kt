@@ -15,11 +15,11 @@ import kotlin.random.Random
 
 class BirdActivity : AppCompatActivity() {
 
-    lateinit private var bird: ImageView
-    lateinit private var background: FrameLayout
-    lateinit private var button: ImageView
-    lateinit private var scoreView: TextView
-    lateinit private var pauseBack: ImageView
+    private lateinit var bird: ImageView
+    private lateinit var background: FrameLayout
+    private lateinit var button: ImageView
+    private lateinit var scoreView: TextView
+    private lateinit var pauseBack: ImageView
 
     private val tickPeriod = 50
     private var tickTimer = Timer()
@@ -155,7 +155,7 @@ class BirdActivity : AppCompatActivity() {
         return intent.getIntExtra("bird_diff", 50)
     }
 
-    fun startGame(){
+    private fun startGame(){
         score = 0
         tickCount = 0
         nextPipeTick = 0
@@ -178,7 +178,7 @@ class BirdActivity : AppCompatActivity() {
         }
     }
 
-    fun endGame(){
+    private fun endGame(){
         tickTimer.cancel()
 
         tickTimer = kotlin.concurrent.timer(initialDelay = tickPeriod.toLong(), period = tickPeriod.toLong()){
@@ -187,7 +187,7 @@ class BirdActivity : AppCompatActivity() {
                 tickTimer = Timer()
             }
             else{
-                bird.y += 100;
+                bird.y += 100
                 if (bird.rotation < 90){
                     bird.rotation += 10f
                 }
@@ -217,7 +217,7 @@ class BirdActivity : AppCompatActivity() {
         }
     }
 
-    fun showPipe(){
+    private fun showPipe(){
         if (pipes.size < 2){
             return
         }
@@ -227,8 +227,8 @@ class BirdActivity : AppCompatActivity() {
 
         val minUpperPipeHeight = 1f * pipeGapWidth
         val maxUpperPipeHeight = screenHeight - 1.5f * pipeGapWidth
-        var randomFrom = 0f
-        var randomUntil = 0f
+        var randomFrom: Float
+        var randomUntil: Float
 
         if (displayedPipes.size < 2){
             randomUntil = maxUpperPipeHeight
@@ -276,7 +276,7 @@ class BirdActivity : AppCompatActivity() {
         pipes.remove(lowerPipe)
     }
 
-    fun hidePipe(i: Int){
+    private fun hidePipe(i: Int){
         if (displayedPipes.size < 2){
             return
         }
@@ -296,7 +296,7 @@ class BirdActivity : AppCompatActivity() {
     }
 
 
-    fun tick() {
+    private fun tick() {
         if (tickCount % 6 == 0) {
             bird.setImageResource(R.drawable.bird_wings_flat)
         } else if (tickCount % 6 == 2) {
