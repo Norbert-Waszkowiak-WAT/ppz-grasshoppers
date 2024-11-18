@@ -22,7 +22,7 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 
-//TODO list: levels, control knife numbers to through -> small graphics, apples, difficulty, dziwne przesunięcie podczas rzutu po wbiciu, background image, knifes intersection
+//TODO list: levels, control knife numbers to throw -> small graphics, apples, difficulty, dziwne przesunięcie podczas rzutu po wbiciu, background image, knifes intersection, ładne odbijanie noża
 
 class KnifeActivity : AppCompatActivity() {
 
@@ -38,7 +38,7 @@ class KnifeActivity : AppCompatActivity() {
     private val knifeAngles = mutableListOf<Float>()
     private val knives = mutableListOf<ImageView>()
     private var currentKnifeIndex = 0
-    private val knivesAmount: Int = 20 //TODO: niemożność rzucenia większej ilości //To powinna być tablica dla odpowiednich poziomów
+    private val knivesAmount: Int = 20 //TODO: To powinna być tablica dla odpowiednich poziomów
     private var knifeThrown: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,8 +48,9 @@ class KnifeActivity : AppCompatActivity() {
         hideSystemBars()
         initUI()
         initTarget()
-        initKnife()
-        //TODO: master function initLevel() which contains initTarget and initKnife
+        //initKnife()
+        //TODO: master function initLevel() which contains initTarget and initUI with params i.e. knife number, target motion type, speed and range of one rotation, apple number etc.
+        //initUI contains the process of making amount of knives maybe move to one function -> will be easier to implement knives?
 
         diffLevel = getDiff()
 
@@ -88,13 +89,19 @@ class KnifeActivity : AppCompatActivity() {
             (screenView as ViewGroup).addView(newKnife)
             knives.add(newKnife)
         }
+
+        screenView.setOnClickListener {
+            if (currentKnifeIndex < knives.size && knives[currentKnifeIndex].visibility == View.VISIBLE) {
+                throwKnife(knives[currentKnifeIndex])
+            }
+        }
     }
 
     private fun initTarget() { //TODO: pewnie tutaj jedno z kilku użyć współczynnika trudności
         val randomDuration = (1000..3000).random().toLong()
         val randomRotation = (30..720).random().toFloat()
         val finalRotation = if ((0..1).random() == 0) randomRotation else -randomRotation
-        val interpolator = when ((0..4).random()) { //TODO: usunąć niektóre ruchy?
+        val interpolator = when ((0..4).random()) { //TODO: usunąć niektóre ruchy? przenieść do initLevel jako wybór a listy
             0 -> LinearInterpolator()
             1 -> AccelerateInterpolator()
             2 -> DecelerateInterpolator()
@@ -143,13 +150,13 @@ class KnifeActivity : AppCompatActivity() {
         startRotationAnimation()
     }
 
-    private fun initKnife() {
+    /*private fun initKnife() {
         screenView.setOnClickListener {
             if (currentKnifeIndex < knives.size && knives[currentKnifeIndex].visibility == View.VISIBLE) {
                 throwKnife(knives[currentKnifeIndex])
             }
         }
-    }
+    }*/
 
     private fun throwKnife(knifeToThrow: ImageView) {
         if (!knifeThrown) {
@@ -162,7 +169,7 @@ class KnifeActivity : AppCompatActivity() {
                 -targetKnifePosition.toFloat()
             )
             knifeAnimator.duration = 100
-            knifeThrown = true;
+            knifeThrown = true
 
             knifeAnimator.addListener(object : Animator.AnimatorListener {
                 override fun onAnimationStart(animation: Animator) {}
@@ -271,7 +278,7 @@ class KnifeActivity : AppCompatActivity() {
     @Suppress("DEPRECATION")
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-        passScore(score)//TODO: pewnie kilka wartośći (wynik, ilość noży, jabłka)
+        passScore(score)//TODO: pewnie kilka wartośći (wynik, ilość noży, jabłka) ale tylko jedna wyświetlana
         super.onBackPressed()
     }
 
