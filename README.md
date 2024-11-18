@@ -102,7 +102,18 @@ Grupą docelową są wszyscy ludzie, którzy chcą grać w proste gry arkadowe. 
    - Użytkownik może dowolnie wybierać grę i w nią grać
    - Użytkownik może modyfikować poziom trudności gier
 
-<!-- ### 9. Potencjalne ryzyka
+### 9. Postęp
+**Etap 1**
+   - Menu\
+     Guzik gry otwiera okno danej gry, liczba w rogu guzika gry to najwyższy wynik w niej osiągnięty. Ikonka zielonego trybika otwiera pole zmiany poziomu trodności gry (widoczne na drugim obrazku). Na dole ekranu wyświetla się losowy żart pozyskiwany z internetu - jest dodana obsługa niemożliwości pozyskania żartu, kliknięcie na to pole załaduje inny losowy żart.\
+     ![Menu](screenshots/Menu.png)
+     ![Difficulty preferences](screenshots/Menudiff.png)
+   - Gra Flappy Bird\
+     ![Flappy Bird start screen](screenshots/FlappyBird-start.png)
+     ![Flappy Bird gameplay](screenshots/FlappyBird-gameplay.png)
+     ![Flappy Bird restart screen](screenshots/FlappyBird-restart.png)
+
+<!-- ### 10. Potencjalne ryzyka
    - Problemy z synchronizacją kolejki (mitigacja: regularne testowanie serwera).
    - Awaria systemu powiadomień (mitigacja: backupowe rozwiązanie oparte na SMS-ach).
    - Niska adopcja aplikacji (mitigacja: kampanie promocyjne na WAT). -->
