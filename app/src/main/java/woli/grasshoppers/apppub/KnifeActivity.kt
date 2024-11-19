@@ -41,11 +41,12 @@ class KnifeActivity : AppCompatActivity() {
     private var currentKnifeIndex = 0
     private var knivesAmount: Int = 7 //TODO: To powinna być tablica dla odpowiednich poziomów
     //TODO: tables for knives amount, apples amount, original knives, speed, movement type OR one configuration table
+    //TODO: limit after the end of levels to end the whole game
     private var levelCount: Int = 0
     private val configuration = arrayOf(
         //knifeAmount, appleAmount, originalKnives, duration[ms], rotation[deg], movementType
-        arrayOf(7, 1, 0, 2000, 360, 0),//1
-        arrayOf(9, 2, 1, 3000, 360, 0),//2
+        arrayOf(7, 1, 0, 2000, 360, 0),//1 TODO: some movements changed the direction
+        arrayOf(9, 2, 1, 3000, 360, 0),//2 TODO: rozmieszczenie noży
         arrayOf(10, 1, 3, 4000, 480, 0),//3
         arrayOf(8, 2, 3, 5000, 860, 3),//4
         arrayOf(10, 10, 0, 6000, 720, 3),//5
@@ -55,7 +56,15 @@ class KnifeActivity : AppCompatActivity() {
         arrayOf(10, 4, 1, 3000, 270, 3),//9
         arrayOf(10, 10, 0, 3000, 360, 0),//10
         arrayOf(10, 2, 1, 3000, 360, 0),//11
-        arrayOf(13, 5, 0, 1000, 75, 3)//12
+        arrayOf(11, 5, 0, 1000, 75, 3),//12 TODO:add more levels
+        arrayOf(12, 3, 3, 3000, 450, 3),//13
+        arrayOf(9, 2, 3, 3500, 540, 3),//14
+        arrayOf(10, 10, 0, 4000, 225),//15
+        arrayOf(11, 2, 1, 3750, 450, 3),//16
+        arrayOf(12, 4, 0, 6000, 432, 3),//17
+        arrayOf(11, 1, 2, 3000, 730, 3),//18
+        arrayOf(12, 4, 2, 3000, 215, 3),//19
+        arrayOf(10, 10, 0, 4000, 395, 3)//20
     )
     private var knifeThrown: Boolean = false
 
