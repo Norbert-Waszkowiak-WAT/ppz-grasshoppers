@@ -42,6 +42,8 @@ class KnifeActivity : AppCompatActivity() {
     private var knivesAmount: Int = 7 //TODO: To powinna być tablica dla odpowiednich poziomów
     //TODO: tables for knives amount, apples amount, original knives, speed, movement type OR one configuration table
     //TODO: limit after the end of levels to end the whole game
+    //TODO: disable throwing a knife after levels limit -> can achieve score 8 with 7 knifes
+    //TODO: why aren't knew levels initialized
     private var levelCount: Int = 0
     private val configuration = arrayOf(
         //knifeAmount, appleAmount, originalKnives, duration[ms], rotation[deg], movementType
@@ -181,7 +183,8 @@ class KnifeActivity : AppCompatActivity() {
             else -> BounceInterpolator()
         }*/
         val finalRotation = if ((0..1).random() == 0) rotation else -rotation
-        val interpolator = when ((0..4).random()) {
+        //val interpolator = when ((0..4).random()) {
+        val interpolator = when (movementType) {
             0 -> LinearInterpolator()
             1 -> AccelerateInterpolator()
             2 -> DecelerateInterpolator()
@@ -228,7 +231,20 @@ class KnifeActivity : AppCompatActivity() {
             animator.start()
         }
 
+        // Wyśrodkowanie celu w poziomie
+        val screenWidth = screenView.width//resources.displayMetrics.widthPixels
+        val targetWidth = target.width
+        target.x = (screenWidth / 2 - targetWidth / 2).toFloat()
+
+        // Umieszczenie celu na wysokości 2/5 wysokości ekranu
+        val screenHeight = screenView.height//resources.displayMetrics.heightPixels
+        target.y = (screenHeight * 37 / 100 - target.height / 2).toFloat() //TODO: z jakiegoś powodu nic nie zmienia
+
+        target.visibility = View.VISIBLE
+
         startRotationAnimation()
+
+        //TODO: jeszcze trzeba noże doprowadzić do punktu początkowego
     }
 
     /*private fun initKnife() {
@@ -240,7 +256,7 @@ class KnifeActivity : AppCompatActivity() {
     }*/
 
     private fun throwKnife(knifeToThrow: ImageView) {
-        if (!knifeThrown) {
+        if (!knifeThrown) {//TODO: dostosować wysokość rzutu
             knifeToThrow.visibility = View.VISIBLE
             val targetKnifePosition = targetY + knifeToThrow.height
             val knifeAnimator = ObjectAnimator.ofFloat(
@@ -359,7 +375,12 @@ class KnifeActivity : AppCompatActivity() {
                 //TODO: peaceful level end but above if must be to levels knife number (this happens when all knifes are thrown)
                 levelCount++
                 clearLevel()
-                initLevel(levelCount)
+                /*if (levelCount <= configuration.size) {
+                    initLevel(levelCount)
+                }
+                else {
+                    //TODO: end game
+                }*/
             }
         }
     }
@@ -367,10 +388,70 @@ class KnifeActivity : AppCompatActivity() {
     private fun clearLevel() {
         //TODO: czyszczenie obrazu czyli usunięcie noży conajmniej być może i celu
         //TODO: tutaj rozpadanie tarczy i wypadanie noży
-        for (knife in knives) {
-            knife.visibility = View.GONE
-        }
-        knives.clear()
+        // Stworzenie animatora dla tarczy
+        val targetAnimator = ObjectAnimator.ofFloat(target, "translationY", target.translationY, target.translationY + target.height + screenView.height)
+        targetAnimator.duration = 500 // Czas trwania animacji
+        targetAnimator.interpolator = AccelerateInterpolator() // Możesz zmienić interpolator, jeśli chcesz
+
+        // Stworzenie animatorów dla wbitych noży
+        /*val knifeAnimators = stuckKnives.map { knife ->
+            ObjectAnimator.ofFloat(knife, "translationY", knife.translationY, knife.translationY + knife.height)
+        }*/
+
+        // Ustawienie tego samego czasu trwania dla wszystkich noży
+        //knifeAnimators.forEach { animator -> animator.duration = 500 }
+
+        //TODO: disable the last knife to fly after clearLevel() called
+
+        // Po zakończeniu animacji tarczy, ukryj ją i noże oraz wywołaj initLevel
+        targetAnimator.addListener(object : Animator.AnimatorListener {
+            override fun onAnimationStart(animation: Animator) {}
+
+            override fun onAnimationEnd(animation: Animator) {
+                // Ukrycie tarczy po animacji
+                target.visibility = View.GONE
+
+                for (knifeToDelete in knives) {
+                    knifeToDelete.visibility = View.GONE
+                }
+
+                knives.clear()
+
+                // Inicjalizacja nowego poziomu
+                levelCount++
+                if (levelCount < configuration.size) {
+                    initLevel(levelCount)
+                } else {
+                    // TODO: Obsługa końca gry, gdy wszystkie poziomy zostały ukończone
+                }
+
+                // Ukrycie noży po animacji
+                /*knifeAnimators.forEach { animator ->
+                    animator.addListener(object : Animator.AnimatorListener {
+                        override fun onAnimationStart(animation: Animator) {}
+
+                        override fun onAnimationEnd(animation: Animator) {
+                            knife.visibility = View.GONE
+                        }
+
+                        override fun onAnimationCancel(animation: Animator) {}
+
+                        override fun onAnimationRepeat(animation: Animator) {}
+                    })
+                    animator.start() // Uruchomienie animacji dla każdego noża
+                }*/
+
+                // Po zakończeniu animacji noży, zainicjuj nowy poziom
+                //initLevel(levelCount)
+            }
+
+            override fun onAnimationCancel(animation: Animator) {}
+
+            override fun onAnimationRepeat(animation: Animator) {}
+        })
+
+        // Rozpocznij animację tarczy
+        targetAnimator.start()
     }
 
     private fun updateScore() {
