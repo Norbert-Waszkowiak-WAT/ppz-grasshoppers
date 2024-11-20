@@ -16,22 +16,22 @@ import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 
-//TODO list: levels, control knife numbers to throw -> small graphics, apples, difficulty, dziwne przesunięcie podczas rzutu po wbiciu, background image, knifes intersection, ładne odbijanie noża
+//TODO list: levels, control knife numbers to throw -> small graphics, level number, apples, difficulty, background image, ładne odbijanie noża
 
 class KnifeActivity : AppCompatActivity() {
 
-    private lateinit var knife: ImageView
     private lateinit var scoreTextView: TextView
     private lateinit var target: ImageView
+    private lateinit var appleTextView: TextView
     private lateinit var screenView: View
     private var score = 0
+    private var apples = 0
     private var diffLevel: Int = 50
     private var targetY: Int = 200
     private val stuckKnives = mutableListOf<ImageView>()
@@ -39,16 +39,18 @@ class KnifeActivity : AppCompatActivity() {
     private val knifeAngles = mutableListOf<Float>()
     private val knives = mutableListOf<ImageView>()
     private var currentKnifeIndex = 0
-    private var knivesAmount: Int = 7 //TODO: To powinna być tablica dla odpowiednich poziomów
-    //TODO: tables for knives amount, apples amount, original knives, speed, movement type OR one configuration table
+    private val tolerance = 15.0
+    private var knivesAmount: Int = 7
+    //TODO: use of tables for knives amount, apples amount, original knives, speed, movement type OR one configuration table
     //TODO: limit after the end of levels to end the whole game
-    //TODO: disable throwing a knife after levels limit -> can achieve score 8 with 7 knifes
-    //TODO: why aren't knew levels initialized
+    //TODO: why aren't knew levels initialized fully -> probably some trash from the previous level
+    //TODO: the knife should be under the target
+    //TODO: show levels number in UI
     private var levelCount: Int = 0
     private val configuration = arrayOf(
         //knifeAmount, appleAmount, originalKnives, duration[ms], rotation[deg], movementType
-        arrayOf(7, 1, 0, 2000, 360, 0),//1 TODO: some movements changed the direction
-        arrayOf(9, 2, 1, 3000, 360, 0),//2 TODO: rozmieszczenie noży
+        arrayOf(7, 1, 0, 2000, 360, 0),//1 TODO: some movements changed the direction -> as a new field in conf table
+        arrayOf(9, 2, 1, 3000, 360, 0),//2 TODO: rozmieszczenie noży i jabłek: równomierne: ilość/360deg = co ile deg
         arrayOf(10, 1, 3, 4000, 480, 0),//3
         arrayOf(8, 2, 3, 5000, 860, 3),//4
         arrayOf(10, 10, 0, 6000, 720, 3),//5
@@ -58,7 +60,7 @@ class KnifeActivity : AppCompatActivity() {
         arrayOf(10, 4, 1, 3000, 270, 3),//9
         arrayOf(10, 10, 0, 3000, 360, 0),//10
         arrayOf(10, 2, 1, 3000, 360, 0),//11
-        arrayOf(11, 5, 0, 1000, 75, 3),//12 TODO:add more levels
+        arrayOf(11, 5, 0, 1000, 75, 3),//12
         arrayOf(12, 3, 3, 3000, 450, 3),//13
         arrayOf(9, 2, 3, 3500, 540, 3),//14
         arrayOf(10, 10, 0, 4000, 225),//15
@@ -66,30 +68,9 @@ class KnifeActivity : AppCompatActivity() {
         arrayOf(12, 4, 0, 6000, 432, 3),//17
         arrayOf(11, 1, 2, 3000, 730, 3),//18
         arrayOf(12, 4, 2, 3000, 215, 3),//19
-        arrayOf(10, 10, 0, 4000, 395, 3)//20
+        arrayOf(10, 10, 0, 4000, 395, 3)//20 TODO:add more levels
     )
     private var knifeThrown: Boolean = false
-
-    /*override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_knife)
-
-        hideSystemBars()
-        initUI()
-        initTarget()
-        //initKnife()
-        //TODO: master function initLevel() which contains initTarget and initUI with params i.e. knife number, target motion type, speed and range of one rotation, apple number etc.
-        //initUI contains the process of making amount of knives maybe move to one function -> will be easier to implement knives?
-
-        diffLevel = getDiff()
-
-        target.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                targetY = target.top
-                target.viewTreeObserver.removeOnGlobalLayoutListener(this)
-            }
-        })
-    }*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,7 +79,6 @@ class KnifeActivity : AppCompatActivity() {
         hideSystemBars()
         diffLevel = getDiff()
         initLevel(levelCount)
-        //initUI()
 
         target.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
@@ -112,39 +92,33 @@ class KnifeActivity : AppCompatActivity() {
         if (levelIndex < configuration.size) {
             val levelConfig = configuration[levelIndex]
 
-            // Odczytanie wartości z tablicy configuration
-            val knifeAmount = levelConfig[0] as Int
-            val appleAmount = levelConfig[1] as Int
-            val originalKnives = levelConfig[2] as Int
-            val duration = levelConfig[3] as Int
-            val rotation = levelConfig[4] as Int
-            val movementType = levelConfig[5] as Int
+            val knifeAmount = levelConfig[0]
+            val appleAmount = levelConfig[1]
+            val originalKnives = levelConfig[2]
+            val duration = levelConfig[3]
+            val rotation = levelConfig[4]
+            val movementType = levelConfig[5]
 
-            // Ustawienie liczby noży
             currentKnifeIndex = 0
             knivesAmount = knifeAmount
 
-            // Inicjalizacja UI dla aktualnego poziomu
-            initUI() // Możesz dostosować tę metodę, aby przyjmowała parametry
+            initUI()
 
-            // Ustawienie ruchu celu
             initTarget(duration.toLong(), rotation.toFloat(), movementType)
         } else {
-            // Obsługa końca poziomów
-            // Możesz tutaj dodać logikę, co się stanie, gdy wszystkie poziomy zostaną ukończone
+            //TODO: here initialize what happens when all levels are finished, and propably no where else
         }
     }
 
     private fun initUI() {
         target = findViewById(R.id.tarcza)
-        knife = findViewById(R.id.knife)
         scoreTextView = findViewById(R.id.score_text)
+        appleTextView = findViewById(R.id.apple_text)
         screenView = findViewById(R.id.screen_view)
 
         target.visibility = View.VISIBLE
-        knives.add(0, knife)
 
-        for (i in 0 until knivesAmount-1) {
+        for (i in 0 until knivesAmount) {
             val newKnife = ImageView(this).apply {
                 layoutParams = ConstraintLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -164,6 +138,10 @@ class KnifeActivity : AppCompatActivity() {
             knives.add(newKnife)
         }
 
+        knives[0].visibility = View.VISIBLE
+
+        //TODO: retrieve apple amount and set its text as so: apples = retrieved amount; updateApples(apples) where retrieved by a get function as at the end
+
         screenView.setOnClickListener {
             if (currentKnifeIndex < knives.size && knives[currentKnifeIndex].visibility == View.VISIBLE) {
                 throwKnife(knives[currentKnifeIndex])
@@ -172,22 +150,11 @@ class KnifeActivity : AppCompatActivity() {
     }
 
     private fun initTarget(duration: Long, rotation: Float, movementType: Int) { //TODO: pewnie tutaj jedno z kilku użyć współczynnika trudności
-        /*val randomDuration = (1000..3000).random().toLong()
-        val randomRotation = (30..720).random().toFloat()
-        val finalRotation = if ((0..1).random() == 0) randomRotation else -randomRotation
-        val interpolator = when ((0..4).random()) { //TODO: usunąć niektóre ruchy? przenieść do initLevel jako wybór a listy
-            0 -> LinearInterpolator()
-            1 -> AccelerateInterpolator()
-            2 -> DecelerateInterpolator()
-            3 -> AccelerateDecelerateInterpolator()
-            else -> BounceInterpolator()
-        }*/
         val finalRotation = if ((0..1).random() == 0) rotation else -rotation
-        //val interpolator = when ((0..4).random()) {
-        val interpolator = when (movementType) {
+        val interpolator = when (movementType) { //TODO: clear this value or delete old something because the target on upcomming levels are mixing motions as I think and knives are mixed I think
             0 -> LinearInterpolator()
-            1 -> AccelerateInterpolator()
-            2 -> DecelerateInterpolator()
+            1 -> AccelerateInterpolator()//deprecated -> do not use
+            2 -> DecelerateInterpolator()//deprecated -> do not use
             3 -> AccelerateDecelerateInterpolator()
             else -> BounceInterpolator()
         }
@@ -195,7 +162,6 @@ class KnifeActivity : AppCompatActivity() {
         fun startRotationAnimation() { //TODO: współczynnik trudności reguluje np. ilość obrotów do czasu
             val currentRotation = target.rotation
             val animator = ObjectAnimator.ofFloat(target, "rotation", currentRotation, currentRotation + finalRotation)
-            //animator.duration = randomDuration
             animator.duration = duration
             animator.interpolator = interpolator
 
@@ -231,32 +197,22 @@ class KnifeActivity : AppCompatActivity() {
             animator.start()
         }
 
-        // Wyśrodkowanie celu w poziomie
-        val screenWidth = screenView.width//resources.displayMetrics.widthPixels
+        val screenWidth = screenView.width
         val targetWidth = target.width
         target.x = (screenWidth / 2 - targetWidth / 2).toFloat()
 
-        // Umieszczenie celu na wysokości 2/5 wysokości ekranu
-        val screenHeight = screenView.height//resources.displayMetrics.heightPixels
-        target.y = (screenHeight * 37 / 100 - target.height / 2).toFloat() //TODO: z jakiegoś powodu nic nie zmienia
+        val screenHeight = screenView.height
+        target.y = (screenHeight * 37 / 100 - target.height / 2).toFloat() //TODO: for some reason has no impact on the first level propably because of its existance in xml -> maybe delete it in xml
 
         target.visibility = View.VISIBLE
 
         startRotationAnimation()
 
-        //TODO: jeszcze trzeba noże doprowadzić do punktu początkowego
+        //TODO: jeszcze trzeba noże doprowadzić do punktu początkowego i usunąć jakieś chyba duchy
     }
 
-    /*private fun initKnife() {
-        screenView.setOnClickListener {
-            if (currentKnifeIndex < knives.size && knives[currentKnifeIndex].visibility == View.VISIBLE) {
-                throwKnife(knives[currentKnifeIndex])
-            }
-        }
-    }*/
-
     private fun throwKnife(knifeToThrow: ImageView) {
-        if (!knifeThrown) {//TODO: dostosować wysokość rzutu
+        if (!knifeThrown) {
             knifeToThrow.visibility = View.VISIBLE
             val targetKnifePosition = targetY + knifeToThrow.height
             val knifeAnimator = ObjectAnimator.ofFloat(
@@ -286,12 +242,9 @@ class KnifeActivity : AppCompatActivity() {
 
     private fun checkHit(knifeToCheck: ImageView) {
         val knifeBounds = Rect()
-        knifeToCheck.getGlobalVisibleRect(knifeBounds)//TODO: czy to powinna na pewno być ta funkcja...? raczej zdecydowanie nie
+        knifeToCheck.getGlobalVisibleRect(knifeBounds)//TODO: czy to powinna na pewno być ta funkcja...? raczej zdecydowanie nie ale jest jeszcze używana do kontaktu z tarczą
 
-        //for (stuckKnife in stuckKnives) {
         for (stuckAngle in knifeAngles) {
-            //val stuckKnifeBounds = Rect()
-            //stuckKnife.getGlobalVisibleRect(stuckKnifeBounds)
 
             val centerX = target.x + target.width / 2
             val centerY = target.y + target.height / 2
@@ -301,8 +254,7 @@ class KnifeActivity : AppCompatActivity() {
             val relativeAngle = Math.toDegrees(atan2(dy.toDouble(), dx.toDouble())).toFloat()
             knifeAngle = (relativeAngle - target.rotation) % 360
 
-            //if (Rect.intersects(knifeBounds, stuckKnifeBounds)) {//TODO: checking by knifeAngles
-            if (knifeAngle == stuckAngle) { //TODO: some toleration
+            if (knifeAngle in (stuckAngle - tolerance)..(stuckAngle + tolerance)) {
                 val isRotatingClockwise = target.rotation > 0
                 val offsetX = if (isRotatingClockwise) -1000f else 1000f
                 val offsetY = 2f
@@ -372,43 +324,21 @@ class KnifeActivity : AppCompatActivity() {
                 knives[currentKnifeIndex].visibility = View.VISIBLE
             }
             else {
-                //TODO: peaceful level end but above if must be to levels knife number (this happens when all knifes are thrown)
                 levelCount++
                 clearLevel()
-                /*if (levelCount <= configuration.size) {
-                    initLevel(levelCount)
-                }
-                else {
-                    //TODO: end game
-                }*/
             }
         }
     }
 
     private fun clearLevel() {
-        //TODO: czyszczenie obrazu czyli usunięcie noży conajmniej być może i celu
-        //TODO: tutaj rozpadanie tarczy i wypadanie noży
-        // Stworzenie animatora dla tarczy
         val targetAnimator = ObjectAnimator.ofFloat(target, "translationY", target.translationY, target.translationY + target.height + screenView.height)
-        targetAnimator.duration = 500 // Czas trwania animacji
-        targetAnimator.interpolator = AccelerateInterpolator() // Możesz zmienić interpolator, jeśli chcesz
+        targetAnimator.duration = 500
+        targetAnimator.interpolator = AccelerateInterpolator()
 
-        // Stworzenie animatorów dla wbitych noży
-        /*val knifeAnimators = stuckKnives.map { knife ->
-            ObjectAnimator.ofFloat(knife, "translationY", knife.translationY, knife.translationY + knife.height)
-        }*/
-
-        // Ustawienie tego samego czasu trwania dla wszystkich noży
-        //knifeAnimators.forEach { animator -> animator.duration = 500 }
-
-        //TODO: disable the last knife to fly after clearLevel() called
-
-        // Po zakończeniu animacji tarczy, ukryj ją i noże oraz wywołaj initLevel
         targetAnimator.addListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator) {}
 
             override fun onAnimationEnd(animation: Animator) {
-                // Ukrycie tarczy po animacji
                 target.visibility = View.GONE
 
                 for (knifeToDelete in knives) {
@@ -417,32 +347,8 @@ class KnifeActivity : AppCompatActivity() {
 
                 knives.clear()
 
-                // Inicjalizacja nowego poziomu
                 levelCount++
-                if (levelCount < configuration.size) {
-                    initLevel(levelCount)
-                } else {
-                    // TODO: Obsługa końca gry, gdy wszystkie poziomy zostały ukończone
-                }
-
-                // Ukrycie noży po animacji
-                /*knifeAnimators.forEach { animator ->
-                    animator.addListener(object : Animator.AnimatorListener {
-                        override fun onAnimationStart(animation: Animator) {}
-
-                        override fun onAnimationEnd(animation: Animator) {
-                            knife.visibility = View.GONE
-                        }
-
-                        override fun onAnimationCancel(animation: Animator) {}
-
-                        override fun onAnimationRepeat(animation: Animator) {}
-                    })
-                    animator.start() // Uruchomienie animacji dla każdego noża
-                }*/
-
-                // Po zakończeniu animacji noży, zainicjuj nowy poziom
-                //initLevel(levelCount)
+                initLevel(levelCount)
             }
 
             override fun onAnimationCancel(animation: Animator) {}
@@ -450,13 +356,17 @@ class KnifeActivity : AppCompatActivity() {
             override fun onAnimationRepeat(animation: Animator) {}
         })
 
-        // Rozpocznij animację tarczy
         targetAnimator.start()
     }
 
     private fun updateScore() {
         score++
         scoreTextView.text = score.toString()
+    }
+
+    private fun updateApples(amount: Int) {
+        apples = amount
+        appleTextView.text = apples.toString()
     }
 
     @Suppress("DEPRECATION")
