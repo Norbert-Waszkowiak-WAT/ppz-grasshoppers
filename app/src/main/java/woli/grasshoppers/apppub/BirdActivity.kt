@@ -3,6 +3,9 @@ package woli.grasshoppers.apppub
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.util.TypedValue
+import android.util.TypedValue.COMPLEX_UNIT_DIP
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
@@ -12,6 +15,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import java.util.Timer
 import kotlin.random.Random
+
 
 class BirdActivity : AppCompatActivity() {
 
@@ -37,13 +41,13 @@ class BirdActivity : AppCompatActivity() {
 
     private var difficulty = 50
 
-    private val birdSize = 150
-    private val pipeWidth = 300
-    private val foamHeight = 300
-    private val foamOffset = 100
+    private var birdSize = 0
+    private var pipeWidth = 0
+    private var foamHeight = 0
+    private var foamOffset = 0
     private var pipeGapWidth = 0f
-    private var speed = 10
-    private var gravity = 1.5f
+    private var speed = 0
+    private var gravity = 0f
     private var jumpVelocity = 20f
     private var maxPipeDistance = 0
     private var minPipeDistance = 0
@@ -77,12 +81,17 @@ class BirdActivity : AppCompatActivity() {
             screenHeight += resources.getDimensionPixelSize(resourceId)
         }
 
+        birdSize = dpToPx(75f).toInt()
+        pipeWidth = dpToPx(100f).toInt()
+        foamHeight = dpToPx(100f).toInt()
+        foamOffset = dpToPx(50f).toInt()
 
         difficulty = getDiff()
 
-        gravity = 1.5f
-        jumpVelocity = 20f
-        speed = 10 * (1 + (difficulty / 100))
+        gravity = dpToPx(1f)
+        jumpVelocity = dpToPx(12f)
+
+        speed = dpToPx(3f).toInt() * (1 + (difficulty / 100))
 
         val jumpHeight = (gravity * (jumpVelocity/gravity) * (jumpVelocity/gravity)) / 2
         pipeGapWidth = jumpHeight + birdSize * (1.5f + ((50 - difficulty) / 100))
@@ -91,7 +100,7 @@ class BirdActivity : AppCompatActivity() {
         minPipeDistance = birdSize * (3 - (difficulty / 100))
 
 
-        bird.x = 50f
+        bird.x = dpToPx(20f)
 
         val pipeHeight = screenHeight
 
@@ -118,6 +127,10 @@ class BirdActivity : AppCompatActivity() {
             button.visibility = Button.INVISIBLE
             startGame()
         }
+    }
+
+    fun dpToPx(dp: Float): Float {
+        return TypedValue.applyDimension(COMPLEX_UNIT_DIP, dp, resources.displayMetrics)
     }
 
 
