@@ -3,6 +3,7 @@ package woli.grasshoppers.apppub
 import android.animation.Animator
 import android.animation.ObjectAnimator
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
@@ -15,21 +16,29 @@ import android.view.animation.BounceInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.get
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 
-//TODO list: levels, control knife numbers to throw -> small graphics, level number, apples, difficulty, background image, ładne odbijanie noża
+//TODO list: apples, difficulty, ładne odbijanie noża, apples animation when hit, czemu czasami noże zachodzą na oryginalne
 
 class KnifeActivity : AppCompatActivity() {
+
+    private val knifePreferences by lazy {
+        getSharedPreferences("knife_prefs", Context.MODE_PRIVATE)
+    }
 
     private lateinit var scoreTextView: TextView
     private lateinit var target: ImageView
     private lateinit var appleTextView: TextView
     private lateinit var screenView: View
+    private lateinit var levelTextView: TextView
+    private lateinit var linearLayout: LinearLayout
     private var score = 0
     private var apples = 0
     private var diffLevel: Int = 50
@@ -40,37 +49,43 @@ class KnifeActivity : AppCompatActivity() {
     private val knives = mutableListOf<ImageView>()
     private var currentKnifeIndex = 0
     private val tolerance = 15.0
-    private var knivesAmount: Int = 7
+    private var knivesAmount: Int = 1
     //TODO: use of tables for knives amount, apples amount, original knives, speed, movement type OR one configuration table
     //TODO: limit after the end of levels to end the whole game
-    //TODO: why aren't knew levels initialized fully -> probably some trash from the previous level
-    //TODO: the knife should be under the target
-    //TODO: show levels number in UI
+    //TODO: all images to pixelArt
     private var levelCount: Int = 0
     private val configuration = arrayOf(
-        //knifeAmount, appleAmount, originalKnives, duration[ms], rotation[deg], movementType
-        arrayOf(7, 1, 0, 2000, 360, 0),//1 TODO: some movements changed the direction -> as a new field in conf table
-        arrayOf(9, 2, 1, 3000, 360, 0),//2 TODO: rozmieszczenie noży i jabłek: równomierne: ilość/360deg = co ile deg
-        arrayOf(10, 1, 3, 4000, 480, 0),//3
-        arrayOf(8, 2, 3, 5000, 860, 3),//4
-        arrayOf(10, 10, 0, 6000, 720, 3),//5
-        arrayOf(9, 1, 4, 4000, 400, 3),//6
-        arrayOf(11, 2, 2, 5000, 405, 3),//7
-        arrayOf(8, 3, 3, 3000, 540, 3),//8
-        arrayOf(10, 4, 1, 3000, 270, 3),//9
-        arrayOf(10, 10, 0, 3000, 360, 0),//10
-        arrayOf(10, 2, 1, 3000, 360, 0),//11
-        arrayOf(11, 5, 0, 1000, 75, 3),//12
-        arrayOf(12, 3, 3, 3000, 450, 3),//13
-        arrayOf(9, 2, 3, 3500, 540, 3),//14
-        arrayOf(10, 10, 0, 4000, 225),//15
-        arrayOf(11, 2, 1, 3750, 450, 3),//16
-        arrayOf(12, 4, 0, 6000, 432, 3),//17
-        arrayOf(11, 1, 2, 3000, 730, 3),//18
-        arrayOf(12, 4, 2, 3000, 215, 3),//19
-        arrayOf(10, 10, 0, 4000, 395, 3)//20 TODO:add more levels
+        //knifeAmount, appleAmount, originalKnives, duration[ms], rotation[deg], movementType, variation
+        arrayOf(7, 1, 0, 2000, 360, 0, 1),//1
+        arrayOf(9, 2, 1, 3000, 360, 0, 1),//2 TODO: rozmieszczenie noży i jabłek: równomierne: ilość/360deg = co ile deg
+        arrayOf(10, 1, 3, 4000, 480, 0, 1),//3
+        arrayOf(8, 2, 3, 5000, 860, 3, -1),//4
+        arrayOf(10, 10, 0, 6000, 720, 3, 1),//5
+        arrayOf(9, 1, 4, 4000, 400, 3, -1),//6
+        arrayOf(11, 2, 2, 5000, 405, 3, 1),//7
+        arrayOf(8, 3, 3, 3000, 540, 3, 1),//8
+        arrayOf(10, 4, 1, 3000, 270, 3, -1),//9
+        arrayOf(10, 10, 0, 3000, 360, 0, -1),//10
+        arrayOf(10, 2, 1, 3000, 360, 0, -1),//11
+        arrayOf(11, 5, 0, 1000, 75, 3, 1),//12
+        arrayOf(12, 3, 3, 3000, 450, 3, 1),//13
+        arrayOf(9, 2, 3, 3500, 540, 3, -1),//14
+        arrayOf(10, 10, 0, 4000, 225, -1),//15
+        arrayOf(11, 2, 1, 3750, 450, 3, 1),//16
+        arrayOf(12, 4, 0, 6000, 432, 3, 1),//17
+        arrayOf(11, 1, 2, 3000, 730, 3, -1),//18
+        arrayOf(12, 4, 2, 3000, 215, 3, 1),//19
+        arrayOf(10, 10, 0, 4000, 395, 3, -1)//20 TODO:add more levels
     )
     private var knifeThrown: Boolean = false
+    private lateinit var animator: ObjectAnimator
+    private var knifeAmount: Int = 1
+    private var appleAmount: Int = 0
+    private var originalKnives: Int = 0
+    private var duration: Int = 0
+    private var rotation: Int = 0
+    private var movementType: Int = 0
+    private var variation: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,18 +101,21 @@ class KnifeActivity : AppCompatActivity() {
                 target.viewTreeObserver.removeOnGlobalLayoutListener(this)
             }
         })
+
+        appleTextView.text = getApple().toString()
     }
 
     private fun initLevel(levelIndex: Int) {
         if (levelIndex < configuration.size) {
             val levelConfig = configuration[levelIndex]
 
-            val knifeAmount = levelConfig[0]
-            val appleAmount = levelConfig[1]
-            val originalKnives = levelConfig[2]
-            val duration = levelConfig[3]
-            val rotation = levelConfig[4]
-            val movementType = levelConfig[5]
+            knifeAmount = levelConfig[0]
+            appleAmount = levelConfig[1]
+            originalKnives = levelConfig[2]
+            duration = levelConfig[3]
+            rotation = levelConfig[4]
+            movementType = levelConfig[5]
+            variation = levelConfig[6]
 
             currentKnifeIndex = 0
             knivesAmount = knifeAmount
@@ -106,7 +124,7 @@ class KnifeActivity : AppCompatActivity() {
 
             initTarget(duration.toLong(), rotation.toFloat(), movementType)
         } else {
-            //TODO: here initialize what happens when all levels are finished, and propably no where else
+            //TODO: here initialize what happens when all levels are finished, and probably no where else
         }
     }
 
@@ -115,6 +133,8 @@ class KnifeActivity : AppCompatActivity() {
         scoreTextView = findViewById(R.id.score_text)
         appleTextView = findViewById(R.id.apple_text)
         screenView = findViewById(R.id.screen_view)
+        levelTextView = findViewById(R.id.level_text)
+        linearLayout = findViewById(R.id.linear_layout)
 
         target.visibility = View.VISIBLE
 
@@ -136,11 +156,25 @@ class KnifeActivity : AppCompatActivity() {
             }
             (screenView as ViewGroup).addView(newKnife)
             knives.add(newKnife)
+
+            val newKnifeIcon = ImageView(this).apply {
+                layoutParams = ConstraintLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    val density = resources.displayMetrics.density
+                    width = (20 * density).toInt()
+                    height = (20 * density).toInt()
+                }
+                setImageResource(R.drawable.white_knife)
+                visibility = View.VISIBLE
+            }
+            linearLayout.addView(newKnifeIcon, i)
         }
 
         knives[0].visibility = View.VISIBLE
 
-        //TODO: retrieve apple amount and set its text as so: apples = retrieved amount; updateApples(apples) where retrieved by a get function as at the end
+        onLevelUp()
 
         screenView.setOnClickListener {
             if (currentKnifeIndex < knives.size && knives[currentKnifeIndex].visibility == View.VISIBLE) {
@@ -150,8 +184,8 @@ class KnifeActivity : AppCompatActivity() {
     }
 
     private fun initTarget(duration: Long, rotation: Float, movementType: Int) { //TODO: pewnie tutaj jedno z kilku użyć współczynnika trudności
-        val finalRotation = if ((0..1).random() == 0) rotation else -rotation
-        val interpolator = when (movementType) { //TODO: clear this value or delete old something because the target on upcomming levels are mixing motions as I think and knives are mixed I think
+        var finalRotation = if ((0..1).random() == 0) rotation else -rotation
+        val interpolator = when (movementType) {
             0 -> LinearInterpolator()
             1 -> AccelerateInterpolator()//deprecated -> do not use
             2 -> DecelerateInterpolator()//deprecated -> do not use
@@ -159,9 +193,12 @@ class KnifeActivity : AppCompatActivity() {
             else -> BounceInterpolator()
         }
 
+        addOriginalKnives()
+
         fun startRotationAnimation() { //TODO: współczynnik trudności reguluje np. ilość obrotów do czasu
             val currentRotation = target.rotation
-            val animator = ObjectAnimator.ofFloat(target, "rotation", currentRotation, currentRotation + finalRotation)
+            finalRotation *= variation
+            animator = ObjectAnimator.ofFloat(target, "rotation", currentRotation, currentRotation + finalRotation)
             animator.duration = duration
             animator.interpolator = interpolator
 
@@ -207,8 +244,41 @@ class KnifeActivity : AppCompatActivity() {
         target.visibility = View.VISIBLE
 
         startRotationAnimation()
+    }
 
-        //TODO: jeszcze trzeba noże doprowadzić do punktu początkowego i usunąć jakieś chyba duchy
+    private fun addOriginalKnives() {
+        val numberOfOriginalKnives = originalKnives
+        val angleIncrement = 360f / numberOfOriginalKnives
+
+        for (i in 0 until numberOfOriginalKnives) {
+            val originalKnife = ImageView(this).apply {
+                layoutParams = ConstraintLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    val density = resources.displayMetrics.density
+                    width = (125 * density).toInt()
+                    height = (125 * density).toInt()
+                }
+                setImageResource(R.drawable.original_knife)
+                visibility = View.VISIBLE
+            }
+
+            val angle = i * angleIncrement
+            knifeAngles.add(angle)
+
+            val centerX = target.x + target.width / 2
+            val centerY = target.y + target.height / 2
+            val radius = target.width / 2
+            val knifeX = centerX + radius * cos(Math.toRadians(angle.toDouble())).toFloat() - originalKnife.width / 2
+            val knifeY = centerY + radius * sin(Math.toRadians(angle.toDouble())).toFloat() - originalKnife.height / 2
+
+            originalKnife.x = knifeX
+            originalKnife.y = knifeY
+
+            (screenView as ViewGroup).addView(originalKnife)
+            stuckKnives.add(originalKnife)
+        }
     }
 
     private fun throwKnife(knifeToThrow: ImageView) {
@@ -237,6 +307,8 @@ class KnifeActivity : AppCompatActivity() {
             })
 
             knifeAnimator.start()
+            val knifeToChange: ImageView = linearLayout[currentKnifeIndex] as ImageView
+            knifeToChange.apply { setImageResource(R.drawable.black_knife) }
         }
     }
 
@@ -316,7 +388,7 @@ class KnifeActivity : AppCompatActivity() {
             knifeToCheck.x = knifeX
             knifeToCheck.y = knifeY
 
-            updateScore()
+            onKnifeStuck()
             knifeThrown = false
 
             currentKnifeIndex++
@@ -324,7 +396,6 @@ class KnifeActivity : AppCompatActivity() {
                 knives[currentKnifeIndex].visibility = View.VISIBLE
             }
             else {
-                levelCount++
                 clearLevel()
             }
         }
@@ -346,6 +417,11 @@ class KnifeActivity : AppCompatActivity() {
                 }
 
                 knives.clear()
+                stuckKnives.clear()
+                knifeAngles.clear()
+                linearLayout.removeAllViews()
+
+                animator.pause()
 
                 levelCount++
                 initLevel(levelCount)
@@ -359,20 +435,29 @@ class KnifeActivity : AppCompatActivity() {
         targetAnimator.start()
     }
 
-    private fun updateScore() {
+    private fun onKnifeStuck() {
         score++
         scoreTextView.text = score.toString()
     }
 
-    private fun updateApples(amount: Int) {
-        apples = amount
+    private fun onAppleHit() {
+        apples++
         appleTextView.text = apples.toString()
+        knifePreferences.edit().apply {
+            putInt("apple_amount", apples)
+            apply()
+        }
+    }
+
+    private fun onLevelUp() {
+        val levelToSet = levelCount + 1
+        levelTextView.text = levelToSet.toString()
     }
 
     @Suppress("DEPRECATION")
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-        passScore(score)//TODO: pewnie kilka wartośći (wynik, ilość noży, jabłka) ale tylko jedna wyświetlana
+        passScore(score)
         super.onBackPressed()
     }
 
@@ -400,9 +485,17 @@ class KnifeActivity : AppCompatActivity() {
         data.putExtra("score", score.toString())
         setResult(Activity.RESULT_OK, data)
         finish()
+        knifePreferences.edit().apply {
+            putInt("apple_amount", apples)
+            apply()
+        }
     }
 
     private fun getDiff(): Int {
         return intent.getIntExtra("knife_diff", 50)
+    }
+
+    private fun getApple(): Int {
+        return knifePreferences.getInt("apple_amount", 0)
     }
 }
