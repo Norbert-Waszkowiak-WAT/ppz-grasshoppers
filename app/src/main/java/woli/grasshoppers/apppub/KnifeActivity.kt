@@ -53,11 +53,13 @@ class KnifeActivity : AppCompatActivity() {
     //TODO: use of tables for knives amount, apples amount, original knives, speed, movement type OR one configuration table
     //TODO: limit after the end of levels to end the whole game
     //TODO: all images to pixelArt
+    //TODO: shouldn't the target be removed from xml
+    //TODO: UI -> arrow back
     private var levelCount: Int = 0
     private val configuration = arrayOf(
         //knifeAmount, appleAmount, originalKnives, duration[ms], rotation[deg], movementType, variation
         arrayOf(7, 1, 0, 2000, 360, 0, 1),//1
-        arrayOf(9, 2, 1, 3000, 360, 0, 1),//2 TODO: rozmieszczenie noży i jabłek: równomierne: ilość/360deg = co ile deg
+        arrayOf(9, 2, 1, 3000, 360, 0, 1),//2 TODO: rozmieszczenie jabłek: równomierne: ilość/360deg = co ile deg
         arrayOf(10, 1, 3, 4000, 480, 0, 1),//3
         arrayOf(8, 2, 3, 5000, 860, 3, -1),//4
         arrayOf(10, 10, 0, 6000, 720, 3, 1),//5
@@ -460,6 +462,8 @@ class KnifeActivity : AppCompatActivity() {
         passScore(score)
         super.onBackPressed()
     }
+
+    //TODO: onArrowBackPressed -> onBackPressed
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
