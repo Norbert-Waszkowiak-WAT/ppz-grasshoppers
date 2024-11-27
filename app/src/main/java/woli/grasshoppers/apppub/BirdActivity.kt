@@ -3,7 +3,6 @@ package woli.grasshoppers.apppub
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import android.util.TypedValue.COMPLEX_UNIT_DIP
 import android.view.LayoutInflater
@@ -41,7 +40,8 @@ class BirdActivity : AppCompatActivity() {
 
     private var difficulty = 50
 
-    private var birdSize = 0
+    private var birdHeight = 0
+    private var birdWidth = 0
     private var pipeWidth = 0
     private var foamHeight = 0
     private var foamOffset = 0
@@ -81,7 +81,8 @@ class BirdActivity : AppCompatActivity() {
             screenHeight += resources.getDimensionPixelSize(resourceId)
         }
 
-        birdSize = dpToPx(75f).toInt()
+        birdHeight = dpToPx(75f).toInt()
+        birdWidth = dpToPx(52f).toInt()
         pipeWidth = dpToPx(100f).toInt()
         foamHeight = dpToPx(100f).toInt()
         foamOffset = dpToPx(50f).toInt()
@@ -94,10 +95,10 @@ class BirdActivity : AppCompatActivity() {
         speed = dpToPx(5f).toInt() * (1 + (difficulty / 100))
 
         val jumpHeight = (gravity * (jumpVelocity/gravity) * (jumpVelocity/gravity)) / 2
-        pipeGapWidth = jumpHeight + birdSize * (1.5f + ((50 - difficulty) / 100))
+        pipeGapWidth = jumpHeight + birdHeight * (1.5f + ((50 - difficulty) / 100))
 
-        maxPipeDistance = birdSize * (4 + ((100-difficulty) / 100))
-        minPipeDistance = birdSize * (3 - (difficulty / 100))
+        maxPipeDistance = birdWidth * (4 + ((100-difficulty) / 100))
+        minPipeDistance = birdWidth * (3 - (difficulty / 100))
 
 
         bird.x = dpToPx(20f)
@@ -250,12 +251,12 @@ class BirdActivity : AppCompatActivity() {
         else {
             val lastUpperPipe = displayedPipes[displayedPipes.size-2]
 
-            val time = (screenWidth - lastUpperPipe.x - birdSize) / speed
+            val time = (screenWidth - lastUpperPipe.x - birdHeight) / speed
             val maxFallDistance = (gravity * time * time) / 2
             val maxJumpDistance = jumpVelocity * time
 
-            randomFrom = lastUpperPipe.height - maxJumpDistance + ((100 - difficulty) / 100) * birdSize
-            randomUntil = lastUpperPipe.height + maxFallDistance - ((100 - difficulty) / 100) * birdSize
+            randomFrom = lastUpperPipe.height - maxJumpDistance + ((100 - difficulty) / 100) * birdHeight
+            randomUntil = lastUpperPipe.height + maxFallDistance - ((100 - difficulty) / 100) * birdHeight
 
             if (randomFrom >= randomUntil) {
                 randomFrom = lastUpperPipe.height - pipeGapWidth
