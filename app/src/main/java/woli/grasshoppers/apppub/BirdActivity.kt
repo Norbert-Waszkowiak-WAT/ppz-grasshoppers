@@ -95,7 +95,7 @@ class BirdActivity : AppCompatActivity() {
         speed = dpToPx(5f).toInt() * (1 + (difficulty / 100))
 
         val jumpHeight = (gravity * (jumpVelocity/gravity) * (jumpVelocity/gravity)) / 2
-        pipeGapWidth = jumpHeight + birdHeight * (1.5f + ((50 - difficulty) / 100))
+        pipeGapWidth = birdHeight + jumpHeight * (1.5f + ((50 - difficulty) / 100))
 
         maxPipeDistance = birdWidth * (4 + ((100-difficulty) / 100))
         minPipeDistance = birdWidth * (3 - (difficulty / 100))
@@ -270,7 +270,7 @@ class BirdActivity : AppCompatActivity() {
 
         val upperPipeHeight = Random.nextInt(randomFrom.toInt(), randomUntil.toInt())
         upperPipe.y = 0f
-        lowerPipe.y = upperPipeHeight + pipeGapWidth - 2*foamOffset + 0f
+        lowerPipe.y = upperPipeHeight + pipeGapWidth - 2*foamHeight + 0f
 
         val lowerParams = FrameLayout.LayoutParams(pipeWidth, screenHeight - lowerPipe.y.toInt())
         val upperParams = FrameLayout.LayoutParams(pipeWidth, upperPipeHeight)
