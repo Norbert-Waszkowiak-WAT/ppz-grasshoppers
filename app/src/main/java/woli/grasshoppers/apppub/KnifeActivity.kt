@@ -485,14 +485,14 @@ class KnifeActivity : AppCompatActivity() {
     }
 
     private fun passScore(score: Int) {
-        val data = Intent()
-        data.putExtra("score", score.toString())
-        setResult(Activity.RESULT_OK, data)
-        finish()
         knifePreferences.edit().apply {
             putInt("apple_amount", apples)
             apply()
         }
+        val data = Intent()
+        data.putExtra("score", score.toString())
+        setResult(Activity.RESULT_OK, data)
+        finish()
     }
 
     private fun getDiff(): Int {
