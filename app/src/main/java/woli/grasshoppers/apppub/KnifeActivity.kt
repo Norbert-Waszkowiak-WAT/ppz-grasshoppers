@@ -40,13 +40,15 @@ class KnifeActivity : AppCompatActivity() {
     private lateinit var levelTextView: TextView
     private lateinit var linearLayout: LinearLayout
     private var score = 0
-    private var apples = 0
+    private var applesCount = 0
     private var diffLevel: Int = 50
     private var targetY: Int = 200
     private val stuckKnives = mutableListOf<ImageView>()
     private var knifeAngle: Float = 0f
     private val knifeAngles = mutableListOf<Float>()
+    private val appleAngles = mutableListOf<Float>()
     private val knives = mutableListOf<ImageView>()
+    private val apples = mutableListOf<ImageView>()
     private var currentKnifeIndex = 0
     private val tolerance = 15.0
     private var knivesAmount: Int = 1
@@ -55,6 +57,7 @@ class KnifeActivity : AppCompatActivity() {
     //TODO: all images to pixelArt
     //TODO: shouldn't the target be removed from xml
     //TODO: UI -> arrow back
+    //TODO: apples to the surface of the target
     private var levelCount: Int = 0
     private val configuration = arrayOf(
         //knifeAmount, appleAmount, originalKnives, duration[ms], rotation[deg], movementType, variation
@@ -197,6 +200,8 @@ class KnifeActivity : AppCompatActivity() {
 
         addOriginalKnives()
 
+        createApples()
+
         fun startRotationAnimation() { //TODO: współczynnik trudności reguluje np. ilość obrotów do czasu
             val currentRotation = target.rotation
             finalRotation *= variation
@@ -219,6 +224,21 @@ class KnifeActivity : AppCompatActivity() {
                     knife.y = knifeY
 
                     knife.rotation = target.rotation + knifeAngles[index] - 90f
+                }
+
+                apples.forEachIndexed { index, apple ->
+                    val centerX = target.x + target.width / 2
+                    val centerY = target.y + target.height / 2
+                    val radius = target.width / 2
+                    val appleAngle = Math.toRadians(target.rotation.toDouble() + appleAngles[index])
+
+                    val appleX = centerX + radius * cos(appleAngle).toFloat() - apple.width / 2
+                    val appleY = centerY + radius * sin(appleAngle).toFloat() - apple.height / 2
+
+                    apple.x = appleX
+                    apple.y = appleY
+
+                    apple.rotation = target.rotation + appleAngles[index] + 90f
                 }
             }
 
@@ -246,6 +266,42 @@ class KnifeActivity : AppCompatActivity() {
         target.visibility = View.VISIBLE
 
         startRotationAnimation()
+    }
+
+    private fun createApples() { //TODO: odsunąć jabłka na powierzchnię tarczy (o połowę ich wysokości od środka tarczy)
+        val numberOfApples = appleAmount
+        val angleIncrement = 360f / numberOfApples
+
+        for (i in 0 until numberOfApples) {
+            val apple = ImageView(this).apply {
+                layoutParams = ConstraintLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    val density = resources.displayMetrics.density
+                    width = (50 * density).toInt()
+                    height = (50 * density).toInt()
+                }
+                setImageResource(R.drawable.beer_apple)
+                visibility = View.VISIBLE
+            }
+
+            val angle = i * angleIncrement + 25
+            appleAngles.add(angle)
+
+            val centerX = target.x + target.width / 2
+            val centerY = target.y + target.height / 2
+            val radius = target.width / 2
+
+            val appleX = centerX + radius * cos(angle) - apple.width / 2
+            val appleY = centerY + radius * sin(angle) - apple.height / 2
+
+            apple.x = appleX
+            apple.y = appleY
+
+            (screenView as ViewGroup).addView(apple)
+            apples.add(apple)
+        }
     }
 
     private fun addOriginalKnives() {
@@ -443,10 +499,10 @@ class KnifeActivity : AppCompatActivity() {
     }
 
     private fun onAppleHit() {
-        apples++
-        appleTextView.text = apples.toString()
+        applesCount++
+        appleTextView.text = applesCount.toString()
         knifePreferences.edit().apply {
-            putInt("apple_amount", apples)
+            putInt("apple_amount", applesCount)
             apply()
         }
     }
@@ -486,7 +542,7 @@ class KnifeActivity : AppCompatActivity() {
 
     private fun passScore(score: Int) {
         knifePreferences.edit().apply {
-            putInt("apple_amount", apples)
+            putInt("apple_amount", applesCount)
             apply()
         }
         val data = Intent()

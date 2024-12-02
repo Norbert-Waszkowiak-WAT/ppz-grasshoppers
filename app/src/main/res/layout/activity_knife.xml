@@ -41,8 +41,8 @@
         android:layout_marginTop="16dp"
         android:textColor="#80FFFFFF"
         android:textSize="@dimen/best_score_size"
-        app:layout_constraintEnd_toEndOf="@+id/apple_text"
-        app:layout_constraintStart_toStartOf="@+id/score_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="0" />
 
@@ -70,6 +70,15 @@
         app:layout_constraintStart_toStartOf="parent">
 
     </LinearLayout>
-    <!-- TODO: Here add an apple / beer icon -->
+
+    <ImageView
+        android:id="@+id/appleBeerView"
+        android:layout_width="20dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="@id/apple_text"
+        app:layout_constraintEnd_toStartOf="@+id/apple_text"
+        app:layout_constraintTop_toTopOf="@id/apple_text"
+        app:srcCompat="@drawable/beer_apple" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
