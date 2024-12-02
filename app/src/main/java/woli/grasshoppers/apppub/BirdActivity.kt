@@ -271,19 +271,20 @@ class BirdActivity : AppCompatActivity() {
 
 
         val upperPipeHeight = Random.nextInt(randomFrom.toInt(), randomUntil.toInt())
-        upperPipe.y = 0f
-        lowerPipe.y = upperPipeHeight + pipeGapWidth - 2*foamHeight + 0f
 
-        val lowerParams = FrameLayout.LayoutParams(pipeWidth, screenHeight - lowerPipe.y.toInt())
-        val upperParams = FrameLayout.LayoutParams(pipeWidth, upperPipeHeight)
         runOnUiThread {
+            upperPipe.y = 0f
+            lowerPipe.y = upperPipeHeight + pipeGapWidth - 2 * foamHeight + 0f
+
+
+            val lowerParams = FrameLayout.LayoutParams(pipeWidth, screenHeight - lowerPipe.y.toInt())
+            val upperParams = FrameLayout.LayoutParams(pipeWidth, upperPipeHeight)
             lowerPipe.layoutParams = lowerParams
             upperPipe.layoutParams = upperParams
+
+            upperPipe.x = screenWidth + 0f
+            lowerPipe.x = screenWidth + 0f
         }
-
-
-        upperPipe.x = screenWidth + 0f
-        lowerPipe.x = screenWidth + 0f
 
         displayedPipes.add(upperPipe)
         displayedPipes.add(lowerPipe)
@@ -300,8 +301,10 @@ class BirdActivity : AppCompatActivity() {
         val upperPipe = displayedPipes[i]
         val lowerPipe = displayedPipes[i+1]
 
-        upperPipe.x = screenWidth + 0f
-        lowerPipe.x = screenWidth + 0f
+        runOnUiThread {
+            upperPipe.x = screenWidth + 0f
+            lowerPipe.x = screenWidth + 0f
+        }
 
 
         displayedPipes.remove(upperPipe)
@@ -326,11 +329,12 @@ class BirdActivity : AppCompatActivity() {
             endGame()
         }
 
-        if (birdVelocity < 0){
-            bird.rotation = 15f
-        }
-        else if (birdVelocity > 0){
-            bird.rotation = -15f
+        runOnUiThread {
+            if (birdVelocity < 0) {
+                bird.rotation = 15f
+            } else if (birdVelocity > 0) {
+                bird.rotation = -15f
+            }
         }
 
         runOnUiThread {
@@ -340,8 +344,10 @@ class BirdActivity : AppCompatActivity() {
 
         birdVelocity -= gravity
 
-        for (pipe in displayedPipes){
-            pipe.x -= speed
+        for (pipe in displayedPipes) {
+            runOnUiThread {
+                pipe.x -= speed
+            }
         }
 
         if (nextPipeTick == tickCount) {
@@ -381,7 +387,7 @@ class BirdActivity : AppCompatActivity() {
             i+=2
         }
 
-        this.runOnUiThread {
+        runOnUiThread {
             scoreView.text = score.toString()
         }
 
