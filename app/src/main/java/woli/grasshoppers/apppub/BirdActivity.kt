@@ -82,8 +82,8 @@ class BirdActivity : AppCompatActivity() {
             screenHeight += resources.getDimensionPixelSize(resourceId)
         }
 
-        birdHeight = dpToPx(75f).toInt()
-        birdWidth = dpToPx(52f).toInt()
+        birdHeight = dpToPx(52f).toInt()
+        birdWidth = dpToPx(75f).toInt()
         pipeWidth = dpToPx(100f).toInt()
         foamHeight = dpToPx(100f).toInt()
         foamOffset = dpToPx(50f).toInt()
