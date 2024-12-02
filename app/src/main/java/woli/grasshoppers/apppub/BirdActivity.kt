@@ -45,6 +45,7 @@ class BirdActivity : AppCompatActivity() {
     private var pipeWidth = 0
     private var foamHeight = 0
     private var foamOffset = 0
+    private var handleWidth = 0
     private var pipeGapWidth = 0f
     private var speed = 0
     private var gravity = 0f
@@ -86,6 +87,7 @@ class BirdActivity : AppCompatActivity() {
         pipeWidth = dpToPx(100f).toInt()
         foamHeight = dpToPx(100f).toInt()
         foamOffset = dpToPx(50f).toInt()
+        handleWidth = dpToPx(20f).toInt()
 
         difficulty = getDiff()
 
@@ -359,9 +361,6 @@ class BirdActivity : AppCompatActivity() {
         }
 
         if (bird.x + bird.width > upperPipe.x  && bird.x < upperPipe.x + upperPipe.width) {
-            if (bird.y < upperPipe.y + upperPipe.height - foamHeight || bird.y + bird.height > lowerPipe.y + foamHeight) {
-                endGame()
-            }
             isBetweenPipes = true
         } else if (isBetweenPipes) {
             score++
@@ -373,8 +372,8 @@ class BirdActivity : AppCompatActivity() {
             upperPipe = displayedPipes[i]
             lowerPipe = displayedPipes[i + 1]
 
-            if (bird.x + bird.width > upperPipe.x  && bird.x < upperPipe.x + upperPipe.width) {
-                if (bird.y < upperPipe.y + upperPipe.height - foamHeight || bird.y + bird.height > lowerPipe.y + foamHeight) {
+            if (bird.x + bird.width > upperPipe.x + handleWidth  && bird.x < upperPipe.x + upperPipe.width - handleWidth) {
+                if (bird.y < upperPipe.y + upperPipe.height - foamHeight - dpToPx(20f) || bird.y + bird.height > lowerPipe.y + foamHeight + dpToPx(20f)) {
                     endGame()
                 }
             }
