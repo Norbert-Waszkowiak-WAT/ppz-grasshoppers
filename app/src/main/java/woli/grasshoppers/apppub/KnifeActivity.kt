@@ -57,7 +57,6 @@ class KnifeActivity : AppCompatActivity() {
     //TODO: all images to pixelArt
     //TODO: shouldn't the target be removed from xml
     //TODO: UI -> arrow back
-    //TODO: apples to the surface of the target
     private var levelCount: Int = 0
     private val configuration = arrayOf(
         //knifeAmount, appleAmount, originalKnives, duration[ms], rotation[deg], movementType, variation
@@ -229,7 +228,7 @@ class KnifeActivity : AppCompatActivity() {
                 apples.forEachIndexed { index, apple ->
                     val centerX = target.x + target.width / 2
                     val centerY = target.y + target.height / 2
-                    val radius = target.width / 2
+                    val radius = target.width / 2 + apple.height / 2
                     val appleAngle = Math.toRadians(target.rotation.toDouble() + appleAngles[index])
 
                     val appleX = centerX + radius * cos(appleAngle).toFloat() - apple.width / 2
@@ -268,7 +267,7 @@ class KnifeActivity : AppCompatActivity() {
         startRotationAnimation()
     }
 
-    private fun createApples() { //TODO: odsunąć jabłka na powierzchnię tarczy (o połowę ich wysokości od środka tarczy)
+    private fun createApples() {
         val numberOfApples = appleAmount
         val angleIncrement = 360f / numberOfApples
 
@@ -291,7 +290,7 @@ class KnifeActivity : AppCompatActivity() {
 
             val centerX = target.x + target.width / 2
             val centerY = target.y + target.height / 2
-            val radius = target.width / 2
+            val radius = target.width / 2 + apple.height / 2
 
             val appleX = centerX + radius * cos(angle) - apple.width / 2
             val appleY = centerY + radius * sin(angle) - apple.height / 2
