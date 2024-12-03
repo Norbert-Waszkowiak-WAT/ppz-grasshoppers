@@ -1,5 +1,6 @@
 package woli.grasshoppers.apppub
 
+import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -7,6 +8,7 @@ import android.util.TypedValue
 import android.util.TypedValue.COMPLEX_UNIT_DIP
 import android.view.LayoutInflater
 import android.view.View
+import android.view.animation.LinearInterpolator
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -33,6 +35,7 @@ class BirdActivity : AppCompatActivity() {
 
     private var pipes = mutableListOf<View>()
     private var displayedPipes = mutableListOf<View>()
+    private var displayedPipesAnimators = mutableListOf<ObjectAnimator>()
 
     private var score = 0
     private var maxScore = 0
@@ -211,6 +214,13 @@ class BirdActivity : AppCompatActivity() {
             }
         }
 
+        for (animator in displayedPipesAnimators){
+            runOnUiThread {
+                animator.cancel()
+            }
+        }
+
+
         if (score > maxScore){
             maxScore = score
         }
@@ -286,8 +296,27 @@ class BirdActivity : AppCompatActivity() {
             lowerPipe.x = screenWidth + 0f
         }
 
+        var upperAnimator = ObjectAnimator.ofFloat(upperPipe, "translationX",
+            screenWidth.toFloat()+pipeWidth, -pipeWidth.toFloat()-10)
+        var lowerAnimator = ObjectAnimator.ofFloat(lowerPipe, "translationX",
+            screenWidth.toFloat()+pipeWidth, -pipeWidth.toFloat()-10)
+
+        upperAnimator.duration = (screenWidth.toLong() / speed) * 50
+        lowerAnimator.duration = (screenWidth.toLong() / speed) * 50
+
+        upperAnimator.interpolator = LinearInterpolator()
+        lowerAnimator.interpolator = LinearInterpolator()
+
+        runOnUiThread {
+            upperAnimator.start()
+            lowerAnimator.start()
+        }
+
         displayedPipes.add(upperPipe)
         displayedPipes.add(lowerPipe)
+
+        displayedPipesAnimators.add(upperAnimator)
+        displayedPipesAnimators.add(lowerAnimator)
 
         pipes.remove(upperPipe)
         pipes.remove(lowerPipe)
@@ -301,14 +330,22 @@ class BirdActivity : AppCompatActivity() {
         val upperPipe = displayedPipes[i]
         val lowerPipe = displayedPipes[i+1]
 
+        val upperAnimator = displayedPipesAnimators[i]
+        val lowerAnimator = displayedPipesAnimators[i+1]
+
         runOnUiThread {
+            upperAnimator.cancel()
+            lowerAnimator.cancel()
+
             upperPipe.x = screenWidth + 0f
             lowerPipe.x = screenWidth + 0f
         }
 
-
         displayedPipes.remove(upperPipe)
         displayedPipes.remove(lowerPipe)
+
+        displayedPipesAnimators.remove(upperAnimator)
+        displayedPipesAnimators.remove(lowerAnimator)
 
         pipes.add(upperPipe)
         pipes.add(lowerPipe)
@@ -343,12 +380,6 @@ class BirdActivity : AppCompatActivity() {
 
 
         birdVelocity -= gravity
-
-        for (pipe in displayedPipes) {
-            runOnUiThread {
-                pipe.x -= speed
-            }
-        }
 
         if (nextPipeTick == tickCount) {
             showPipe()
