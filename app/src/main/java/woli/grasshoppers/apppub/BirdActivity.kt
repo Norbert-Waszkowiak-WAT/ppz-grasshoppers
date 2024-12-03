@@ -113,7 +113,7 @@ class BirdActivity : AppCompatActivity() {
         val params1 = FrameLayout.LayoutParams(pipeWidth,pipeHeight)
         val params2 = FrameLayout.LayoutParams(pipeWidth,pipeHeight)
 
-        val pipeCount = 6
+        val pipeCount = screenWidth / pipeWidth + 1
         for (i in 1..pipeCount){
             val newPipe1 = LayoutInflater.from(this).inflate(R.layout.bird_pipe, null)
             val newPipe2 = LayoutInflater.from(this).inflate(R.layout.bird_pipe, null)
