@@ -12,7 +12,8 @@
         android:scaleType="fitXY"
         android:src="@drawable/bird_beer_foam"
         android:translationY="50dp"
-        android:translationZ="50dp" />
+        android:translationZ="50dp"
+        android:alpha="0.90"/>
 
     <ImageView
         android:layout_width="match_parent"
