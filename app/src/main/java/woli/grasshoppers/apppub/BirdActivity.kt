@@ -263,7 +263,7 @@ class BirdActivity : AppCompatActivity() {
         else {
             val lastUpperPipe = displayedPipes[displayedPipes.size-2]
 
-            val time = (screenWidth - lastUpperPipe.x - birdHeight) / speed
+            val time = (screenWidth - lastUpperPipe.x - birdWidth) / speed
             val maxFallDistance = (gravity * time * time) / 2
             val maxJumpDistance = jumpVelocity * time
 
