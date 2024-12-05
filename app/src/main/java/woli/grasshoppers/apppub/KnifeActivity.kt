@@ -459,7 +459,7 @@ class KnifeActivity : AppCompatActivity() {
                     override fun onAnimationStart(animation: Animator) {}
 
                     override fun onAnimationEnd(animation: Animator) {
-                        appleToDestroy.visibility = View.GONE //TODO: here index out of bound probably because of deleting apple 1 before apple 0
+                        appleToDestroy.visibility = View.GONE //TODO: here index out of bound probably because of deleting apple 1 before apple 0 or odwrotnie => not always true? Maybe kilkuktorne trafienie w one apple, may not work with every apple
                         appleAngles.removeAt(appleIndex)
                         apples.removeAt(appleIndex)
                     }
