@@ -1,6 +1,7 @@
 package woli.grasshoppers.apppub
 
 import android.animation.Animator
+import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -24,8 +25,9 @@ import androidx.core.view.get
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.random.Random
 
-//TODO list: apples, difficulty, ładne odbijanie noża, apples animation when hit, czemu czasami noże zachodzą na oryginalne, czy appleHit działa, co z liczeniem jabek when closed by square and swipe
+//TODO list: apples, difficulty, ładne odbijanie noża, apples animation when hit, czemu czasami noże zachodzą na oryginalne
 
 class KnifeActivity : AppCompatActivity() {
 
@@ -76,6 +78,7 @@ class KnifeActivity : AppCompatActivity() {
     //TODO: what's happening with apple counting
     //TODO: no knife collisions
     //TODO: pass score and apples when closed by square and swipe
+    //TODO: zapisywanie jabłek podczas square and swipe oraz sleep button
     private var levelCount: Int = 0
     private val configuration = arrayOf(
         //knifeAmount, appleAmount, originalKnives, duration[ms], rotation[deg], movementType, variation
@@ -331,6 +334,7 @@ class KnifeActivity : AppCompatActivity() {
                     val density = resources.displayMetrics.density
                     width = (50 * density).toInt()
                     height = (50 * density).toInt()
+                    translationZ = 2F
                 }
                 setImageResource(R.drawable.beer_apple)
                 visibility = View.VISIBLE
@@ -512,7 +516,7 @@ class KnifeActivity : AppCompatActivity() {
             /*val appleBounds = Rect()
             appleToDestroy.getGlobalVisibleRect(appleBounds)*/
 
-            if (knifeAngle in (applePos - appleTolerance)..(applePos + appleTolerance)) {// || Rect.intersects(appleBounds, knifeBounds)) {
+            /*if (knifeAngle in (applePos - appleTolerance)..(applePos + appleTolerance)) {// || Rect.intersects(appleBounds, knifeBounds)) {
                 appleToDestroy.setImageResource(R.drawable.beer_apple_squished)
                 onAppleHit()
 
@@ -523,6 +527,7 @@ class KnifeActivity : AppCompatActivity() {
                     appleToDestroy.translationY + screenView.height
                 )
                 appleAnimator.duration = 750
+                appleAnimator.interpolator = AccelerateInterpolator()
 
                 appleAnimator.addListener(object : Animator.AnimatorListener {
                     override fun onAnimationStart(animation: Animator) {}
@@ -542,6 +547,82 @@ class KnifeActivity : AppCompatActivity() {
                 apples.removeAt(appleIndex)
 
                 appleAnimator.start()
+
+                break
+            }*/
+            if (knifeAngle in (applePos - appleTolerance)..(applePos + appleTolerance)) {
+                appleToDestroy.setImageResource(R.drawable.beer_apple_squished)
+                onAppleHit()
+
+                // Losowy kąt w lewo lub w prawo
+                val randomOffset = Random.nextInt(-100, 100) // Zmienna do losowego przesunięcia w poziomie
+
+                // Animacja podskoku
+                val jumpAnimator = ObjectAnimator.ofFloat(
+                    appleToDestroy,
+                    "translationY",
+                    appleToDestroy.translationY,
+                    appleToDestroy.translationY - 150 // Wysokość podskoku
+                )
+
+                val jumpXAnimator = ObjectAnimator.ofFloat(
+                    appleToDestroy,
+                    "translationX",
+                    appleToDestroy.translationX,
+                    appleToDestroy.translationX + randomOffset // Losowe przesunięcie w poziomie
+                )
+
+                // Animacja spadania
+                val fallAnimator = ObjectAnimator.ofFloat(
+                    appleToDestroy,
+                    "translationY",
+                    appleToDestroy.translationY - 150, // Zaczyna się z wysokości podskoku
+                    appleToDestroy.translationY + screenView.height // Kończy się na dole ekranu
+                )
+
+                val fallXAnimator = ObjectAnimator.ofFloat(
+                    appleToDestroy,
+                    "translationX",
+                    appleToDestroy.translationX + randomOffset,
+                    appleToDestroy.translationX + 2 * randomOffset
+                )
+
+                // Ustawienie czasu trwania
+                jumpAnimator.duration = 200 // Czas podskoku
+                fallAnimator.duration = 750 // Czas spadania
+
+                // Ustawienie interpolatora
+                jumpAnimator.interpolator = DecelerateInterpolator()
+                fallAnimator.interpolator = AccelerateInterpolator()
+
+                // Ustawienie AnimatorSet
+                val animatorSet = AnimatorSet()
+                //animatorSet.playSequentially(jumpXAnimator, jumpAnimator, fallAnimator)
+                animatorSet.playTogether(jumpXAnimator, jumpAnimator)
+                animatorSet.playTogether(fallAnimator, fallXAnimator)
+                animatorSet.play(fallAnimator).after(jumpAnimator)
+
+                // Dodanie listenera do animatora
+                animatorSet.addListener(object : Animator.AnimatorListener {
+                    override fun onAnimationStart(animation: Animator) {}
+
+                    override fun onAnimationEnd(animation: Animator) {
+                        appleToDestroy.visibility = View.GONE
+                        //appleAngles.removeAt(appleIndex)
+                        //apples.removeAt(appleIndex)
+                    }
+
+                    override fun onAnimationCancel(animation: Animator) {}
+
+                    override fun onAnimationRepeat(animation: Animator) {}
+                })
+
+                // Usunięcie jabłka z listy
+                appleAngles.removeAt(appleIndex)
+                apples.removeAt(appleIndex)
+
+                // Rozpoczęcie animacji
+                animatorSet.start()
 
                 break
             }
