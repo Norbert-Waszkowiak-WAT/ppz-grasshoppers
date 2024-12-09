@@ -27,13 +27,9 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
 
-//TODO list: apples, difficulty, ładne odbijanie noża, apples animation when hit, czemu czasami noże zachodzą na oryginalne
+//TODO list: apples, difficulty, ładne odbijanie noża, czemu czasami noże zachodzą na oryginalne
 
 class KnifeActivity : AppCompatActivity() {
-
-    /*private val knifePreferences by lazy {
-        getSharedPreferences("knife_prefs", Context.MODE_PRIVATE)
-    }*/
 
     enum class Signal {
         INIT,
@@ -50,6 +46,7 @@ class KnifeActivity : AppCompatActivity() {
     private lateinit var gameOverLayout: ConstraintLayout
     private lateinit var gameOverScoreTextView: TextView
     private lateinit var gameOverStageTextView: TextView
+    private lateinit var animator: ObjectAnimator
     private var score = 0
     private var applesCount = 0
     private var diffLevel: Int = 50
@@ -64,22 +61,15 @@ class KnifeActivity : AppCompatActivity() {
     private val tolerance = 15.0
     private val appleTolerance = 15.0
     private var knivesAmount: Int = 1
-
-    //TODO: limit after the end of levels to end the whole game
-    //TODO: all images to pixelArt
-    //TODO: shouldn't the target be removed from xml
-    //TODO: czemu czasami kolizje noży nie mają efektu?
-    //TODO: death screen + success screen
-    //TODO: może współczynnik trudności reguluje ilość jabłek potrzebnych do kontynuacji
-    //TODO: apples amount to pref should be saved in only one place and retrieved in only one place, rest by variable => doesn't work
-    //TODO: MAJOR ERROR: why doesn't the apple count always keep updated
-    //TODO: clean the code
-    //TODO: apply() => commit() doesn't solve the issue => maybe bring the value to master level => pass in intent to master and save there, pass as a start argument with getApple()
-    //TODO: what's happening with apple counting
-    //TODO: no knife collisions
-    //TODO: pass score and apples when closed by square and swipe
-    //TODO: zapisywanie jabłek podczas square and swipe oraz sleep button
     private var levelCount: Int = 0
+    private var knifeThrown: Boolean = false
+    private var knifeAmount: Int = 1
+    private var appleAmount: Int = 0
+    private var originalKnives: Int = 0
+    private var duration: Int = 0
+    private var rotation: Int = 0
+    private var movementType: Int = 0
+    private var variation: Int = 0
     private val configuration = arrayOf(
         //knifeAmount, appleAmount, originalKnives, duration[ms], rotation[deg], movementType, variation
         arrayOf(7, 1, 0, 2000, 360, 0, 1),//1
@@ -103,22 +93,24 @@ class KnifeActivity : AppCompatActivity() {
         arrayOf(12, 4, 2, 3000, 215, 3, 1),//19
         arrayOf(10, 10, 0, 4000, 395, 3, -1)//20 TODO:add more levels
     )
-    private var knifeThrown: Boolean = false
-    private lateinit var animator: ObjectAnimator
-    private var knifeAmount: Int = 1
-    private var appleAmount: Int = 0
-    private var originalKnives: Int = 0
-    private var duration: Int = 0
-    private var rotation: Int = 0
-    private var movementType: Int = 0
-    private var variation: Int = 0
+
+    //TODO: limit after the end of levels to end the whole game
+    //TODO: all images to pixelArt
+    //TODO: shouldn't the target be removed from xml
+    //TODO: czemu czasami kolizje noży nie mają efektu?
+    //TODO: death screen + success screen
+    //TODO: może współczynnik trudności reguluje ilość jabłek potrzebnych do kontynuacji
+    //TODO: clean the code
+    //TODO: what's happening with apple counting
+    //TODO: pass score and apples when closed by square and swipe
+    //TODO: zapisywanie jabłek podczas square and swipe oraz sleep button
+    //TODO: with atan2 second argument is always 0 which means that the whole value is always 90
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_knife)
 
         hideSystemBars()
-        //diffLevel = getDiff()
         diffLevel = intent.getIntExtra("knife_diff", 50)
         initLevel(levelCount)
 
@@ -130,7 +122,6 @@ class KnifeActivity : AppCompatActivity() {
             }
         })
 
-        //applesCount = getApple()
         applesCount = intent.getIntExtra("apple_amount", 0)
         appleTextView.text = applesCount.toString()
     }
@@ -479,6 +470,7 @@ class KnifeActivity : AppCompatActivity() {
                         knifeThrown = false
                         //TODO: jakieś zakończenie lub możliwość kontynuowania za piwa -> ilość piw zależna od współczynnika trudności
                         //TODO: pause target and knife and apple rotation -> continue later on when continuing
+                        //TODO: show the next knife and make it usable and controll left side small icons
                         gameOverStageTextView.text = "Stage: " + (levelCount + 1).toString()
                         gameOverScoreTextView.text = score.toString()
                         gameOverLayout.visibility = View.VISIBLE
@@ -513,71 +505,31 @@ class KnifeActivity : AppCompatActivity() {
             val appleIndex = appleAngles.indexOf(applePos)
             val appleToDestroy = apples[appleIndex]
 
-            /*val appleBounds = Rect()
-            appleToDestroy.getGlobalVisibleRect(appleBounds)*/
-
-            /*if (knifeAngle in (applePos - appleTolerance)..(applePos + appleTolerance)) {// || Rect.intersects(appleBounds, knifeBounds)) {
-                appleToDestroy.setImageResource(R.drawable.beer_apple_squished)
-                onAppleHit()
-
-                val appleAnimator = ObjectAnimator.ofFloat(
-                    appleToDestroy,
-                    "translationY",
-                    appleToDestroy.translationY,
-                    appleToDestroy.translationY + screenView.height
-                )
-                appleAnimator.duration = 750
-                appleAnimator.interpolator = AccelerateInterpolator()
-
-                appleAnimator.addListener(object : Animator.AnimatorListener {
-                    override fun onAnimationStart(animation: Animator) {}
-
-                    override fun onAnimationEnd(animation: Animator) {
-                        appleToDestroy.visibility = View.GONE
-                        //appleAngles.removeAt(appleIndex)
-                        //apples.removeAt(appleIndex)
-                    }
-
-                    override fun onAnimationCancel(animation: Animator) {}
-
-                    override fun onAnimationRepeat(animation: Animator) {}
-                })
-
-                appleAngles.removeAt(appleIndex)
-                apples.removeAt(appleIndex)
-
-                appleAnimator.start()
-
-                break
-            }*/
             if (knifeAngle in (applePos - appleTolerance)..(applePos + appleTolerance)) {
                 appleToDestroy.setImageResource(R.drawable.beer_apple_squished)
                 onAppleHit()
 
-                // Losowy kąt w lewo lub w prawo
-                val randomOffset = Random.nextInt(-100, 100) // Zmienna do losowego przesunięcia w poziomie
+                val randomOffset = Random.nextInt(-100, 100)
 
-                // Animacja podskoku
                 val jumpAnimator = ObjectAnimator.ofFloat(
                     appleToDestroy,
                     "translationY",
                     appleToDestroy.translationY,
-                    appleToDestroy.translationY - 150 // Wysokość podskoku
+                    appleToDestroy.translationY - 150
                 )
 
                 val jumpXAnimator = ObjectAnimator.ofFloat(
                     appleToDestroy,
                     "translationX",
                     appleToDestroy.translationX,
-                    appleToDestroy.translationX + randomOffset // Losowe przesunięcie w poziomie
+                    appleToDestroy.translationX + randomOffset
                 )
 
-                // Animacja spadania
                 val fallAnimator = ObjectAnimator.ofFloat(
                     appleToDestroy,
                     "translationY",
-                    appleToDestroy.translationY - 150, // Zaczyna się z wysokości podskoku
-                    appleToDestroy.translationY + screenView.height // Kończy się na dole ekranu
+                    appleToDestroy.translationY - 150,
+                    appleToDestroy.translationY + screenView.height
                 )
 
                 val fallXAnimator = ObjectAnimator.ofFloat(
@@ -587,29 +539,22 @@ class KnifeActivity : AppCompatActivity() {
                     appleToDestroy.translationX + 2 * randomOffset
                 )
 
-                // Ustawienie czasu trwania
-                jumpAnimator.duration = 200 // Czas podskoku
-                fallAnimator.duration = 750 // Czas spadania
+                jumpAnimator.duration = 200
+                fallAnimator.duration = 750
 
-                // Ustawienie interpolatora
                 jumpAnimator.interpolator = DecelerateInterpolator()
                 fallAnimator.interpolator = AccelerateInterpolator()
 
-                // Ustawienie AnimatorSet
                 val animatorSet = AnimatorSet()
-                //animatorSet.playSequentially(jumpXAnimator, jumpAnimator, fallAnimator)
                 animatorSet.playTogether(jumpXAnimator, jumpAnimator)
                 animatorSet.playTogether(fallAnimator, fallXAnimator)
                 animatorSet.play(fallAnimator).after(jumpAnimator)
 
-                // Dodanie listenera do animatora
                 animatorSet.addListener(object : Animator.AnimatorListener {
                     override fun onAnimationStart(animation: Animator) {}
 
                     override fun onAnimationEnd(animation: Animator) {
                         appleToDestroy.visibility = View.GONE
-                        //appleAngles.removeAt(appleIndex)
-                        //apples.removeAt(appleIndex)
                     }
 
                     override fun onAnimationCancel(animation: Animator) {}
@@ -617,11 +562,9 @@ class KnifeActivity : AppCompatActivity() {
                     override fun onAnimationRepeat(animation: Animator) {}
                 })
 
-                // Usunięcie jabłka z listy
                 appleAngles.removeAt(appleIndex)
                 apples.removeAt(appleIndex)
 
-                // Rozpoczęcie animacji
                 animatorSet.start()
 
                 break
@@ -638,25 +581,19 @@ class KnifeActivity : AppCompatActivity() {
 
             val centerX = target.x + target.width / 2
             val centerY = target.y + target.height / 2
-            val dx =
-                knifeToCheck.x + knifeToCheck.width / 2 - centerX //TODO: isn't it theoretically always 0?
-            val dy =
-                knifeToCheck.y + knifeToCheck.height / 2 - centerY//TODO: theoretically if the knife is 1/2 way in then it's equal to the radius -> const
+            val dx = knifeToCheck.x + knifeToCheck.width / 2 - centerX //TODO: always 0
+            val dy = knifeToCheck.y + knifeToCheck.height / 2 - centerY//TODO: const for each level: 1: 157 other: 159
 
-            val relativeAngle =
-                Math.toDegrees(atan2(dy.toDouble(), dx.toDouble())).toFloat()//TODO: always 0?
-            knifeAngle =
-                (relativeAngle - target.rotation/* * (target.rotation.absoluteValue / target.rotation) */) % 360 //TODO: is that modulo necessary?
+            val relativeAngle = Math.toDegrees(atan2(dy.toDouble(), dx.toDouble())).toFloat()//TODO: always 90
+            knifeAngle = (relativeAngle - target.rotation) % 360 //TODO: is that modulo necessary?
             if (knifeAngle < 0) {
                 knifeAngle += 360
             }
             knifeAngles.add(knifeAngle)
 
             val radius = target.width / 2
-            val knifeX =
-                centerX + radius * cos(Math.toRadians((knifeAngle + target.rotation).toDouble())).toFloat() - knifeToCheck.width / 2
-            val knifeY =
-                centerY + radius * sin(Math.toRadians((knifeAngle + target.rotation).toDouble())).toFloat() - knifeToCheck.height / 2
+            val knifeX = centerX + radius * cos(Math.toRadians((knifeAngle + target.rotation).toDouble())).toFloat() - knifeToCheck.width / 2
+            val knifeY = centerY + radius * sin(Math.toRadians((knifeAngle + target.rotation).toDouble())).toFloat() - knifeToCheck.height / 2
 
             knifeToCheck.x = knifeX
             knifeToCheck.y = knifeY
@@ -731,11 +668,6 @@ class KnifeActivity : AppCompatActivity() {
     private fun onAppleHit() {
         applesCount++
         appleTextView.text = applesCount.toString()
-        /*knifePreferences.edit().apply {
-            putInt("apple_amount", applesCount)
-            //apply()
-            commit()
-        }*/
     }
 
     private fun onLevelUp() {
@@ -746,11 +678,6 @@ class KnifeActivity : AppCompatActivity() {
     @Suppress("DEPRECATION")
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-        /*knifePreferences.edit().apply {
-            putInt("apple_amount", applesCount)
-            //apply()
-            commit()
-        }*/
         passScore(score)
         clearLevel(Signal.EXIT)
         super.onBackPressed()
@@ -776,24 +703,10 @@ class KnifeActivity : AppCompatActivity() {
     }
 
     private fun passScore(score: Int) {
-        /*knifePreferences.edit().apply {
-            putInt("apple_amount", applesCount)
-            //apply()
-            commit()
-        }*/
         val data = Intent()
         data.putExtra("score", score.toString())
         data.putExtra("apple_amount", applesCount)
         setResult(Activity.RESULT_OK, data)
         finish()
-    }
-
-    private fun getDiff(): Int {
-        return intent.getIntExtra("knife_diff", 50)
-    }
-
-    private fun getApple(): Int {
-        //return knifePreferences.getInt("apple_amount", 0)
-        return intent.getIntExtra("apple_amount", 0)
     }
 }
