@@ -1,5 +1,6 @@
 package woli.grasshoppers.apppub
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
@@ -24,10 +25,16 @@ import android.widget.SeekBar
 import android.widget.ImageButton
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
+//TODO: clear the code
+
 class MainActivity : AppCompatActivity() {
 
     private val sharedPreferences by lazy {
         getSharedPreferences("streak_prefs", Context.MODE_PRIVATE)
+    }
+
+    private val knifePreferences by lazy {
+        getSharedPreferences("knife_preferences", Context.MODE_PRIVATE)
     }
 
     private val client = OkHttpClient()
@@ -52,9 +59,13 @@ class MainActivity : AppCompatActivity() {
     private var birdDiff: Int = 0
     private var pacmanDiff: Int = 0
 
+    private var knifeApples: Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        knifeApples = knifePreferences.getInt("apple_amount", 0)
 
         initUIElements()
 
@@ -65,6 +76,7 @@ class MainActivity : AppCompatActivity() {
         setOnClickListeners()
     }
 
+    @SuppressLint("SetTextI18n")
     private fun handleJokes() {
         jokeTxt.text = "Lołding jor dżołk"
         if (isNetworkAvailable()) {
@@ -74,6 +86,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initUIElements() {
         birdButton = findViewById(R.id.buttonBird)
         knifeButton = findViewById(R.id.buttonKnife)
@@ -129,6 +142,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updateStreakUI(streakCount: Int) {
         streakImg.visibility = View.VISIBLE
         streakTxt.visibility = View.VISIBLE
@@ -141,6 +155,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun setOnClickListeners() {
         birdButton.setOnClickListener {
             val intent = Intent(this, BirdActivity::class.java)
@@ -151,6 +166,7 @@ class MainActivity : AppCompatActivity() {
         knifeButton.setOnClickListener {
             val intent = Intent(this, KnifeActivity::class.java)
             intent.putExtra("knife_diff", knifeDiff)
+            intent.putExtra("apple_amount", knifeApples)
             startActivityForResult(intent, 1)
         }
 
@@ -191,6 +207,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -222,10 +239,18 @@ class MainActivity : AppCompatActivity() {
                         sharedPreferences.edit().apply {
                             putInt(
                                 "knife_best_score",
-                                data.getStringExtra("score").toString().toInt()
+                                data.getIntExtra("score", 0)
                             )
                             apply()
                         }
+                    }
+                    knifeApples = data.getIntExtra("apple_amount", 0)
+                    knifePreferences.edit().apply {
+                        putInt(
+                            "apple_amount",
+                            knifeApples
+                        )
+                        apply()
                     }
                 }
             }
@@ -286,7 +311,7 @@ class MainActivity : AppCompatActivity() {
         val current = dateFormat.parse(currentDate)
 
         val calendar = Calendar.getInstance()
-        calendar.time = last
+        calendar.time = last as Date
         calendar.add(Calendar.DAY_OF_YEAR, 1)
 
         return current == calendar.time
@@ -296,6 +321,7 @@ class MainActivity : AppCompatActivity() {
         return lastDate == currentDate
     }
 
+    @Suppress("DEPRECATION")
     private fun hideSystemBars() {
         window.decorView.systemUiVisibility = (
                 View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
@@ -345,6 +371,7 @@ class MainActivity : AppCompatActivity() {
         showJoke(jokeText)
     }
 
+    @Suppress("SameParameterValue")
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
@@ -362,6 +389,7 @@ class MainActivity : AppCompatActivity() {
         return networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
     }
 
+    @SuppressLint("InflateParams")
     private fun showBottomSheetMenu() {
         val bottomSheetDialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.bottom_sheet_menu, null)
