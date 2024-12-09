@@ -2,8 +2,8 @@ package woli.grasshoppers.apppub
 
 import android.animation.Animator
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
@@ -25,13 +25,13 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 
-//TODO list: apples, difficulty, ładne odbijanie noża, apples animation when hit, czemu czasami noże zachodzą na oryginalne, czy appleHit działa
+//TODO list: apples, difficulty, ładne odbijanie noża, apples animation when hit, czemu czasami noże zachodzą na oryginalne, czy appleHit działa, co z liczeniem jabek when closed by square and swipe
 
 class KnifeActivity : AppCompatActivity() {
 
-    private val knifePreferences by lazy {
+    /*private val knifePreferences by lazy {
         getSharedPreferences("knife_prefs", Context.MODE_PRIVATE)
-    }
+    }*/
 
     enum class Signal {
         INIT,
@@ -44,6 +44,10 @@ class KnifeActivity : AppCompatActivity() {
     private lateinit var screenView: View
     private lateinit var levelTextView: TextView
     private lateinit var linearLayout: LinearLayout
+    private lateinit var backArrow: ImageView
+    private lateinit var gameOverLayout: ConstraintLayout
+    private lateinit var gameOverScoreTextView: TextView
+    private lateinit var gameOverStageTextView: TextView
     private var score = 0
     private var applesCount = 0
     private var diffLevel: Int = 50
@@ -58,14 +62,20 @@ class KnifeActivity : AppCompatActivity() {
     private val tolerance = 15.0
     private val appleTolerance = 15.0
     private var knivesAmount: Int = 1
+
     //TODO: limit after the end of levels to end the whole game
     //TODO: all images to pixelArt
     //TODO: shouldn't the target be removed from xml
-    //TODO: UI -> arrow back
-    //TODO: onHit knife to apple
-    //TODO: check apple hit: does it work
-    //TODO: czemu po zrzuceniu puszka jeszcze się pojawia, czemu tak dziwnie z kątami, zmienić grafikę, czemu się zatrzymuje po zrzuceniu jednej puszki
-    //TODO: MAJOR ERROR: usunięcie jabłek się psuje ponieważ List się przesuwa recreate at boss levels
+    //TODO: czemu czasami kolizje noży nie mają efektu?
+    //TODO: death screen + success screen
+    //TODO: może współczynnik trudności reguluje ilość jabłek potrzebnych do kontynuacji
+    //TODO: apples amount to pref should be saved in only one place and retrieved in only one place, rest by variable => doesn't work
+    //TODO: MAJOR ERROR: why doesn't the apple count always keep updated
+    //TODO: clean the code
+    //TODO: apply() => commit() doesn't solve the issue => maybe bring the value to master level => pass in intent to master and save there, pass as a start argument with getApple()
+    //TODO: what's happening with apple counting
+    //TODO: no knife collisions
+    //TODO: pass score and apples when closed by square and swipe
     private var levelCount: Int = 0
     private val configuration = arrayOf(
         //knifeAmount, appleAmount, originalKnives, duration[ms], rotation[deg], movementType, variation
@@ -105,18 +115,27 @@ class KnifeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_knife)
 
         hideSystemBars()
-        diffLevel = getDiff()
+        //diffLevel = getDiff()
+        diffLevel = intent.getIntExtra("knife_diff", 50)
         initLevel(levelCount)
 
-        target.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+        target.viewTreeObserver.addOnGlobalLayoutListener(object :
+            ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 targetY = target.top
                 target.viewTreeObserver.removeOnGlobalLayoutListener(this)
             }
         })
 
-        applesCount = getApple()
+        //applesCount = getApple()
+        applesCount = intent.getIntExtra("apple_amount", 0)
         appleTextView.text = applesCount.toString()
+    }
+
+    @Suppress("DEPRECATION")
+    override fun onDestroy() {
+        onBackPressed()
+        super.onDestroy()
     }
 
     private fun initLevel(levelIndex: Int) {
@@ -149,8 +168,14 @@ class KnifeActivity : AppCompatActivity() {
         screenView = findViewById(R.id.screen_view)
         levelTextView = findViewById(R.id.level_text)
         linearLayout = findViewById(R.id.linear_layout)
+        backArrow = findViewById(R.id.backView)
+        gameOverLayout = findViewById(R.id.gameOverLayout)
+        gameOverScoreTextView = findViewById(R.id.gameOverScoreText)
+        gameOverStageTextView = findViewById(R.id.gameOverStageText)
 
         target.visibility = View.VISIBLE
+        gameOverLayout.visibility = View.GONE
+        gameOverLayout.isClickable = false
 
         for (i in 0 until knivesAmount) {
             val newKnife = ImageView(this).apply {
@@ -195,9 +220,18 @@ class KnifeActivity : AppCompatActivity() {
                 throwKnife(knives[currentKnifeIndex])
             }
         }
+
+        backArrow.setOnClickListener {
+            @Suppress("DEPRECATION")
+            onBackPressed()
+        }
     }
 
-    private fun initTarget(duration: Long, rotation: Float, movementType: Int) { //TODO: pewnie tutaj jedno z kilku użyć współczynnika trudności
+    private fun initTarget(
+        duration: Long,
+        rotation: Float,
+        movementType: Int
+    ) { //TODO: pewnie tutaj jedno z kilku użyć współczynnika trudności
         var finalRotation = if ((0..1).random() == 0) rotation else -rotation
         val interpolator = when (movementType) {
             0 -> LinearInterpolator()
@@ -214,7 +248,12 @@ class KnifeActivity : AppCompatActivity() {
         fun startRotationAnimation() { //TODO: współczynnik trudności reguluje np. ilość obrotów do czasu
             val currentRotation = target.rotation
             finalRotation *= variation
-            animator = ObjectAnimator.ofFloat(target, "rotation", currentRotation, currentRotation + finalRotation)
+            animator = ObjectAnimator.ofFloat(
+                target,
+                "rotation",
+                currentRotation,
+                currentRotation + finalRotation
+            )
             animator.duration = duration
             animator.interpolator = interpolator
 
@@ -224,7 +263,8 @@ class KnifeActivity : AppCompatActivity() {
                     val centerY = target.y + target.height / 2
                     val radius = target.width / 2
 
-                    val currentAngle = Math.toRadians(target.rotation.toDouble() + knifeAngles[index])
+                    val currentAngle =
+                        Math.toRadians(target.rotation.toDouble() + knifeAngles[index])
 
                     val knifeX = centerX + radius * cos(currentAngle).toFloat() - knife.width / 2
                     val knifeY = centerY + radius * sin(currentAngle).toFloat() - knife.height / 2
@@ -270,7 +310,8 @@ class KnifeActivity : AppCompatActivity() {
         target.x = (screenWidth / 2 - targetWidth / 2).toFloat()
 
         val screenHeight = screenView.height
-        target.y = (screenHeight * 37 / 100 - target.height / 2).toFloat() //TODO: for some reason has no impact on the first level probably because of its existence in xml -> maybe delete it in xml
+        target.y =
+            (screenHeight * 37 / 100 - target.height / 2).toFloat() //TODO: for some reason has no impact on the first level probably because of its existence in xml -> maybe delete it in xml
 
         target.visibility = View.VISIBLE
 
@@ -337,8 +378,10 @@ class KnifeActivity : AppCompatActivity() {
             val centerX = target.x + target.width / 2
             val centerY = target.y + target.height / 2
             val radius = target.width / 2
-            val knifeX = centerX + radius * cos(Math.toRadians(angle.toDouble())).toFloat() - originalKnife.width / 2
-            val knifeY = centerY + radius * sin(Math.toRadians(angle.toDouble())).toFloat() - originalKnife.height / 2
+            val knifeX =
+                centerX + radius * cos(Math.toRadians(angle.toDouble())).toFloat() - originalKnife.width / 2
+            val knifeY =
+                centerY + radius * sin(Math.toRadians(angle.toDouble())).toFloat() - originalKnife.height / 2
 
             originalKnife.x = knifeX
             originalKnife.y = knifeY
@@ -400,9 +443,24 @@ class KnifeActivity : AppCompatActivity() {
                 val targetX = knifeToCheck.x + offsetX
                 val targetY = knifeToCheck.y + offsetY
 
-                val knifeAnimator = ObjectAnimator.ofFloat(knifeToCheck, "translationX", knifeToCheck.translationX, targetX)
-                val knifeAnimatorY = ObjectAnimator.ofFloat(knifeToCheck, "translationY", knifeToCheck.translationY, targetY)
-                val rotationAnimator = ObjectAnimator.ofFloat(knifeToCheck, "rotation", knifeToCheck.rotation, knifeToCheck.rotation + 720)
+                val knifeAnimator = ObjectAnimator.ofFloat(
+                    knifeToCheck,
+                    "translationX",
+                    knifeToCheck.translationX,
+                    targetX
+                )
+                val knifeAnimatorY = ObjectAnimator.ofFloat(
+                    knifeToCheck,
+                    "translationY",
+                    knifeToCheck.translationY,
+                    targetY
+                )
+                val rotationAnimator = ObjectAnimator.ofFloat(
+                    knifeToCheck,
+                    "rotation",
+                    knifeToCheck.rotation,
+                    knifeToCheck.rotation + 720
+                )
 
                 knifeAnimator.duration = 500
                 knifeAnimatorY.duration = 500
@@ -411,10 +469,16 @@ class KnifeActivity : AppCompatActivity() {
                 knifeAnimator.addListener(object : Animator.AnimatorListener {
                     override fun onAnimationStart(animation: Animator) {}
 
+                    @SuppressLint("SetTextI18n")
                     override fun onAnimationEnd(animation: Animator) {
                         knifeToCheck.visibility = View.GONE
                         knifeThrown = false
-                        //TODO: jakieś zakończenie lub możliwość kontynuowania za piwa
+                        //TODO: jakieś zakończenie lub możliwość kontynuowania za piwa -> ilość piw zależna od współczynnika trudności
+                        //TODO: pause target and knife and apple rotation -> continue later on when continuing
+                        gameOverStageTextView.text = "Stage: " + (levelCount + 1).toString()
+                        gameOverScoreTextView.text = score.toString()
+                        gameOverLayout.visibility = View.VISIBLE
+                        gameOverLayout.isClickable = true
                     }
 
                     override fun onAnimationCancel(animation: Animator) {}
@@ -445,23 +509,28 @@ class KnifeActivity : AppCompatActivity() {
             val appleIndex = appleAngles.indexOf(applePos)
             val appleToDestroy = apples[appleIndex]
 
-            val appleBounds = Rect()
-            appleToDestroy.getGlobalVisibleRect(appleBounds)
+            /*val appleBounds = Rect()
+            appleToDestroy.getGlobalVisibleRect(appleBounds)*/
 
-            if (knifeAngle in (applePos - appleTolerance)..(applePos + appleTolerance)){// || Rect.intersects(appleBounds, knifeBounds)) {
+            if (knifeAngle in (applePos - appleTolerance)..(applePos + appleTolerance)) {// || Rect.intersects(appleBounds, knifeBounds)) {
                 appleToDestroy.setImageResource(R.drawable.beer_apple_squished)
                 onAppleHit()
 
-                val appleAnimator = ObjectAnimator.ofFloat(appleToDestroy, "translationY", appleToDestroy.translationY, appleToDestroy.translationY + screenView.height)
+                val appleAnimator = ObjectAnimator.ofFloat(
+                    appleToDestroy,
+                    "translationY",
+                    appleToDestroy.translationY,
+                    appleToDestroy.translationY + screenView.height
+                )
                 appleAnimator.duration = 750
 
                 appleAnimator.addListener(object : Animator.AnimatorListener {
                     override fun onAnimationStart(animation: Animator) {}
 
                     override fun onAnimationEnd(animation: Animator) {
-                        appleToDestroy.visibility = View.GONE //TODO: here index out of bound probably because of deleting apple 1 before apple 0 or odwrotnie => not always true? Maybe kilkuktorne trafienie w one apple, may not work with every apple
-                        appleAngles.removeAt(appleIndex)
-                        apples.removeAt(appleIndex)
+                        appleToDestroy.visibility = View.GONE
+                        //appleAngles.removeAt(appleIndex)
+                        //apples.removeAt(appleIndex)
                     }
 
                     override fun onAnimationCancel(animation: Animator) {}
@@ -469,7 +538,12 @@ class KnifeActivity : AppCompatActivity() {
                     override fun onAnimationRepeat(animation: Animator) {}
                 })
 
+                appleAngles.removeAt(appleIndex)
+                apples.removeAt(appleIndex)
+
                 appleAnimator.start()
+
+                break
             }
         }
 
@@ -483,19 +557,25 @@ class KnifeActivity : AppCompatActivity() {
 
             val centerX = target.x + target.width / 2
             val centerY = target.y + target.height / 2
-            val dx = knifeToCheck.x + knifeToCheck.width / 2 - centerX //TODO: isn't it theoretically always 0?
-            val dy = knifeToCheck.y + knifeToCheck.height / 2 - centerY//TODO: theoretically if the knife is 1/2 way in then it's equal to the radius -> const
+            val dx =
+                knifeToCheck.x + knifeToCheck.width / 2 - centerX //TODO: isn't it theoretically always 0?
+            val dy =
+                knifeToCheck.y + knifeToCheck.height / 2 - centerY//TODO: theoretically if the knife is 1/2 way in then it's equal to the radius -> const
 
-            val relativeAngle = Math.toDegrees(atan2(dy.toDouble(), dx.toDouble())).toFloat()//TODO: always 0?
-            knifeAngle = (relativeAngle - target.rotation/* * (target.rotation.absoluteValue / target.rotation) */) % 360 //TODO: is that modulo necessary?
+            val relativeAngle =
+                Math.toDegrees(atan2(dy.toDouble(), dx.toDouble())).toFloat()//TODO: always 0?
+            knifeAngle =
+                (relativeAngle - target.rotation/* * (target.rotation.absoluteValue / target.rotation) */) % 360 //TODO: is that modulo necessary?
             if (knifeAngle < 0) {
                 knifeAngle += 360
             }
             knifeAngles.add(knifeAngle)
 
             val radius = target.width / 2
-            val knifeX = centerX + radius * cos(Math.toRadians((knifeAngle + target.rotation).toDouble())).toFloat() - knifeToCheck.width / 2
-            val knifeY = centerY + radius * sin(Math.toRadians((knifeAngle + target.rotation).toDouble())).toFloat() - knifeToCheck.height / 2
+            val knifeX =
+                centerX + radius * cos(Math.toRadians((knifeAngle + target.rotation).toDouble())).toFloat() - knifeToCheck.width / 2
+            val knifeY =
+                centerY + radius * sin(Math.toRadians((knifeAngle + target.rotation).toDouble())).toFloat() - knifeToCheck.height / 2
 
             knifeToCheck.x = knifeX
             knifeToCheck.y = knifeY
@@ -506,15 +586,19 @@ class KnifeActivity : AppCompatActivity() {
             currentKnifeIndex++
             if (currentKnifeIndex < knives.size) {
                 knives[currentKnifeIndex].visibility = View.VISIBLE
-            }
-            else {
+            } else {
                 clearLevel(Signal.INIT)
             }
         }
     }
 
     private fun clearLevel(signal: Signal) {
-        val targetClearAnimator = ObjectAnimator.ofFloat(target, "translationY", target.translationY, target.translationY + target.height + screenView.height)
+        val targetClearAnimator = ObjectAnimator.ofFloat(
+            target,
+            "translationY",
+            target.translationY,
+            target.translationY + target.height + screenView.height
+        )
         targetClearAnimator.duration = 500
         targetClearAnimator.interpolator = AccelerateInterpolator()
 
@@ -542,6 +626,7 @@ class KnifeActivity : AppCompatActivity() {
                         levelCount++
                         initLevel(levelCount)
                     }
+
                     Signal.EXIT -> {
                         @Suppress("DEPRECATION")
                         onBackPressed()
@@ -565,10 +650,11 @@ class KnifeActivity : AppCompatActivity() {
     private fun onAppleHit() {
         applesCount++
         appleTextView.text = applesCount.toString()
-        knifePreferences.edit().apply {
+        /*knifePreferences.edit().apply {
             putInt("apple_amount", applesCount)
-            apply()
-        }
+            //apply()
+            commit()
+        }*/
     }
 
     private fun onLevelUp() {
@@ -579,12 +665,15 @@ class KnifeActivity : AppCompatActivity() {
     @Suppress("DEPRECATION")
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
+        /*knifePreferences.edit().apply {
+            putInt("apple_amount", applesCount)
+            //apply()
+            commit()
+        }*/
         passScore(score)
         clearLevel(Signal.EXIT)
         super.onBackPressed()
     }
-
-    //TODO: onArrowBackInUIPressed -> onBackPressed
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
@@ -596,22 +685,24 @@ class KnifeActivity : AppCompatActivity() {
     @Suppress("DEPRECATION")
     private fun hideSystemBars() {
         window.decorView.systemUiVisibility = (
-            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN
-        )
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_FULLSCREEN
+                )
     }
 
     private fun passScore(score: Int) {
-        knifePreferences.edit().apply {
+        /*knifePreferences.edit().apply {
             putInt("apple_amount", applesCount)
-            apply()
-        }
+            //apply()
+            commit()
+        }*/
         val data = Intent()
         data.putExtra("score", score.toString())
+        data.putExtra("apple_amount", applesCount)
         setResult(Activity.RESULT_OK, data)
         finish()
     }
@@ -621,6 +712,7 @@ class KnifeActivity : AppCompatActivity() {
     }
 
     private fun getApple(): Int {
-        return knifePreferences.getInt("apple_amount", 0)
+        //return knifePreferences.getInt("apple_amount", 0)
+        return intent.getIntExtra("apple_amount", 0)
     }
 }
