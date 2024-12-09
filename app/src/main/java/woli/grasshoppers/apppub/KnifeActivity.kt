@@ -47,6 +47,7 @@ class KnifeActivity : AppCompatActivity() {
     private lateinit var gameOverScoreTextView: TextView
     private lateinit var gameOverStageTextView: TextView
     private lateinit var animator: ObjectAnimator
+    private lateinit var restartButton: TextView
     private var score = 0
     private var applesCount = 0
     private var diffLevel: Int = 50
@@ -70,6 +71,7 @@ class KnifeActivity : AppCompatActivity() {
     private var rotation: Int = 0
     private var movementType: Int = 0
     private var variation: Int = 0
+    private var bestScore: Int = 0
     private val configuration = arrayOf(
         //knifeAmount, appleAmount, originalKnives, duration[ms], rotation[deg], movementType, variation
         arrayOf(7, 1, 0, 2000, 360, 0, 1),//1
@@ -123,6 +125,7 @@ class KnifeActivity : AppCompatActivity() {
         })
 
         applesCount = intent.getIntExtra("apple_amount", 0)
+        bestScore = intent.getIntExtra("best_score", 0)
         appleTextView.text = applesCount.toString()
     }
 
@@ -166,6 +169,7 @@ class KnifeActivity : AppCompatActivity() {
         gameOverLayout = findViewById(R.id.gameOverLayout)
         gameOverScoreTextView = findViewById(R.id.gameOverScoreText)
         gameOverStageTextView = findViewById(R.id.gameOverStageText)
+        restartButton = findViewById(R.id.restartButton)
 
         target.visibility = View.VISIBLE
         gameOverLayout.visibility = View.GONE
@@ -218,6 +222,17 @@ class KnifeActivity : AppCompatActivity() {
         backArrow.setOnClickListener {
             @Suppress("DEPRECATION")
             onBackPressed()
+        }
+
+        restartButton.setOnClickListener {
+            //TODO: co jeżeli miał teraz najwyższy wynik?
+            if (score > bestScore) {
+                bestScore = score
+            }
+            levelCount = -1
+            score = 0
+            scoreTextView.text = score.toString()
+            clearLevel(Signal.INIT)
         }
     }
 
@@ -585,7 +600,7 @@ class KnifeActivity : AppCompatActivity() {
             val dy = knifeToCheck.y + knifeToCheck.height / 2 - centerY//TODO: const for each level: 1: 157 other: 159
 
             val relativeAngle = Math.toDegrees(atan2(dy.toDouble(), dx.toDouble())).toFloat()//TODO: always 90
-            knifeAngle = (relativeAngle - target.rotation) % 360 //TODO: is that modulo necessary?
+            knifeAngle = (relativeAngle - target.rotation) % 360
             if (knifeAngle < 0) {
                 knifeAngle += 360
             }
@@ -704,7 +719,11 @@ class KnifeActivity : AppCompatActivity() {
 
     private fun passScore(score: Int) {
         val data = Intent()
-        data.putExtra("score", score.toString())
+        if (score > bestScore) {
+            data.putExtra("score", score.toString())
+        } else {
+            data.putExtra("score", bestScore.toString())
+        }
         data.putExtra("apple_amount", applesCount)
         setResult(Activity.RESULT_OK, data)
         finish()

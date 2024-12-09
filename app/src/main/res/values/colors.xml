@@ -9,6 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="menu_button_text">#F35500</color>
     <color name="streak_text">#D67601</color>
+    <color name="restart_shadow">#B43C00</color>
     <color name="navy">#191970</color>
     <color name="background_dark">#122020</color>
 </resources>

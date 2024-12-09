@@ -167,6 +167,7 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, KnifeActivity::class.java)
             intent.putExtra("knife_diff", knifeDiff)
             intent.putExtra("apple_amount", knifeApples)
+            intent.putExtra("best_score", knifeBestTxt.text.toString().toInt())
             startActivityForResult(intent, 1)
         }
 
