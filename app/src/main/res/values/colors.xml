@@ -12,4 +12,7 @@
     <color name="restart_shadow">#B43C00</color>
     <color name="navy">#191970</color>
     <color name="background_dark">#122020</color>
+    <color name="continue_color">#009D19</color>
+    <color name="continue_border">#1A6B00</color>
+    <color name="continue_shadow">#034E00</color>
 </resources>
