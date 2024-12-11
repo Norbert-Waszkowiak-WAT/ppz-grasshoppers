@@ -210,38 +210,7 @@
                 android:textSize="18sp"
                 tools:text="123" />
 
-            <!-- <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/knife_continue"
-                android:elevation="4dp"
-                android:gravity="center"
-                android:padding="16dp"
-                android:text="CONTINUE"
-                android:textColor="@color/continue_shadow"
-                android:textSize="18sp" />-->
         </LinearLayout>
-
-        <!--<TextView
-            android:id="@+id/continueButton"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/knife_continue"
-            android:drawableBottom="@drawable/beer_apple"
-            android:elevation="4dp"
-            android:gravity="center"
-            android:padding="16dp"
-            android:shadowColor="@color/continue_shadow"
-            android:shadowDx="2"
-            android:shadowDy="2"
-            android:shadowRadius="4"
-            android:text="CONTINUE"
-            android:textColor="@color/continue_shadow"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="@+id/restartButton"
-            app:layout_constraintEnd_toEndOf="@+id/banner"
-            app:layout_constraintStart_toEndOf="@+id/restartButton"
-            app:layout_constraintTop_toTopOf="@+id/restartButton" /> -->
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

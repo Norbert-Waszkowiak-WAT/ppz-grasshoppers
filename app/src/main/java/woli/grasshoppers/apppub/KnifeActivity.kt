@@ -19,6 +19,7 @@ import android.view.animation.LinearInterpolator
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.get
@@ -74,6 +75,8 @@ class KnifeActivity : AppCompatActivity() {
     private var movementType: Int = 0
     private var variation: Int = 0
     private var bestScore: Int = 0
+    private var knifeInitialX: Float = 0f
+    private var knifeInitialY: Float = 0f
     private val configuration = arrayOf(
         //knifeAmount, appleAmount, originalKnives, duration[ms], rotation[deg], movementType, variation
         arrayOf(7, 1, 0, 2000, 360, 0, 1),//1
@@ -90,7 +93,7 @@ class KnifeActivity : AppCompatActivity() {
         arrayOf(11, 5, 0, 1000, 75, 3, 1),//12
         arrayOf(12, 3, 3, 3000, 450, 3, 1),//13
         arrayOf(9, 2, 3, 3500, 540, 3, -1),//14
-        arrayOf(10, 10, 0, 4000, 225, -1),//15
+        arrayOf(10, 10, 0, 4000, 225, 3, -1),//15
         arrayOf(11, 2, 1, 3750, 450, 3, 1),//16
         arrayOf(12, 4, 0, 6000, 432, 3, 1),//17
         arrayOf(11, 1, 2, 3000, 730, 3, -1),//18
@@ -102,14 +105,14 @@ class KnifeActivity : AppCompatActivity() {
     //TODO: all images to pixelArt
     //TODO: shouldn't the target be removed from xml
     //TODO: czemu czasami kolizje noży nie mają efektu?
-    //TODO: death screen + success screen
-    //TODO: może współczynnik trudności reguluje ilość jabłek potrzebnych do kontynuacji
+    //TODO: success screen
     //TODO: what's happening with apple counting
     //TODO: pass score and apples when closed by square and swipe
     //TODO: zapisywanie jabłek podczas square and swipe oraz sleep button
     //TODO: with atan2 second argument is always 0 which means that the whole value is always 90
     //TODO: ładne odbijanie noża
     //TODO: czemu czasami noże na siebie zachodzą
+    //TODO: easter egg about finishing the game
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -157,7 +160,9 @@ class KnifeActivity : AppCompatActivity() {
 
             initTarget(duration.toLong(), rotation.toFloat(), movementType)
         } else {
-            //TODO: here initialize what happens when all levels are finished, and probably no where else, remember clearLevel(exit)
+            //TODO: here initialize what happens when all levels are finished, and probably no where else
+            Toast.makeText(this, "You finished the game, Sir", Toast.LENGTH_LONG).show()
+            clearLevel(Signal.EXIT)
         }
     }
 
@@ -240,8 +245,20 @@ class KnifeActivity : AppCompatActivity() {
         }
 
         continueButton.setOnClickListener {
-            //TODO: here initialize the continue process
-            //TODO: show the next knife and make it usable and control left side small icons
+            if (applesCount < diffLevel) {
+                Toast.makeText(this, "Not enaf birs ju haf", Toast.LENGTH_LONG).show()
+            }
+            else {
+                applesCount -= diffLevel
+                setApples(applesCount)
+
+                gameOverLayout.visibility = View.GONE
+                gameOverLayout.isClickable = false
+
+                knives[currentKnifeIndex].x = knifeInitialX
+                knives[currentKnifeIndex].y = knifeInitialY
+                knives[currentKnifeIndex].visibility = View.VISIBLE
+            }
         }
     }
 
@@ -413,6 +430,10 @@ class KnifeActivity : AppCompatActivity() {
     private fun throwKnife(knifeToThrow: ImageView) {
         if (!knifeThrown) {
             knifeToThrow.visibility = View.VISIBLE
+
+            knifeInitialX = knifeToThrow.x
+            knifeInitialY = knifeToThrow.y
+
             val targetKnifePosition = targetY + knifeToThrow.height
             val knifeAnimator = ObjectAnimator.ofFloat(
                 knifeToThrow,
@@ -436,8 +457,6 @@ class KnifeActivity : AppCompatActivity() {
             })
 
             knifeAnimator.start()
-            val knifeToChange: ImageView = linearLayout[currentKnifeIndex] as ImageView
-            knifeToChange.apply { setImageResource(R.drawable.black_knife) }
         }
     }
 
@@ -492,12 +511,11 @@ class KnifeActivity : AppCompatActivity() {
                     override fun onAnimationEnd(animation: Animator) {
                         knifeToCheck.visibility = View.GONE
                         knifeThrown = false
-                        //TODO: jakieś zakończenie lub możliwość kontynuowania za piwa -> ilość piw zależna od współczynnika trudności
                         gameOverStageTextView.text = "Stage: " + (levelCount + 1).toString()
                         gameOverScoreTextView.text = score.toString()
                         gameOverLayout.visibility = View.VISIBLE
                         gameOverLayout.isClickable = true
-                        continueCost.text = diffLevel.toString()//TODO: maintain a proper cost of continuation
+                        continueCost.text = diffLevel.toString()
                     }
 
                     override fun onAnimationCancel(animation: Animator) {}
@@ -624,6 +642,9 @@ class KnifeActivity : AppCompatActivity() {
             onKnifeStuck()
             knifeThrown = false
 
+            val knifeToChange: ImageView = linearLayout[currentKnifeIndex] as ImageView
+            knifeToChange.apply { setImageResource(R.drawable.black_knife) }
+
             currentKnifeIndex++
             if (currentKnifeIndex < knives.size) {
                 knives[currentKnifeIndex].visibility = View.VISIBLE
@@ -690,6 +711,11 @@ class KnifeActivity : AppCompatActivity() {
 
     private fun onAppleHit() {
         applesCount++
+        appleTextView.text = applesCount.toString()
+    }
+
+    private fun setApples(amount: Int) {
+        applesCount = amount
         appleTextView.text = applesCount.toString()
     }
 
