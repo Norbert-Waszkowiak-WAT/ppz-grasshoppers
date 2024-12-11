@@ -25,8 +25,6 @@ import android.widget.SeekBar
 import android.widget.ImageButton
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
-//TODO: clear the code
-
 class MainActivity : AppCompatActivity() {
 
     private val sharedPreferences by lazy {
@@ -342,14 +340,12 @@ class MainActivity : AppCompatActivity() {
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 e.printStackTrace()
-                //showToast("Failed to fetch joke")
                 showJoke("Failed to fetch joke")
             }
 
             override fun onResponse(call: Call, response: Response) {
                 response.use {
                     if (!response.isSuccessful) {
-                        //showToast("Failed to fetch joke: ${response.message}")
                         showJoke("Failed to fetch joke: ${response.message}")
                         return
                     }
