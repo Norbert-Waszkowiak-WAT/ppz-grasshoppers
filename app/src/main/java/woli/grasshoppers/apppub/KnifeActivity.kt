@@ -83,22 +83,22 @@ class KnifeActivity : AppCompatActivity() {
         arrayOf(9, 2, 1, 3000, 360, 0, 1),//2
         arrayOf(10, 1, 3, 4000, 480, 0, 1),//3
         arrayOf(8, 2, 3, 5000, 860, 3, -1),//4
-        arrayOf(10, 10, 0, 6000, 720, 3, 1),//5
+        arrayOf(10, 10, 0, 6000, 720, 0, 1),//5
         arrayOf(9, 1, 4, 4000, 400, 3, -1),//6
         arrayOf(11, 2, 2, 5000, 405, 3, 1),//7
         arrayOf(8, 3, 3, 3000, 540, 3, 1),//8
         arrayOf(10, 4, 1, 3000, 270, 3, -1),//9
-        arrayOf(10, 10, 0, 3000, 360, 0, -1),//10
+        arrayOf(10, 10, 0, 6000, 720, 0, 1),//10
         arrayOf(10, 2, 1, 3000, 360, 0, -1),//11
         arrayOf(11, 5, 0, 1000, 75, 3, 1),//12
-        arrayOf(12, 3, 3, 3000, 450, 3, 1),//13
+        arrayOf(9, 3, 3, 3000, 450, 3, 1),//13
         arrayOf(9, 2, 3, 3500, 540, 3, -1),//14
-        arrayOf(10, 10, 0, 4000, 225, 3, -1),//15
+        arrayOf(10, 10, 0, 6000, 720, 0, 1),//15
         arrayOf(11, 2, 1, 3750, 450, 3, 1),//16
         arrayOf(12, 4, 0, 6000, 432, 3, 1),//17
         arrayOf(11, 1, 2, 3000, 730, 3, -1),//18
         arrayOf(12, 4, 2, 3000, 215, 3, 1),//19
-        arrayOf(10, 10, 0, 4000, 395, 3, -1)//20 TODO:add more levels
+        arrayOf(10, 10, 0, 6000, 720, 0, 1)//20 TODO:add more levels
     )
 
     //TODO: limit after the end of levels to end the whole game
@@ -113,6 +113,7 @@ class KnifeActivity : AppCompatActivity() {
     //TODO: ładne odbijanie noża
     //TODO: czemu czasami noże na siebie zachodzą
     //TODO: easter egg about finishing the game
+    //TODO: why did the score became zero after finishing all levels -> probably solved
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -162,7 +163,7 @@ class KnifeActivity : AppCompatActivity() {
         } else {
             //TODO: here initialize what happens when all levels are finished, and probably no where else
             Toast.makeText(this, "You finished the game, Sir", Toast.LENGTH_LONG).show()
-            clearLevel(Signal.EXIT)
+            onBackPressed()
         }
     }
 
