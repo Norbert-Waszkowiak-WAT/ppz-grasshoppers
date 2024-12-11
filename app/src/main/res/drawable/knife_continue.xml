@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="@dimen/knife_button_radius"/> <!-- Set the desired corner radius -->
+    <solid android:color="@color/continue_color"/> <!-- Set the background color -->
+    <stroke android:width="2dp" android:color="@color/continue_border"/>
+    <padding
+        android:left="8dp"
+        android:top="8dp"
+        android:right="8dp"
+        android:bottom="8dp"/> <!-- Optional padding -->
+</shape>

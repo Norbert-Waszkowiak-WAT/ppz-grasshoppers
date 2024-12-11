@@ -27,7 +27,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
 
-//TODO list: apples, difficulty, ładne odbijanie noża, czemu czasami noże zachodzą na oryginalne
+//TODO list: apples, difficulty
 
 class KnifeActivity : AppCompatActivity() {
 
@@ -48,6 +48,8 @@ class KnifeActivity : AppCompatActivity() {
     private lateinit var gameOverStageTextView: TextView
     private lateinit var animator: ObjectAnimator
     private lateinit var restartButton: TextView
+    private lateinit var continueButton: LinearLayout
+    private lateinit var continueCost: TextView
     private var score = 0
     private var applesCount = 0
     private var diffLevel: Int = 50
@@ -102,11 +104,12 @@ class KnifeActivity : AppCompatActivity() {
     //TODO: czemu czasami kolizje noży nie mają efektu?
     //TODO: death screen + success screen
     //TODO: może współczynnik trudności reguluje ilość jabłek potrzebnych do kontynuacji
-    //TODO: clean the code
     //TODO: what's happening with apple counting
     //TODO: pass score and apples when closed by square and swipe
     //TODO: zapisywanie jabłek podczas square and swipe oraz sleep button
     //TODO: with atan2 second argument is always 0 which means that the whole value is always 90
+    //TODO: ładne odbijanie noża
+    //TODO: czemu czasami noże na siebie zachodzą
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -170,6 +173,8 @@ class KnifeActivity : AppCompatActivity() {
         gameOverScoreTextView = findViewById(R.id.gameOverScoreText)
         gameOverStageTextView = findViewById(R.id.gameOverStageText)
         restartButton = findViewById(R.id.restartButton)
+        continueButton = findViewById(R.id.continueButton)
+        continueCost = findViewById(R.id.continueCostTxt)
 
         target.visibility = View.VISIBLE
         gameOverLayout.visibility = View.GONE
@@ -225,7 +230,6 @@ class KnifeActivity : AppCompatActivity() {
         }
 
         restartButton.setOnClickListener {
-            //TODO: co jeżeli miał teraz najwyższy wynik?
             if (score > bestScore) {
                 bestScore = score
             }
@@ -233,6 +237,11 @@ class KnifeActivity : AppCompatActivity() {
             score = 0
             scoreTextView.text = score.toString()
             clearLevel(Signal.INIT)
+        }
+
+        continueButton.setOnClickListener {
+            //TODO: here initialize the continue process
+            //TODO: show the next knife and make it usable and control left side small icons
         }
     }
 
@@ -484,12 +493,11 @@ class KnifeActivity : AppCompatActivity() {
                         knifeToCheck.visibility = View.GONE
                         knifeThrown = false
                         //TODO: jakieś zakończenie lub możliwość kontynuowania za piwa -> ilość piw zależna od współczynnika trudności
-                        //TODO: pause target and knife and apple rotation -> continue later on when continuing
-                        //TODO: show the next knife and make it usable and controll left side small icons
                         gameOverStageTextView.text = "Stage: " + (levelCount + 1).toString()
                         gameOverScoreTextView.text = score.toString()
                         gameOverLayout.visibility = View.VISIBLE
                         gameOverLayout.isClickable = true
+                        continueCost.text = diffLevel.toString()//TODO: maintain a proper cost of continuation
                     }
 
                     override fun onAnimationCancel(animation: Animator) {}
