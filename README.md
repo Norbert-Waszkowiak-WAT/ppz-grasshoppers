@@ -116,7 +116,7 @@ Grupą docelową są wszyscy ludzie, którzy chcą grać w proste gry arkadowe. 
 **Etap 2**
    - Gra Knife Hit\
      ![Knife_Hit_gameplay](screenshots/knife.png)
-     ![Knife_Hit_game_over](scrreenshots/kniferestart.png)
+     ![Knife_Hit_game_over](screenshots/kniferestart.png)
 
 <!-- ### 10. Potencjalne ryzyka
    - Problemy z synchronizacją kolejki (mitigacja: regularne testowanie serwera).
