@@ -94,16 +94,16 @@ class BirdActivity : AppCompatActivity() {
 
         difficulty = getDiff()
 
-        gravity = dpToPx(1f)
-        jumpVelocity = dpToPx(12f)
+        gravity = dpToPx(1f) * (0.5f + (difficulty / 100f))
+        jumpVelocity = dpToPx(12f) * (0.75f + (difficulty / 200f))
 
-        speed = dpToPx(5f).toInt() * (1 + (difficulty / 100))
+        speed = (dpToPx(7f) * (1 + (difficulty / 100f))).toInt()
 
         val jumpHeight = (gravity * (jumpVelocity/gravity) * (jumpVelocity/gravity)) / 2
-        pipeGapWidth = birdHeight + jumpHeight * (1.5f + ((50 - difficulty) / 100))
+        pipeGapWidth = birdHeight + jumpHeight * (1.5f + ((50 - difficulty) / 100f))
 
-        maxPipeDistance = (birdWidth * (3 + ((100-difficulty) / 100f))).toInt()
-        minPipeDistance = (birdWidth * (2.25f - (difficulty / 100f))).toInt()
+        maxPipeDistance = (birdWidth * (2.75f + ((100-difficulty) / 100f))).toInt()
+        minPipeDistance = (birdWidth * 1.75f).toInt()
 
 
         bird.x = dpToPx(20f)
@@ -301,8 +301,8 @@ class BirdActivity : AppCompatActivity() {
         var lowerAnimator = ObjectAnimator.ofFloat(lowerPipe, "translationX",
             screenWidth.toFloat()+pipeWidth, -pipeWidth.toFloat()-10)
 
-        upperAnimator.duration = (screenWidth.toLong() / speed) * 50
-        lowerAnimator.duration = (screenWidth.toLong() / speed) * 50
+        upperAnimator.duration = (screenWidth.toLong() / speed) * tickPeriod
+        lowerAnimator.duration = (screenWidth.toLong() / speed) * tickPeriod
 
         upperAnimator.interpolator = LinearInterpolator()
         lowerAnimator.interpolator = LinearInterpolator()
