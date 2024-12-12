@@ -77,6 +77,7 @@ class KnifeActivity : AppCompatActivity() {
     private var bestScore: Int = 0
     private var knifeInitialX: Float = 0f
     private var knifeInitialY: Float = 0f
+    private var targetRotationDirection = 0
     private val configuration = arrayOf(
         //knifeAmount, appleAmount, originalKnives, duration[ms], rotation[deg], movementType, variation
         arrayOf(7, 1, 0, 2000, 360, 0, 1),//1
@@ -269,6 +270,13 @@ class KnifeActivity : AppCompatActivity() {
         movementType: Int
     ) { //TODO: pewnie tutaj jedno z kilku użyć współczynnika trudności
         var finalRotation = if ((0..1).random() == 0) rotation else -rotation
+
+        if (rotation == finalRotation) {
+            targetRotationDirection = 1
+        } else {
+            targetRotationDirection = -1
+        }
+
         val interpolator = when (movementType) {
             0 -> LinearInterpolator()
             1 -> AccelerateInterpolator()//deprecated -> do not use
@@ -284,6 +292,11 @@ class KnifeActivity : AppCompatActivity() {
         fun startRotationAnimation() { //TODO: współczynnik trudności reguluje np. ilość obrotów do czasu
             val currentRotation = target.rotation
             finalRotation *= variation
+
+            if (targetRotationDirection != 0) {
+                targetRotationDirection *= variation
+            }
+
             animator = ObjectAnimator.ofFloat(
                 target,
                 "rotation",
@@ -475,8 +488,8 @@ class KnifeActivity : AppCompatActivity() {
             knifeAngle = (relativeAngle - target.rotation) % 360
 
             if (knifeAngle in (stuckAngle - tolerance)..(stuckAngle + tolerance)) {
-                val isRotatingClockwise = target.rotation > 0
-                val offsetX = if (isRotatingClockwise) -1000f else 1000f
+                //val isRotatingClockwise = target.rotation > 0 //TODO: wrong direction resolving
+                val offsetX = if (targetRotationDirection == 1) -750f else 750f
                 val offsetY = 2f
 
                 val targetX = knifeToCheck.x + offsetX
