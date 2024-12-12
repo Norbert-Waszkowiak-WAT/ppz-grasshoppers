@@ -488,7 +488,6 @@ class KnifeActivity : AppCompatActivity() {
             knifeAngle = (relativeAngle - target.rotation) % 360
 
             if (knifeAngle in (stuckAngle - tolerance)..(stuckAngle + tolerance)) {
-                //val isRotatingClockwise = target.rotation > 0 //TODO: wrong direction resolving
                 val offsetX = if (targetRotationDirection == 1) -750f else 750f
                 val offsetY = 2f
 
