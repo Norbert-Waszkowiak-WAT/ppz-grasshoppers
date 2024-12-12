@@ -238,7 +238,7 @@ class MainActivity : AppCompatActivity() {
                         sharedPreferences.edit().apply {
                             putInt(
                                 "knife_best_score",
-                                data.getIntExtra("score", 0)
+                                data.getStringExtra("score").toString().toInt()
                             )
                             apply()
                         }
