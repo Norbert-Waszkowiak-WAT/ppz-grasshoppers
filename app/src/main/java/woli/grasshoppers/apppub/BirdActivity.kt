@@ -206,11 +206,12 @@ class BirdActivity : AppCompatActivity() {
                 tickTimer = Timer()
             }
             else{
-                bird.y += 100
-                if (bird.rotation < 90){
-                    bird.rotation += 10f
+                runOnUiThread {
+                    bird.y += 100
+                    if (bird.rotation < 90){
+                        bird.rotation += 10f
+                    }
                 }
-
             }
         }
 
@@ -225,7 +226,7 @@ class BirdActivity : AppCompatActivity() {
             maxScore = score
         }
 
-        this.runOnUiThread{
+        runOnUiThread{
             button.visibility = Button.VISIBLE
             button.setImageResource(R.drawable.bird_restart)
 
@@ -267,10 +268,10 @@ class BirdActivity : AppCompatActivity() {
             val maxFallDistance = (gravity * time * time) / 2
             val maxJumpDistance = jumpVelocity * time
 
-            randomFrom = lastUpperPipe.height - maxJumpDistance + ((100 - difficulty) / 100) * birdHeight
-            randomUntil = lastUpperPipe.height + maxFallDistance - ((100 - difficulty) / 100) * birdHeight
+            randomFrom = lastUpperPipe.height - maxJumpDistance + ((100 - difficulty) / 100f) * birdHeight
+            randomUntil = lastUpperPipe.height + maxFallDistance - ((100 - difficulty) / 100f) * birdHeight
 
-            if (randomFrom >= randomUntil) {
+            if (randomFrom.toInt() >= randomUntil.toInt()) {
                 randomFrom = lastUpperPipe.height - pipeGapWidth
                 randomUntil = lastUpperPipe.height + pipeGapWidth
             }
@@ -279,8 +280,23 @@ class BirdActivity : AppCompatActivity() {
         if (randomFrom < minUpperPipeHeight) { randomFrom = minUpperPipeHeight }
         if (randomUntil > maxUpperPipeHeight) { randomUntil = maxUpperPipeHeight }
 
+        if (randomFrom.toInt() >= randomUntil.toInt()) {
+            randomFrom = randomFrom
+            randomUntil = randomFrom + pipeGapWidth
+        }
 
-        val upperPipeHeight = Random.nextInt(randomFrom.toInt(), randomUntil.toInt())
+        var upperPipeHeight = Random.nextInt(randomFrom.toInt(), randomUntil.toInt())
+
+        if (difficulty > 60 && upperPipeHeight % 3 == 0){
+            upperPipeHeight = randomFrom.toInt()
+        }
+        else if (difficulty > 70 && upperPipeHeight % 4 == 0){
+            upperPipeHeight = randomUntil.toInt()
+        }
+
+        if (displayedPipes.size == 0){
+            upperPipeHeight = bird.y.toInt()
+        }
 
         runOnUiThread {
             upperPipe.y = 0f
