@@ -117,7 +117,12 @@ Grupą docelową są wszyscy ludzie, którzy chcą grać w proste gry arkadowe. 
    - Gra Knife Hit\
      ![Knife_Hit_gameplay](screenshots/knife.png)
      ![Knife_Hit_game_over](screenshots/kniferestart.png)
-
+   
+   - Poprawki w grze Flappy Bird
+     - zmiana jednostek z px na dp (które skalują się do rozmiaru ekranu)
+     - dostosowanie wartości wpływających na trudność gry
+     - optymalizacja poruszania kolumn, poprzez zastosowanie animacji
+     - poprawki drobnych buggów
 <!-- ### 10. Potencjalne ryzyka
    - Problemy z synchronizacją kolejki (mitigacja: regularne testowanie serwera).
    - Awaria systemu powiadomień (mitigacja: backupowe rozwiązanie oparte na SMS-ach).
