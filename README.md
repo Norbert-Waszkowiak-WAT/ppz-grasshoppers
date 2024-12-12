@@ -113,6 +113,11 @@ Grupą docelową są wszyscy ludzie, którzy chcą grać w proste gry arkadowe. 
      ![Flappy Bird gameplay](screenshots/FlappyBird-gameplay.png)
      ![Flappy Bird restart screen](screenshots/FlappyBird-restart.png)
 
+**Etap 2**
+   - Gra Knife Hit\
+     ![Knife_Hit_gameplay](screenshots/knife.png)
+     ![Knife_Hit_game_over](scrreenshots/kniferestart.png)
+
 <!-- ### 10. Potencjalne ryzyka
    - Problemy z synchronizacją kolejki (mitigacja: regularne testowanie serwera).
    - Awaria systemu powiadomień (mitigacja: backupowe rozwiązanie oparte na SMS-ach).
