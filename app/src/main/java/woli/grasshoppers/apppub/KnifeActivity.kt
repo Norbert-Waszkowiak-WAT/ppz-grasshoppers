@@ -626,7 +626,7 @@ class KnifeActivity : AppCompatActivity() {
             val dx = knifeToCheck.x + knifeToCheck.width / 2 - centerX //TODO: always 0
             val dy = knifeToCheck.y + knifeToCheck.height / 2 - centerY//TODO: const for each level: 1: 157 other: 159
 
-            val relativeAngle = Math.toDegrees(atan2(dy.toDouble(), dx.toDouble())).toFloat()//TODO: always 90
+            val relativeAngle = Math.toDegrees(atan2(dy.toDouble(), dx.toDouble())).toFloat()//TODO: always 90 deg
             knifeAngle = (relativeAngle - target.rotation) % 360
             if (knifeAngle < 0) {
                 knifeAngle += 360
