@@ -115,6 +115,7 @@ class KnifeActivity : AppCompatActivity() {
     //TODO: czemu czasami noże na siebie zachodzą
     //TODO: easter egg about finishing the game
     //TODO: why did the score became zero after finishing all levels -> probably solved
+    //TODO: why isn't the screen always touchable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -164,6 +165,7 @@ class KnifeActivity : AppCompatActivity() {
         } else {
             //TODO: here initialize what happens when all levels are finished, and probably no where else
             Toast.makeText(this, "You finished the game, Sir", Toast.LENGTH_LONG).show()
+            @Suppress("DEPRECATION")
             onBackPressed()
         }
     }
@@ -271,10 +273,10 @@ class KnifeActivity : AppCompatActivity() {
     ) { //TODO: pewnie tutaj jedno z kilku użyć współczynnika trudności
         var finalRotation = if ((0..1).random() == 0) rotation else -rotation
 
-        if (rotation == finalRotation) {
-            targetRotationDirection = 1
+        targetRotationDirection = if (rotation == finalRotation) {
+            1
         } else {
-            targetRotationDirection = -1
+            -1
         }
 
         val interpolator = when (movementType) {
