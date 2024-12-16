@@ -114,7 +114,6 @@ class KnifeActivity : AppCompatActivity() {
     //TODO: ładne odbijanie noża
     //TODO: czemu czasami noże na siebie zachodzą
     //TODO: easter egg about finishing the game
-    //TODO: why did the score became zero after finishing all levels -> probably solved
     //TODO: why isn't the screen always touchable
 
     override fun onCreate(savedInstanceState: Bundle?) {
