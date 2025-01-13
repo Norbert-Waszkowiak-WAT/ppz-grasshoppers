@@ -3,4 +3,5 @@
     <dimen name="button_corner_radius">16dp</dimen>
     <dimen name="button_text_size">18sp</dimen>
     <dimen name="best_score_size">24sp</dimen>
+    <dimen name="knife_button_radius">32dp</dimen>
 </resources>

@@ -1,6 +1,224 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/screen_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/beerbg">
+
+    <nl.dionsegijn.konfetti.KonfettiView
+        android:id="@+id/konfettiView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <ImageView
+        android:id="@+id/tarcza"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="90dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="90dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/barrel"
+        android:translationZ="1dp"/>
+
+    <TextView
+        android:id="@+id/score_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:ems="2"
+        android:text="0"
+        android:textColor="@color/streak_text"
+        android:textSize="@dimen/best_score_size"
+        app:layout_constraintStart_toEndOf="@id/knifeScoreView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/level_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textColor="#80FFFFFF"
+        android:textSize="@dimen/best_score_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="0" />
+
+    <TextView
+        android:id="@+id/apple_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:ems="2"
+        android:gravity="right"
+        android:text="0"
+        android:textColor="@color/streak_text"
+        android:textSize="@dimen/best_score_size"
+        android:translationZ="3dp"
+        app:layout_constraintEnd_toStartOf="@id/appleBeerView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/linear_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="64dp"
+        android:orientation="vertical"
+        android:layout_gravity="bottom|start"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/appleBeerView"
+        android:layout_width="20dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="16dp"
+        android:translationZ="3dp"
+        app:layout_constraintBottom_toBottomOf="@id/apple_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/apple_text"
+        app:srcCompat="@drawable/beer_apple" />
+
+    <ImageView
+        android:id="@+id/knifeScoreView"
+        android:layout_width="30dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="@id/score_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/score_text"
+        app:srcCompat="@drawable/white_knife" />
+
+    <ImageView
+        android:id="@+id/backView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:translationZ="3dp"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="@+id/knifeScoreView"
+        app:layout_constraintStart_toStartOf="@+id/knifeScoreView"
+        app:layout_constraintTop_toBottomOf="@+id/knifeScoreView"
+        app:srcCompat="@android:drawable/ic_menu_revert" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/gameOverLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/beerbg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:translationZ="2dp">
+
+        <ImageView
+            android:id="@+id/banner"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="320dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/banner" />
+
+        <TextView
+            android:id="@+id/gameOverScoreText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="150dp"
+            android:ems="3"
+            android:gravity="center"
+            android:textSize="60sp"
+            app:layout_constraintEnd_toEndOf="@+id/banner"
+            app:layout_constraintStart_toStartOf="@+id/banner"
+            app:layout_constraintTop_toTopOf="@+id/banner"
+            tools:text="123" />
+
+        <TextView
+            android:id="@+id/gameOverStageText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:textSize="40sp"
+            app:layout_constraintEnd_toEndOf="@+id/gameOverScoreText"
+            app:layout_constraintStart_toStartOf="@+id/gameOverScoreText"
+            app:layout_constraintTop_toBottomOf="@+id/gameOverScoreText"
+            tools:text="Stage 123" />
+
+        <TextView
+            android:id="@+id/restartButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/knife_restart"
+            android:elevation="4dp"
+            android:gravity="center"
+            android:padding="16dp"
+            android:shadowColor="@color/restart_shadow"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="4"
+            android:textColor="@color/restart_shadow"
+            android:textSize="18sp"
+            android:text="RESTART"
+            app:layout_constraintBottom_toBottomOf="@+id/banner"
+            app:layout_constraintEnd_toStartOf="@+id/continueButton"
+            app:layout_constraintStart_toStartOf="@+id/banner" />
+
+        <LinearLayout
+            android:id="@id/continueButton"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:background="@drawable/knife_continue"
+            android:elevation="4dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/restartButton"
+            app:layout_constraintEnd_toEndOf="@+id/banner"
+            app:layout_constraintStart_toEndOf="@+id/restartButton"
+            app:layout_constraintTop_toTopOf="@+id/restartButton">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CONTINUE"
+                android:textColor="@color/continue_shadow"
+                android:textSize="18sp" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:src="@drawable/beer_apple" />
+
+            <TextView
+                android:id="@+id/continueCostTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/continue_shadow"
+                android:textSize="18sp"
+                tools:text="123" />
+
+        </LinearLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

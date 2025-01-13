@@ -1,5 +1,6 @@
 package woli.grasshoppers.apppub
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
@@ -30,6 +31,10 @@ class MainActivity : AppCompatActivity() {
         getSharedPreferences("streak_prefs", Context.MODE_PRIVATE)
     }
 
+    private val knifePreferences by lazy {
+        getSharedPreferences("knife_preferences", Context.MODE_PRIVATE)
+    }
+
     private val client = OkHttpClient()
     private val gson = Gson()
 
@@ -52,9 +57,13 @@ class MainActivity : AppCompatActivity() {
     private var birdDiff: Int = 0
     private var pacmanDiff: Int = 0
 
+    private var knifeApples: Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        knifeApples = knifePreferences.getInt("apple_amount", 0)
 
         initUIElements()
 
@@ -65,6 +74,7 @@ class MainActivity : AppCompatActivity() {
         setOnClickListeners()
     }
 
+    @SuppressLint("SetTextI18n")
     private fun handleJokes() {
         jokeTxt.text = "Lołding jor dżołk"
         if (isNetworkAvailable()) {
@@ -74,6 +84,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initUIElements() {
         birdButton = findViewById(R.id.buttonBird)
         knifeButton = findViewById(R.id.buttonKnife)
@@ -129,6 +140,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updateStreakUI(streakCount: Int) {
         streakImg.visibility = View.VISIBLE
         streakTxt.visibility = View.VISIBLE
@@ -141,6 +153,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun setOnClickListeners() {
         birdButton.setOnClickListener {
             val intent = Intent(this, BirdActivity::class.java)
@@ -151,6 +164,8 @@ class MainActivity : AppCompatActivity() {
         knifeButton.setOnClickListener {
             val intent = Intent(this, KnifeActivity::class.java)
             intent.putExtra("knife_diff", knifeDiff)
+            intent.putExtra("apple_amount", knifeApples)
+            intent.putExtra("best_score", knifeBestTxt.text.toString().toInt())
             startActivityForResult(intent, 1)
         }
 
@@ -191,6 +206,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -226,6 +242,14 @@ class MainActivity : AppCompatActivity() {
                             )
                             apply()
                         }
+                    }
+                    knifeApples = data.getIntExtra("apple_amount", 0)
+                    knifePreferences.edit().apply {
+                        putInt(
+                            "apple_amount",
+                            knifeApples
+                        )
+                        apply()
                     }
                 }
             }
@@ -286,7 +310,7 @@ class MainActivity : AppCompatActivity() {
         val current = dateFormat.parse(currentDate)
 
         val calendar = Calendar.getInstance()
-        calendar.time = last
+        calendar.time = last as Date
         calendar.add(Calendar.DAY_OF_YEAR, 1)
 
         return current == calendar.time
@@ -296,6 +320,7 @@ class MainActivity : AppCompatActivity() {
         return lastDate == currentDate
     }
 
+    @Suppress("DEPRECATION")
     private fun hideSystemBars() {
         window.decorView.systemUiVisibility = (
                 View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
@@ -315,14 +340,12 @@ class MainActivity : AppCompatActivity() {
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 e.printStackTrace()
-                //showToast("Failed to fetch joke")
                 showJoke("Failed to fetch joke")
             }
 
             override fun onResponse(call: Call, response: Response) {
                 response.use {
                     if (!response.isSuccessful) {
-                        //showToast("Failed to fetch joke: ${response.message}")
                         showJoke("Failed to fetch joke: ${response.message}")
                         return
                     }
@@ -345,6 +368,7 @@ class MainActivity : AppCompatActivity() {
         showJoke(jokeText)
     }
 
+    @Suppress("SameParameterValue")
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
@@ -362,6 +386,7 @@ class MainActivity : AppCompatActivity() {
         return networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
     }
 
+    @SuppressLint("InflateParams")
     private fun showBottomSheetMenu() {
         val bottomSheetDialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.bottom_sheet_menu, null)
