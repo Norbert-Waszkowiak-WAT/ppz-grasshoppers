@@ -6,8 +6,11 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.Rect
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
@@ -23,12 +26,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.get
+import nl.dionsegijn.konfetti.KonfettiView
+import nl.dionsegijn.konfetti.models.Shape
+import nl.dionsegijn.konfetti.models.Size
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
-
-//TODO list: apples, difficulty
 
 class KnifeActivity : AppCompatActivity() {
 
@@ -51,6 +55,7 @@ class KnifeActivity : AppCompatActivity() {
     private lateinit var restartButton: TextView
     private lateinit var continueButton: LinearLayout
     private lateinit var continueCost: TextView
+    private lateinit var konfettiView: KonfettiView
     private var score = 0
     private var applesCount = 0
     private var diffLevel: Int = 50
@@ -102,19 +107,11 @@ class KnifeActivity : AppCompatActivity() {
         arrayOf(10, 10, 0, 6000, 720, 0, 1)//20 TODO:add more levels
     )
 
-    //TODO: limit after the end of levels to end the whole game
-    //TODO: all images to pixelArt
-    //TODO: shouldn't the target be removed from xml
-    //TODO: czemu czasami kolizje noży nie mają efektu?
-    //TODO: success screen
-    //TODO: what's happening with apple counting
-    //TODO: pass score and apples when closed by square and swipe
-    //TODO: zapisywanie jabłek podczas square and swipe oraz sleep button
-    //TODO: with atan2 second argument is always 0 which means that the whole value is always 90
-    //TODO: ładne odbijanie noża
+    //TODO: limit after the end of levels to end the whole game -> some confetti?
+    //TODO: czemu czasami kolizje noży nie mają efektu? -> jakieś przesunięcie?
+    //TODO: zapisywanie jabłek i wyniku podczas square and swipe oraz sleep button
     //TODO: czemu czasami noże na siebie zachodzą
-    //TODO: easter egg about finishing the game
-    //TODO: why isn't the screen always touchable
+    //TODO: difficulty
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -143,6 +140,12 @@ class KnifeActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
+    override fun onUserLeaveHint() {
+        Toast.makeText(this, "onUserLeaveHint", Toast.LENGTH_SHORT).show()
+        passScore(score)
+        super.onUserLeaveHint()
+    }
+
     private fun initLevel(levelIndex: Int) {
         if (levelIndex < configuration.size) {
             val levelConfig = configuration[levelIndex]
@@ -162,10 +165,12 @@ class KnifeActivity : AppCompatActivity() {
 
             initTarget(duration.toLong(), rotation.toFloat(), movementType)
         } else {
-            //TODO: here initialize what happens when all levels are finished, and probably no where else
-            Toast.makeText(this, "You finished the game, Sir", Toast.LENGTH_LONG).show()
-            @Suppress("DEPRECATION")
-            onBackPressed()
+            makeKonfetti(konfettiView)
+            Handler(Looper.getMainLooper()).postDelayed({
+                Toast.makeText(this, "You finished the game, Sir", Toast.LENGTH_LONG).show()
+                @Suppress("DEPRECATION")
+                onBackPressed()
+            }, 5000)
         }
     }
 
@@ -183,6 +188,7 @@ class KnifeActivity : AppCompatActivity() {
         restartButton = findViewById(R.id.restartButton)
         continueButton = findViewById(R.id.continueButton)
         continueCost = findViewById(R.id.continueCostTxt)
+        konfettiView = findViewById(R.id.konfettiView)
 
         target.visibility = View.VISIBLE
         gameOverLayout.visibility = View.GONE
@@ -775,5 +781,18 @@ class KnifeActivity : AppCompatActivity() {
         data.putExtra("apple_amount", applesCount)
         setResult(Activity.RESULT_OK, data)
         finish()
+    }
+
+    private fun makeKonfetti(view: KonfettiView) {
+        view.build()
+            .addColors(Color.rgb(255, 36, 0), Color.rgb(120, 116, 242), Color.rgb(255, 232, 103))
+            .setDirection(0.0, 359.0)
+            .setSpeed(1f, 5f)
+            .setFadeOutEnabled(true)
+            .setTimeToLive(2000L)
+            .addShapes(Shape.Square, Shape.Circle)
+            .addSizes(Size(12))
+            .setPosition(-50f, view.width + 50f, -50f, -50f)
+            .streamFor(300, 5000L)
     }
 }

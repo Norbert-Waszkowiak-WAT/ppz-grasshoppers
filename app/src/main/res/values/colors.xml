@@ -15,4 +15,7 @@
     <color name="continue_color">#009D19</color>
     <color name="continue_border">#1A6B00</color>
     <color name="continue_shadow">#034E00</color>
+    <color name="yellow">#FFDD00</color>
+    <color name="green">#00FF00</color>
+    <color name="magenta">#FF009D</color>
 </resources>
