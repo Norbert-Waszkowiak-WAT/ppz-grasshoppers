@@ -107,7 +107,6 @@ class KnifeActivity : AppCompatActivity() {
         arrayOf(10, 10, 0, 6000, 720, 0, 1)//20 TODO:add more levels
     )
 
-    //TODO: limit after the end of levels to end the whole game -> some confetti?
     //TODO: czemu czasami kolizje noży nie mają efektu? -> jakieś przesunięcie?
     //TODO: zapisywanie jabłek i wyniku podczas square and swipe oraz sleep button
     //TODO: czemu czasami noże na siebie zachodzą
