@@ -1,9 +1,11 @@
 package woli.grasshoppers.apppub
 
+import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.TouchDelegate
@@ -42,9 +44,12 @@ class PacmanActivity : AppCompatActivity(){
 
         setupSwipeDetection()
 
-        gridX = gameBoard.x
-        gridY = gameBoard.y
         gameBoard.post {
+            pacmanView.x = 0f
+            pacmanView.y = 0f
+
+            gridX = gameBoard.x
+            gridY = gameBoard.y
             gridWidth = gameBoard.width
             gridHeight = gameBoard.height
 
@@ -126,13 +131,22 @@ class PacmanActivity : AppCompatActivity(){
     private fun moveTo(x: Int, y: Int) {
         var actualX = x * (gridWidth / gridCount) + gridX
         var actualY = y * (gridHeight / gridCount) + gridY
+        val currentActualX = pacmanX * (gridWidth / gridCount) + gridX
+        val currentActualY = pacmanY * (gridHeight / gridCount) + gridY
+
+        var xAnimator = ObjectAnimator.ofFloat(pacmanView, "translationX",
+            currentActualX, actualX)
+        var yAnimator = ObjectAnimator.ofFloat(pacmanView, "translationY",
+            currentActualY, actualY)
 
         pacmanX = x
         pacmanY = y
 
+        xAnimator.duration = 100
+        yAnimator.duration = 100
         runOnUiThread {
-            pacmanView.x = actualX
-            pacmanView.y = actualY
+            xAnimator.start()
+            yAnimator.start()
         }
     }
 

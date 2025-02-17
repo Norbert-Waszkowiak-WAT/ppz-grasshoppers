@@ -19,7 +19,7 @@
         android:id="@+id/pacman"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:layout_gravity="center"
+        android:layout_gravity="top|left"
         app:srcCompat="@android:drawable/ic_media_ff" />
 
 
