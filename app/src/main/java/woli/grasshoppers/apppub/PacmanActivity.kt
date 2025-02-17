@@ -169,6 +169,11 @@ class PacmanActivity : AppCompatActivity(){
         if (walls[pacmanY+y][pacmanX+x] == 1){
             return
         }
+        if (x == 1) pacmanView.rotation = 0f
+        if (x == -1) pacmanView.rotation = 180f
+        if (y == 1) pacmanView.rotation = 90f
+        if (y == -1) pacmanView.rotation = 270f
+
         pacmanMoveTimer.cancel()
         pacmanMoveTimer = Timer()
         pacmanMoveTimer.schedule(object : java.util.TimerTask() {
