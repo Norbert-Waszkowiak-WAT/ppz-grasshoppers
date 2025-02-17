@@ -154,11 +154,14 @@ class PacmanActivity : AppCompatActivity(){
         var yAnimator = ObjectAnimator.ofFloat(pacmanView, "translationY",
             currentActualY, actualY)
 
+        xAnimator.interpolator = android.view.animation.LinearInterpolator()
+        yAnimator.interpolator = android.view.animation.LinearInterpolator()
+        xAnimator.duration = movementDuration
+        yAnimator.duration = movementDuration
+
         pacmanX = x
         pacmanY = y
 
-        xAnimator.duration = movementDuration
-        yAnimator.duration = movementDuration
         runOnUiThread {
             xAnimator.start()
             yAnimator.start()
