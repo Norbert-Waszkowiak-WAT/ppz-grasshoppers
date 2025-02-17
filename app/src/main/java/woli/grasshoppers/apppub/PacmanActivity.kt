@@ -169,6 +169,9 @@ class PacmanActivity : AppCompatActivity(){
     }
 
     private fun moveUntil(x: Int, y: Int) {
+        if (pacmanX + x < 0 || pacmanX + x >= walls[0].size || pacmanY + y < 0 || pacmanY + y >= walls.size){
+            return
+        }
         if (walls[pacmanY+y][pacmanX+x] == 1){
             return
         }
