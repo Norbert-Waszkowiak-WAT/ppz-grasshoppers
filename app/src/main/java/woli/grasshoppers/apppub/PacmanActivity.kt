@@ -13,6 +13,7 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import java.util.Timer
 import kotlin.math.abs
 
 class PacmanActivity : AppCompatActivity(){
@@ -28,8 +29,22 @@ class PacmanActivity : AppCompatActivity(){
     private var gridHeight = 0
     private val gridCount = 20
 
+    private val movementDuration = 200L
+
     private var pacmanX = 0
     private var pacmanY = 0
+    private var pacmanMoveTimer: Timer = Timer()
+
+    private val walls = arrayOf(
+        intArrayOf(1,1,1,1,1,1,1),
+        intArrayOf(1,0,0,0,1,0,1),
+        intArrayOf(1,0,1,1,1,0,1),
+        intArrayOf(1,0,0,0,0,0,1),
+        intArrayOf(1,0,1,1,1,1,1),
+        intArrayOf(1,0,0,0,0,1,1),
+        intArrayOf(1,1,1,1,1,1,1)
+        )
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +68,7 @@ class PacmanActivity : AppCompatActivity(){
             gridWidth = gameBoard.width
             gridHeight = gameBoard.height
 
-            moveTo(0, 0)
+            moveTo(1, 1)
         }
     }
 
@@ -112,19 +127,19 @@ class PacmanActivity : AppCompatActivity(){
 
 
     private fun onSwipeRight() {
-        moveTo(pacmanX + 1, pacmanY)
+        moveUntil(1, 0)
     }
 
     private fun onSwipeLeft() {
-        moveTo(pacmanX - 1, pacmanY)
+        moveUntil(-1, 0)
     }
 
     private fun onSwipeUp() {
-        moveTo(pacmanX, pacmanY - 1)
+        moveUntil(0, -1)
     }
 
     private fun onSwipeDown() {
-        moveTo(pacmanX, pacmanY + 1)
+        moveUntil(0, 1)
     }
 
 
@@ -142,15 +157,32 @@ class PacmanActivity : AppCompatActivity(){
         pacmanX = x
         pacmanY = y
 
-        xAnimator.duration = 100
-        yAnimator.duration = 100
+        xAnimator.duration = movementDuration
+        yAnimator.duration = movementDuration
         runOnUiThread {
             xAnimator.start()
             yAnimator.start()
         }
     }
 
-
+    private fun moveUntil(x: Int, y: Int) {
+        if (walls[pacmanY+y][pacmanX+x] == 1){
+            return
+        }
+        pacmanMoveTimer.cancel()
+        pacmanMoveTimer = Timer()
+        pacmanMoveTimer.schedule(object : java.util.TimerTask() {
+            override fun run() {
+                if (walls[pacmanY+y][pacmanX+x] == 1){
+                    pacmanMoveTimer.cancel()
+                    return
+                }
+                runOnUiThread {
+                    moveTo(pacmanX + x, pacmanY + y)
+                }
+            }
+        }, 0, movementDuration)
+    }
 
 
 
