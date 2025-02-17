@@ -39,7 +39,7 @@ class PacmanActivity : AppCompatActivity(){
         intArrayOf(1,1,1,1,1,1,1),
         intArrayOf(1,0,0,0,1,0,1),
         intArrayOf(1,0,1,1,1,0,1),
-        intArrayOf(1,0,0,0,0,0,1),
+        intArrayOf(0,0,0,0,0,0,0),
         intArrayOf(1,0,1,1,1,1,1),
         intArrayOf(1,0,0,0,0,1,1),
         intArrayOf(1,1,1,1,1,1,1)
@@ -181,10 +181,24 @@ class PacmanActivity : AppCompatActivity(){
         pacmanMoveTimer = Timer()
         pacmanMoveTimer.schedule(object : java.util.TimerTask() {
             override fun run() {
+                if ((pacmanX == 0 && x == -1)){
+                    moveTo(-1,pacmanY)
+                    pacmanX = 7
+                    moveTo(6, pacmanY)
+                    return
+                }
+                if ((pacmanX == 6 && x == 1)){
+                    moveTo(7,pacmanY)
+                    pacmanX = -1
+                    moveTo(0, pacmanY)
+                    return
+                }
+
                 if (walls[pacmanY+y][pacmanX+x] == 1){
                     pacmanMoveTimer.cancel()
                     return
                 }
+
                 runOnUiThread {
                     moveTo(pacmanX + x, pacmanY + y)
                 }
