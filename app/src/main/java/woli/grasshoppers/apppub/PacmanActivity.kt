@@ -122,13 +122,13 @@ class PacmanActivity : AppCompatActivity(){
 
     private val walls = arrayOf(
         intArrayOf(1,1,1,1,1,1,1),
-        intArrayOf(1,0,0,0,1,0,1),
+        intArrayOf(1,0,0,0,0,0,1),
         intArrayOf(1,0,1,1,1,0,1),
         intArrayOf(0,0,0,0,0,0,0),
         intArrayOf(1,0,1,1,1,1,1),
         intArrayOf(1,0,0,0,0,1,1),
         intArrayOf(1,1,1,1,1,1,1)
-        )
+    )
 
     private lateinit var ghostViews: Array<ImageView>
     private var ghostPositions = arrayOf(
@@ -193,7 +193,6 @@ class PacmanActivity : AppCompatActivity(){
         pacmanView.touchDelegate = delegate
         gameBoard.touchDelegate = delegate
 
-
         gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
             override fun onDown(event: MotionEvent): Boolean {
                 return true
@@ -205,25 +204,20 @@ class PacmanActivity : AppCompatActivity(){
                 velocityX: Float,
                 velocityY: Float
             ): Boolean {
-                // Detect swipe direction
                 if (e1 != null && e2 != null) {
                     val diffX = e2.x - e1.x
                     val diffY = e2.y - e1.y
 
-                    if (abs(diffX) > abs(diffY)) { // Horizontal swipe
+                    if (abs(diffX) > abs(diffY)) {
                         if (diffX > 0) {
-                            // Swipe Right
                             onSwipeRight()
                         } else {
-                            // Swipe Left
                             onSwipeLeft()
                         }
-                    } else { // Vertical swipe
+                    } else {
                         if (diffY > 0) {
-                            // Swipe Down
                             onSwipeDown()
                         } else {
-                            // Swipe Up
                             onSwipeUp()
                         }
                     }
