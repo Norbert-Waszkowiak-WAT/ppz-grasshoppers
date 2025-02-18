@@ -22,6 +22,20 @@
         android:layout_gravity="top|left"
         app:srcCompat="@android:drawable/ic_media_ff" />
 
+    <ImageView
+        android:id="@+id/pacmanGhost0"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_gravity="top|left"
+        app:srcCompat="@android:drawable/ic_media_play" />
+
+    <ImageView
+        android:id="@+id/pacmanGhost1"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_gravity="top|left"
+        app:srcCompat="@android:drawable/ic_media_play" />
+
 
 
 
