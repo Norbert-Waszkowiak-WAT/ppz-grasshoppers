@@ -115,7 +115,7 @@ class PacmanActivity : AppCompatActivity(){
     private val gridCountY = 31
 
     private val movementDuration = 400L
-    private val ghostMovementDuration = 600L
+    private val ghostMovementDuration = 400L
 
     private var pacmanX = 0
     private var pacmanY = 0
@@ -158,8 +158,9 @@ class PacmanActivity : AppCompatActivity(){
 
     private lateinit var ghostViews: Array<ImageView>
     private var ghostPositions = arrayOf(
-        intArrayOf(1, 5),
-        intArrayOf(5, 1)
+        intArrayOf(13, 14),
+        intArrayOf(11, 14),
+        intArrayOf(15, 14)
     )
     private lateinit var ghostBehaviors: Array<GhostBehavior>
 
@@ -176,11 +177,13 @@ class PacmanActivity : AppCompatActivity(){
 
         ghostViews = arrayOf(
             findViewById(R.id.pacmanGhost0),
-            findViewById(R.id.pacmanGhost1)
+            findViewById(R.id.pacmanGhost1),
+            findViewById(R.id.pacmanGhost2)
         )
         ghostBehaviors = arrayOf(
             RandomMovement(),
-            ChasePacman()
+            ChasePacman(),
+            RandomMovement()
         )
 
         setupSwipeDetection()
@@ -207,7 +210,7 @@ class PacmanActivity : AppCompatActivity(){
             override fun run() {
                 moveGhosts()
             }
-        }, 0, ghostMovementDuration)
+        }, 100, ghostMovementDuration)
     }
 
     private fun setupSwipeDetection(){

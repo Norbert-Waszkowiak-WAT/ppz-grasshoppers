@@ -20,13 +20,17 @@
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_gravity="top|left"
-        app:srcCompat="@android:drawable/ic_media_ff" />
+        android:translationX="175dp"
+        android:translationY="340dp"
+        app:srcCompat="@android:drawable/ic_media_play" />
 
     <ImageView
         android:id="@+id/pacmanGhost0"
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_gravity="top|left"
+        android:translationX="175dp"
+        android:translationY="225dp"
         app:srcCompat="@android:drawable/ic_media_play" />
 
     <ImageView
@@ -34,8 +38,18 @@
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_gravity="top|left"
+        android:translationX="150dp"
+        android:translationY="225dp"
         app:srcCompat="@android:drawable/ic_media_play" />
 
+    <ImageView
+        android:id="@+id/pacmanGhost2"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_gravity="top|left"
+        android:translationX="200dp"
+        android:translationY="225dp"
+        app:srcCompat="@android:drawable/ic_media_play" />
 
 
 
