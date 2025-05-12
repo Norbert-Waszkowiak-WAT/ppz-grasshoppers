@@ -117,7 +117,8 @@ class RandomChase(chaseChances: Int) : GhostBehavior {
 
     init {
         for (i in 0 until chaseChances) {
-            directions += Pair(0, 0)
+            val direction = arrayOf(0,1).random()
+            directions += Pair(direction, direction)
         }
 
     }
@@ -134,6 +135,25 @@ class RandomChase(chaseChances: Int) : GhostBehavior {
             if (direction.first == 0 && direction.second == 0 && path.size > 1) {
                 newX = path[1].first
                 newY = path[1].second
+            }
+            else if (direction.first == 1 && direction.second == 1) {
+                var p = bfs(ghostX, ghostY, pacmanX+1, pacmanY, walls)
+                if (p.size <= 1) {
+                    p = bfs(ghostX, ghostY, pacmanX-1, pacmanY, walls)
+                }
+                if (p.size <= 1) {
+                    p = bfs(ghostX, ghostY, pacmanX, pacmanY+1, walls)
+                }
+                if (p.size <= 1) {
+                    p = bfs(ghostX, ghostY, pacmanX, pacmanY-1, walls)
+                }
+                if (p.size > 1) {
+                    newX = p[1].first
+                    newY = p[1].second
+                } else {
+                    newX = ghostX
+                    newY = ghostY
+                }
             }
             else {
                 newX = ghostX + direction.first
