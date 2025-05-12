@@ -5,7 +5,10 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.TypedValue
+import android.util.TypedValue.COMPLEX_UNIT_DIP
 import android.view.GestureDetector
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.TouchDelegate
 import android.view.View
@@ -96,7 +99,7 @@ class ChasePacman : GhostBehavior {
                 var newX = x + direction[0]
                 var newY = y + direction[1]
 
-                if (newY in walls.indices && newX in walls[0].indices && !visited[newY][newX] && walls[newY][newX] == 0) {
+                if (newY in walls.indices && newX in walls[0].indices && !visited[newY][newX] && walls[newY][newX] != 1) {
                     queue.add(Pair(newX, newY))
                     visited[newY][newX] = true
                     parent[Pair(newX, newY)] = Pair(x, y)
@@ -213,7 +216,7 @@ class RandomChase(chaseChances: Int) : GhostBehavior {
                 var newX = x + direction[0]
                 var newY = y + direction[1]
 
-                if (newY in walls.indices && newX in walls[0].indices && !visited[newY][newX] && walls[newY][newX] == 0) {
+                if (newY in walls.indices && newX in walls[0].indices && !visited[newY][newX] && walls[newY][newX] != 1) {
                     queue.add(Pair(newX, newY))
                     visited[newY][newX] = true
                     parent[Pair(newX, newY)] = Pair(x, y)
@@ -247,39 +250,38 @@ class PacmanActivity : AppCompatActivity(){
     private var pacmanY = 0
     private var pacmanMoveTimer: Timer = Timer()
 
-    private val walls = arrayOf(
+    private var walls = arrayOf(
         intArrayOf(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),
-        intArrayOf(1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1),
-        intArrayOf(1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1),
-        intArrayOf(1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1),
-        intArrayOf(1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1),
-        intArrayOf(1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1),
-        intArrayOf(1,0,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,0,1),
-        intArrayOf(1,0,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,0,1),
-        intArrayOf(1,0,0,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,0,0,1),
-        intArrayOf(1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,1,1),
-        intArrayOf(1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,1,1),
-        intArrayOf(1,1,1,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,1,1,1,1),
-        intArrayOf(1,1,1,1,1,1,0,1,1,0,1,1,1,0,0,1,1,1,0,1,1,0,1,1,1,1,1,1),
-        intArrayOf(1,1,1,1,1,1,0,1,1,0,1,0,0,0,0,0,0,1,0,1,1,0,1,1,1,1,1,1),
-        intArrayOf(0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0),
-        intArrayOf(1,1,1,1,1,1,0,1,1,0,1,0,0,0,0,0,0,1,0,1,1,0,1,1,1,1,1,1),
-        intArrayOf(1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1),
-        intArrayOf(1,1,1,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,1,1,1,1),
-        intArrayOf(1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1),
-        intArrayOf(1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1),
-        intArrayOf(1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1),
-        intArrayOf(1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1),
-        intArrayOf(1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1),
-        intArrayOf(1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1),
-        intArrayOf(1,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,0,1,1,1),
-        intArrayOf(1,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,0,1,1,1),
-        intArrayOf(1,0,0,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,0,0,1),
-        intArrayOf(1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1),
-        intArrayOf(1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1),
-        intArrayOf(1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1),
+        intArrayOf(1,3,3,3,3,3,3,3,3,3,3,3,3,1,1,3,3,3,3,3,3,3,3,3,3,3,3,1),
+        intArrayOf(1,3,1,1,1,1,3,1,1,1,1,1,3,1,1,3,1,1,1,1,1,3,1,1,1,1,3,1),
+        intArrayOf(1,4,1,1,1,1,3,1,1,1,1,1,3,1,1,3,1,1,1,1,1,3,1,1,1,1,4,1),
+        intArrayOf(1,3,1,1,1,1,3,1,1,1,1,1,3,1,1,3,1,1,1,1,1,3,1,1,1,1,3,1),
+        intArrayOf(1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,1),
+        intArrayOf(1,3,1,1,1,1,3,1,1,3,1,1,1,1,1,1,1,1,3,1,1,3,1,1,1,1,3,1),
+        intArrayOf(1,3,1,1,1,1,3,1,1,3,1,1,1,1,1,1,1,1,3,1,1,3,1,1,1,1,3,1),
+        intArrayOf(1,3,3,3,3,3,3,1,1,3,3,3,3,1,1,3,3,3,3,1,1,3,3,3,3,3,3,1),
+        intArrayOf(1,1,1,1,1,1,3,1,1,1,1,1,0,1,1,0,1,1,1,1,1,3,1,1,1,1,1,1),
+        intArrayOf(1,1,1,1,1,1,3,1,1,1,1,1,0,1,1,0,1,1,1,1,1,3,1,1,1,1,1,1),
+        intArrayOf(1,1,1,1,1,1,3,1,1,0,0,0,0,0,0,0,0,0,0,1,1,3,1,1,1,1,1,1),
+        intArrayOf(1,1,1,1,1,1,3,1,1,0,1,1,1,2,2,1,1,1,0,1,1,3,1,1,1,1,1,1),
+        intArrayOf(1,1,1,1,1,1,3,1,1,0,1,2,2,2,2,2,2,1,0,1,1,3,1,1,1,1,1,1),
+        intArrayOf(0,0,0,0,0,0,3,0,0,0,1,2,2,2,2,2,2,1,0,0,0,3,0,0,0,0,0,0),
+        intArrayOf(1,1,1,1,1,1,3,1,1,0,1,2,2,2,2,2,2,1,0,1,1,3,1,1,1,1,1,1),
+        intArrayOf(1,1,1,1,1,1,3,1,1,0,1,1,1,1,1,1,1,1,0,1,1,3,1,1,1,1,1,1),
+        intArrayOf(1,1,1,1,1,1,3,1,1,0,0,0,0,0,0,0,0,0,0,1,1,3,1,1,1,1,1,1),
+        intArrayOf(1,1,1,1,1,1,3,1,1,0,1,1,1,1,1,1,1,1,0,1,1,3,1,1,1,1,1,1),
+        intArrayOf(1,1,1,1,1,1,3,1,1,0,1,1,1,1,1,1,1,1,0,1,1,3,1,1,1,1,1,1),
+        intArrayOf(1,3,3,3,3,3,3,3,3,3,3,3,3,1,1,3,3,3,3,3,3,3,3,3,3,3,3,1),
+        intArrayOf(1,3,1,1,1,1,3,1,1,1,1,1,3,1,1,3,1,1,1,1,1,3,1,1,1,1,3,1),
+        intArrayOf(1,3,1,1,1,1,3,1,1,1,1,1,3,1,1,3,1,1,1,1,1,3,1,1,1,1,3,1),
+        intArrayOf(1,4,3,3,1,1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,1,1,3,3,4,1),
+        intArrayOf(1,1,1,3,1,1,3,1,1,3,1,1,1,1,1,1,1,1,3,1,1,3,1,1,3,1,1,1),
+        intArrayOf(1,1,1,3,1,1,3,1,1,3,1,1,1,1,1,1,1,1,3,1,1,3,1,1,3,1,1,1),
+        intArrayOf(1,3,3,3,3,3,3,1,1,3,3,3,3,1,1,3,3,3,3,1,1,3,3,3,3,3,3,1),
+        intArrayOf(1,3,1,1,1,1,1,1,1,1,1,1,3,1,1,3,1,1,1,1,1,1,1,1,1,1,3,1),
+        intArrayOf(1,3,1,1,1,1,1,1,1,1,1,1,3,1,1,3,1,1,1,1,1,1,1,1,1,1,3,1),
+        intArrayOf(1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,1),
         intArrayOf(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),
-
     )
 
     private lateinit var ghostViews: Array<ImageView>
@@ -329,6 +331,8 @@ class PacmanActivity : AppCompatActivity(){
                 ghostViews[i].x = ghostPositions[i][0] * (gridWidth / gridCountX) + gridX
                 ghostViews[i].y = ghostPositions[i][1] * (gridHeight / gridCountY) + gridY
             }
+
+            placeDotsAndEnergizers()
         }
 
         val ghostMoveTimer = Timer()
@@ -401,6 +405,36 @@ class PacmanActivity : AppCompatActivity(){
         pacmanMoveUntil(0, 1)
     }
 
+    fun dpToPx(dp: Float): Float {
+        return TypedValue.applyDimension(COMPLEX_UNIT_DIP, dp, resources.displayMetrics)
+    }
+
+    private fun placeDotsAndEnergizers(){
+        for (i in walls.indices) {
+            for (j in walls[i].indices) {
+                if (walls[i][j] == 4) {
+                    val params = FrameLayout.LayoutParams(dpToPx(25f).toInt(), dpToPx(25f).toInt())
+                    val energizer = LayoutInflater.from(this).inflate(R.layout.pacman_dot, null)
+
+                    backgroundView.addView(energizer, params)
+
+                    energizer.x = j * (gridWidth / gridCountX) + gridX
+                    energizer.y = i * (gridHeight / gridCountY) + gridY
+                }
+                if (walls[i][j] == 3) {
+                    val params = FrameLayout.LayoutParams(dpToPx(10f).toInt(), dpToPx(10f).toInt())
+                    val dot = LayoutInflater.from(this).inflate(R.layout.pacman_dot, null)
+
+                    backgroundView.addView(dot, params)
+
+                    dot.x = j * (gridWidth / gridCountX) + gridX
+                    dot.y = i * (gridHeight / gridCountY) + gridY
+                    dot.findViewById<ImageView>(R.id.pacmanDot).setImageResource(R.drawable.baseline_settings_24)
+                }
+            }
+        }
+    }
+
     private fun pacmanMoveTo(x: Int, y: Int) {
         var actualX = x * (gridWidth / gridCountX) + gridX
         var actualY = y * (gridHeight / gridCountY) + gridY
@@ -430,7 +464,7 @@ class PacmanActivity : AppCompatActivity(){
         if (pacmanX + x < 0 || pacmanX + x >= walls[0].size || pacmanY + y < 0 || pacmanY + y >= walls.size){
             return
         }
-        if (walls[pacmanY+y][pacmanX+x] == 1){
+        if (walls[pacmanY+y][pacmanX+x] == 1 || walls[pacmanY+y][pacmanX+x] == 2){
             return
         }
         if (x == 1) pacmanView.rotation = 0f
