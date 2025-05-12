@@ -96,11 +96,7 @@ class ChasePacman : GhostBehavior {
                 var newX = x + direction[0]
                 var newY = y + direction[1]
 
-                // Handle teleportation
-                newX = if (newX < 0) walls[0].size - 1 else if (newX >= walls[0].size) 0 else newX
-                newY = if (newY < 0) walls.size - 1 else if (newY >= walls.size) 0 else newY
-
-                if (!visited[newY][newX] && walls[newY][newX] == 0) {
+                if (newY in walls.indices && newX in walls[0].indices && !visited[newY][newX] && walls[newY][newX] == 0) {
                     queue.add(Pair(newX, newY))
                     visited[newY][newX] = true
                     parent[Pair(newX, newY)] = Pair(x, y)
@@ -197,11 +193,7 @@ class RandomChase(chaseChances: Int) : GhostBehavior {
                 var newX = x + direction[0]
                 var newY = y + direction[1]
 
-                // Handle teleportation
-                newX = if (newX < 0) walls[0].size - 1 else if (newX >= walls[0].size) 0 else newX
-                newY = if (newY < 0) walls.size - 1 else if (newY >= walls.size) 0 else newY
-
-                if (!visited[newY][newX] && walls[newY][newX] == 0) {
+                if (newY in walls.indices && newX in walls[0].indices && !visited[newY][newX] && walls[newY][newX] == 0) {
                     queue.add(Pair(newX, newY))
                     visited[newY][newX] = true
                     parent[Pair(newX, newY)] = Pair(x, y)
