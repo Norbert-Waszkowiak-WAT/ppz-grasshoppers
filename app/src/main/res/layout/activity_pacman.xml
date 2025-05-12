@@ -8,7 +8,7 @@
 
     <ImageView
         android:id="@+id/pacmanGameBoard"
-        android:layout_width="400dp"
+        android:layout_width="360dp"
         android:layout_height="400dp"
         android:translationX="5dp"
         android:translationY="50dp"

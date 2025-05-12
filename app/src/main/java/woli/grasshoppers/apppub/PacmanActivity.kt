@@ -111,7 +111,8 @@ class PacmanActivity : AppCompatActivity(){
     private var gridY = 0f
     private var gridWidth = 0
     private var gridHeight = 0
-    private val gridCount = 20
+    private val gridCountX = 28
+    private val gridCountY = 31
 
     private val movementDuration = 400L
     private val ghostMovementDuration = 600L
@@ -121,13 +122,38 @@ class PacmanActivity : AppCompatActivity(){
     private var pacmanMoveTimer: Timer = Timer()
 
     private val walls = arrayOf(
-        intArrayOf(1,1,1,1,1,1,1),
-        intArrayOf(1,0,0,0,0,0,1),
-        intArrayOf(1,0,1,1,1,0,1),
-        intArrayOf(0,0,0,0,0,0,0),
-        intArrayOf(1,0,1,1,1,1,1),
-        intArrayOf(1,0,0,0,0,1,1),
-        intArrayOf(1,1,1,1,1,1,1)
+        intArrayOf(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),
+        intArrayOf(1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1),
+        intArrayOf(1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1),
+        intArrayOf(1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1),
+        intArrayOf(1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1),
+        intArrayOf(1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1),
+        intArrayOf(1,0,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,0,1),
+        intArrayOf(1,0,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,0,1),
+        intArrayOf(1,0,0,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,0,0,1),
+        intArrayOf(1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,1,1),
+        intArrayOf(1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,1,1),
+        intArrayOf(1,1,1,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,1,1,1,1),
+        intArrayOf(1,1,1,1,1,1,0,1,1,0,1,1,1,0,0,1,1,1,0,1,1,0,1,1,1,1,1,1),
+        intArrayOf(1,1,1,1,1,1,0,1,1,0,1,0,0,0,0,0,0,1,0,1,1,0,1,1,1,1,1,1),
+        intArrayOf(0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0),
+        intArrayOf(1,1,1,1,1,1,0,1,1,0,1,0,0,0,0,0,0,1,0,1,1,0,1,1,1,1,1,1),
+        intArrayOf(1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1),
+        intArrayOf(1,1,1,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,1,1,1,1),
+        intArrayOf(1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1),
+        intArrayOf(1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1),
+        intArrayOf(1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1),
+        intArrayOf(1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1),
+        intArrayOf(1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1),
+        intArrayOf(1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1),
+        intArrayOf(1,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,0,1,1,1),
+        intArrayOf(1,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,0,1,1,1),
+        intArrayOf(1,0,0,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,0,0,1),
+        intArrayOf(1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1),
+        intArrayOf(1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1),
+        intArrayOf(1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1),
+        intArrayOf(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),
+
     )
 
     private lateinit var ghostViews: Array<ImageView>
@@ -171,8 +197,8 @@ class PacmanActivity : AppCompatActivity(){
             pacmanMoveTo(1, 1)
 
             for (i in ghostPositions.indices) {
-                ghostViews[i].x = ghostPositions[i][0] * (gridWidth / gridCount) + gridX
-                ghostViews[i].y = ghostPositions[i][1] * (gridHeight / gridCount) + gridY
+                ghostViews[i].x = ghostPositions[i][0] * (gridWidth / gridCountX) + gridX
+                ghostViews[i].y = ghostPositions[i][1] * (gridHeight / gridCountY) + gridY
             }
         }
 
@@ -247,10 +273,10 @@ class PacmanActivity : AppCompatActivity(){
     }
 
     private fun pacmanMoveTo(x: Int, y: Int) {
-        var actualX = x * (gridWidth / gridCount) + gridX
-        var actualY = y * (gridHeight / gridCount) + gridY
-        val currentActualX = pacmanX * (gridWidth / gridCount) + gridX
-        val currentActualY = pacmanY * (gridHeight / gridCount) + gridY
+        var actualX = x * (gridWidth / gridCountX) + gridX
+        var actualY = y * (gridHeight / gridCountY) + gridY
+        val currentActualX = pacmanX * (gridWidth / gridCountX) + gridX
+        val currentActualY = pacmanY * (gridHeight / gridCountY) + gridY
 
         var xAnimator = ObjectAnimator.ofFloat(pacmanView, "translationX",
             currentActualX, actualX)
@@ -289,12 +315,12 @@ class PacmanActivity : AppCompatActivity(){
             override fun run() {
                 if ((pacmanX == 0 && x == -1)){
                     pacmanMoveTo(-1,pacmanY)
-                    pacmanX = 7
-                    pacmanMoveTo(6, pacmanY)
+                    pacmanX = 28
+                    pacmanMoveTo(27, pacmanY)
                     return
                 }
-                if ((pacmanX == 6 && x == 1)){
-                    pacmanMoveTo(7,pacmanY)
+                if ((pacmanX == 27 && x == 1)){
+                    pacmanMoveTo(28,pacmanY)
                     pacmanX = -1
                     pacmanMoveTo(0, pacmanY)
                     return
@@ -330,8 +356,8 @@ class PacmanActivity : AppCompatActivity(){
                 ghostPositions[i][0] = newX
                 ghostPositions[i][1] = newY
 
-                val actualX = newX * (gridWidth / gridCount) + gridX
-                val actualY = newY * (gridHeight / gridCount) + gridY
+                val actualX = newX * (gridWidth / gridCountX) + gridX
+                val actualY = newY * (gridHeight / gridCountY) + gridY
 
                 runOnUiThread {
                     val xAnimator = ObjectAnimator.ofFloat(ghostViews[i], "translationX", ghostViews[i].x, actualX)
