@@ -22,7 +22,7 @@
         android:layout_gravity="top|left"
         android:translationX="175dp"
         android:translationY="340dp"
-        app:srcCompat="@android:drawable/ic_media_play" />
+        app:srcCompat="@android:drawable/ic_media_ff" />
 
     <ImageView
         android:id="@+id/pacmanGhost0"
