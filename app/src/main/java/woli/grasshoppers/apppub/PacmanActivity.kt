@@ -197,7 +197,7 @@ class PacmanActivity : AppCompatActivity(){
             gridWidth = gameBoard.width
             gridHeight = gameBoard.height
 
-            pacmanMoveTo(1, 1)
+            pacmanMoveTo(13, 23)
 
             for (i in ghostPositions.indices) {
                 ghostViews[i].x = ghostPositions[i][0] * (gridWidth / gridCountX) + gridX
