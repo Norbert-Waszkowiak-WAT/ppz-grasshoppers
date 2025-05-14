@@ -14,6 +14,7 @@ import android.view.TouchDelegate
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import java.util.LinkedList
 import java.util.Queue
@@ -233,8 +234,11 @@ class PacmanActivity : AppCompatActivity(){
     private lateinit var pacmanView: ImageView
     private lateinit var backgroundView: FrameLayout
     private lateinit var gameBoard: ImageView
+    private lateinit var scoreView: TextView
 
     private lateinit var gestureDetector: GestureDetector
+
+    private var score = 0
 
     private var gridX = 0f
     private var gridY = 0f
@@ -284,6 +288,9 @@ class PacmanActivity : AppCompatActivity(){
         intArrayOf(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),
     )
 
+    private lateinit var dotViews: Array<Array<View>>
+    private lateinit var energizerViews: Array<Array<View>>
+
     private lateinit var ghostViews: Array<ImageView>
     private var ghostPositions = arrayOf(
         intArrayOf(13, 14),
@@ -302,6 +309,7 @@ class PacmanActivity : AppCompatActivity(){
         backgroundView = findViewById(R.id.pacmanBackground)
         pacmanView = findViewById(R.id.pacman)
         gameBoard = findViewById(R.id.pacmanGameBoard)
+        scoreView = findViewById(R.id.pacmanScore)
 
         ghostViews = arrayOf(
             findViewById(R.id.pacmanGhost0),
@@ -313,6 +321,9 @@ class PacmanActivity : AppCompatActivity(){
             RandomChase(5),
             RandomChase(10)
         )
+
+        dotViews = Array(walls.size) { Array<View>(walls[0].size) { View(this) } }
+        energizerViews = Array(walls.size) { Array<View>(walls[0].size) { View(this) } }
 
         setupSwipeDetection()
 
@@ -417,6 +428,7 @@ class PacmanActivity : AppCompatActivity(){
                     val energizer = LayoutInflater.from(this).inflate(R.layout.pacman_dot, null)
 
                     backgroundView.addView(energizer, params)
+                    energizerViews[i][j] = energizer
 
                     energizer.x = j * (gridWidth / gridCountX) + gridX
                     energizer.y = i * (gridHeight / gridCountY) + gridY
@@ -426,6 +438,7 @@ class PacmanActivity : AppCompatActivity(){
                     val dot = LayoutInflater.from(this).inflate(R.layout.pacman_dot, null)
 
                     backgroundView.addView(dot, params)
+                    dotViews[i][j] = dot
 
                     dot.x = j * (gridWidth / gridCountX) + gridX
                     dot.y = i * (gridHeight / gridCountY) + gridY
@@ -433,6 +446,25 @@ class PacmanActivity : AppCompatActivity(){
                 }
             }
         }
+    }
+
+    private fun eatDotOrEnergizer(x: Int, y: Int) {
+        if (walls[y][x] == 3) {
+            walls[y][x] = 0
+            backgroundView.removeView(dotViews[y][x])
+            dotViews[y][x] = View(this)
+
+            score += 10
+        }
+        else if (walls[y][x] == 4) {
+            walls[y][x] = 0
+            backgroundView.removeView(energizerViews[y][x])
+            energizerViews[y][x] = View(this)
+
+            score += 50
+        }
+
+        scoreView.text = "Score: $score"
     }
 
     private fun pacmanMoveTo(x: Int, y: Int) {
@@ -453,6 +485,10 @@ class PacmanActivity : AppCompatActivity(){
 
         pacmanX = x
         pacmanY = y
+
+        if (pacmanX in walls[0].indices && pacmanY in walls.indices) {
+            eatDotOrEnergizer(pacmanX, pacmanY)
+        }
 
         runOnUiThread {
             xAnimator.start()
@@ -541,7 +577,7 @@ class PacmanActivity : AppCompatActivity(){
 
 
     override fun onBackPressed() {
-        passScore(12)//TODO: real score value
+        passScore(score)
         super.onBackPressed()
     }
 
