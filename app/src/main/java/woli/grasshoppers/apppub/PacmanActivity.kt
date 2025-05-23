@@ -24,6 +24,7 @@ import kotlin.math.abs
 interface GhostBehavior {
     fun move(ghostX: Int, ghostY: Int, pacmanX: Int, pacmanY: Int, walls: Array<IntArray>, ghostPositions: Array<IntArray>): Pair<Int, Int>
 }
+
 class RandomMovement : GhostBehavior {
     override fun move(ghostX: Int, ghostY: Int, pacmanX: Int, pacmanY: Int, walls: Array<IntArray>, ghostPositions: Array<IntArray>): Pair<Int, Int> {
         val directions = arrayOf(
@@ -52,6 +53,7 @@ class RandomMovement : GhostBehavior {
         return Pair(newX, newY)
     }
 }
+
 class ChasePacman : GhostBehavior {
     override fun move(ghostX: Int, ghostY: Int, pacmanX: Int, pacmanY: Int, walls: Array<IntArray>, ghostPositions: Array<IntArray>): Pair<Int, Int> {
         val path = bfs(ghostX, ghostY, pacmanX, pacmanY, walls)
@@ -111,8 +113,9 @@ class ChasePacman : GhostBehavior {
         return emptyList()
     }
 }
+
 class RandomChase(chaseChances: Int) : GhostBehavior {
-    private var directions: Array<Pair<Int,Int>> = arrayOf(
+    private var directions: Array<Pair<Int, Int>> = arrayOf(
         Pair(0, 1),  // Down
         Pair(0, -1), // Up
         Pair(1, 0),  // Right
@@ -121,10 +124,9 @@ class RandomChase(chaseChances: Int) : GhostBehavior {
 
     init {
         for (i in 0 until chaseChances) {
-            val direction = arrayOf(0,1).random()
+            val direction = arrayOf(0, 1).random()
             directions += Pair(direction, direction)
         }
-
     }
 
     override fun move(ghostX: Int, ghostY: Int, pacmanX: Int, pacmanY: Int, walls: Array<IntArray>, ghostPositions: Array<IntArray>): Pair<Int, Int> {
@@ -139,17 +141,16 @@ class RandomChase(chaseChances: Int) : GhostBehavior {
             if (direction.first == 0 && direction.second == 0 && path.size > 1) {
                 newX = path[1].first
                 newY = path[1].second
-            }
-            else if (direction.first == 1 && direction.second == 1) {
-                var p = bfs(ghostX, ghostY, pacmanX+1, pacmanY, walls)
+            } else if (direction.first == 1 && direction.second == 1) {
+                var p = bfs(ghostX, ghostY, pacmanX + 1, pacmanY, walls)
                 if (p.size <= 1) {
-                    p = bfs(ghostX, ghostY, pacmanX-1, pacmanY, walls)
+                    p = bfs(ghostX, ghostY, pacmanX - 1, pacmanY, walls)
                 }
                 if (p.size <= 1) {
-                    p = bfs(ghostX, ghostY, pacmanX, pacmanY+1, walls)
+                    p = bfs(ghostX, ghostY, pacmanX, pacmanY + 1, walls)
                 }
                 if (p.size <= 1) {
-                    p = bfs(ghostX, ghostY, pacmanX, pacmanY-1, walls)
+                    p = bfs(ghostX, ghostY, pacmanX, pacmanY - 1, walls)
                 }
                 if (p.size > 1) {
                     newX = p[1].first
@@ -158,8 +159,7 @@ class RandomChase(chaseChances: Int) : GhostBehavior {
                     newX = ghostX
                     newY = ghostY
                 }
-            }
-            else {
+            } else {
                 newX = ghostX + direction.first
                 newY = ghostY + direction.second
             }
@@ -170,7 +170,7 @@ class RandomChase(chaseChances: Int) : GhostBehavior {
                     isOverlapping = true
                 }
             }
-            if (isOverlapping){
+            if (isOverlapping) {
                 overlappingCycles++
                 if (overlappingCycles > 10) {
                     return Pair(ghostX, ghostY)
@@ -229,8 +229,47 @@ class RandomChase(chaseChances: Int) : GhostBehavior {
     }
 }
 
+// Ghost state enum
+enum class GhostState {
+    NORMAL,
+    FRIGHTENED,
+    EATEN
+}
 
-class PacmanActivity : AppCompatActivity(){
+// Frightened movement: ghosts run away from Pacman
+class FrightenedMovement : GhostBehavior {
+    override fun move(
+        ghostX: Int, ghostY: Int, pacmanX: Int, pacmanY: Int,
+        walls: Array<IntArray>, ghostPositions: Array<IntArray>
+    ): Pair<Int, Int> {
+        val directions = arrayOf(
+            intArrayOf(0, 1), intArrayOf(0, -1),
+            intArrayOf(1, 0), intArrayOf(-1, 0)
+        )
+        var maxDist = -1.0
+        var bestMove = Pair(ghostX, ghostY)
+        for (dir in directions) {
+            val nx = ghostX + dir[0]
+            val ny = ghostY + dir[1]
+            if (ny in walls.indices && nx in walls[0].indices && walls[ny][nx] != 1) {
+                // Avoid overlapping with other ghosts
+                var isOverlapping = false
+                ghostPositions.forEach { ghostPos ->
+                    if (ghostPos[0] == nx && ghostPos[1] == ny) isOverlapping = true
+                }
+                if (isOverlapping) continue
+                val dist = Math.hypot((nx - pacmanX).toDouble(), (ny - pacmanY).toDouble())
+                if (dist > maxDist) {
+                    maxDist = dist
+                    bestMove = Pair(nx, ny)
+                }
+            }
+        }
+        return bestMove
+    }
+}
+
+class PacmanActivity : AppCompatActivity() {
     private lateinit var pacmanView: ImageView
     private lateinit var backgroundView: FrameLayout
     private lateinit var gameBoard: ImageView
@@ -255,37 +294,37 @@ class PacmanActivity : AppCompatActivity(){
     private var pacmanMoveTimer: Timer = Timer()
 
     private var walls = arrayOf(
-        intArrayOf(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),
-        intArrayOf(1,3,3,3,3,3,3,3,3,3,3,3,3,1,1,3,3,3,3,3,3,3,3,3,3,3,3,1),
-        intArrayOf(1,3,1,1,1,1,3,1,1,1,1,1,3,1,1,3,1,1,1,1,1,3,1,1,1,1,3,1),
-        intArrayOf(1,4,1,1,1,1,3,1,1,1,1,1,3,1,1,3,1,1,1,1,1,3,1,1,1,1,4,1),
-        intArrayOf(1,3,1,1,1,1,3,1,1,1,1,1,3,1,1,3,1,1,1,1,1,3,1,1,1,1,3,1),
-        intArrayOf(1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,1),
-        intArrayOf(1,3,1,1,1,1,3,1,1,3,1,1,1,1,1,1,1,1,3,1,1,3,1,1,1,1,3,1),
-        intArrayOf(1,3,1,1,1,1,3,1,1,3,1,1,1,1,1,1,1,1,3,1,1,3,1,1,1,1,3,1),
-        intArrayOf(1,3,3,3,3,3,3,1,1,3,3,3,3,1,1,3,3,3,3,1,1,3,3,3,3,3,3,1),
-        intArrayOf(1,1,1,1,1,1,3,1,1,1,1,1,0,1,1,0,1,1,1,1,1,3,1,1,1,1,1,1),
-        intArrayOf(1,1,1,1,1,1,3,1,1,1,1,1,0,1,1,0,1,1,1,1,1,3,1,1,1,1,1,1),
-        intArrayOf(1,1,1,1,1,1,3,1,1,0,0,0,0,0,0,0,0,0,0,1,1,3,1,1,1,1,1,1),
-        intArrayOf(1,1,1,1,1,1,3,1,1,0,1,1,1,2,2,1,1,1,0,1,1,3,1,1,1,1,1,1),
-        intArrayOf(1,1,1,1,1,1,3,1,1,0,1,2,2,2,2,2,2,1,0,1,1,3,1,1,1,1,1,1),
-        intArrayOf(0,0,0,0,0,0,3,0,0,0,1,2,2,2,2,2,2,1,0,0,0,3,0,0,0,0,0,0),
-        intArrayOf(1,1,1,1,1,1,3,1,1,0,1,2,2,2,2,2,2,1,0,1,1,3,1,1,1,1,1,1),
-        intArrayOf(1,1,1,1,1,1,3,1,1,0,1,1,1,1,1,1,1,1,0,1,1,3,1,1,1,1,1,1),
-        intArrayOf(1,1,1,1,1,1,3,1,1,0,0,0,0,0,0,0,0,0,0,1,1,3,1,1,1,1,1,1),
-        intArrayOf(1,1,1,1,1,1,3,1,1,0,1,1,1,1,1,1,1,1,0,1,1,3,1,1,1,1,1,1),
-        intArrayOf(1,1,1,1,1,1,3,1,1,0,1,1,1,1,1,1,1,1,0,1,1,3,1,1,1,1,1,1),
-        intArrayOf(1,3,3,3,3,3,3,3,3,3,3,3,3,1,1,3,3,3,3,3,3,3,3,3,3,3,3,1),
-        intArrayOf(1,3,1,1,1,1,3,1,1,1,1,1,3,1,1,3,1,1,1,1,1,3,1,1,1,1,3,1),
-        intArrayOf(1,3,1,1,1,1,3,1,1,1,1,1,3,1,1,3,1,1,1,1,1,3,1,1,1,1,3,1),
-        intArrayOf(1,4,3,3,1,1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,1,1,3,3,4,1),
-        intArrayOf(1,1,1,3,1,1,3,1,1,3,1,1,1,1,1,1,1,1,3,1,1,3,1,1,3,1,1,1),
-        intArrayOf(1,1,1,3,1,1,3,1,1,3,1,1,1,1,1,1,1,1,3,1,1,3,1,1,3,1,1,1),
-        intArrayOf(1,3,3,3,3,3,3,1,1,3,3,3,3,1,1,3,3,3,3,1,1,3,3,3,3,3,3,1),
-        intArrayOf(1,3,1,1,1,1,1,1,1,1,1,1,3,1,1,3,1,1,1,1,1,1,1,1,1,1,3,1),
-        intArrayOf(1,3,1,1,1,1,1,1,1,1,1,1,3,1,1,3,1,1,1,1,1,1,1,1,1,1,3,1),
-        intArrayOf(1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,1),
-        intArrayOf(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),
+        intArrayOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+        intArrayOf(1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1),
+        intArrayOf(1, 3, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 3, 1),
+        intArrayOf(1, 4, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 4, 1),
+        intArrayOf(1, 3, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 3, 1),
+        intArrayOf(1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1),
+        intArrayOf(1, 3, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1, 1, 1, 3, 1),
+        intArrayOf(1, 3, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1, 1, 1, 3, 1),
+        intArrayOf(1, 3, 3, 3, 3, 3, 3, 1, 1, 3, 3, 3, 3, 1, 1, 3, 3, 3, 3, 1, 1, 3, 3, 3, 3, 3, 3, 1),
+        intArrayOf(1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1),
+        intArrayOf(1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1),
+        intArrayOf(1, 1, 1, 1, 1, 1, 3, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 3, 1, 1, 1, 1, 1, 1),
+        intArrayOf(1, 1, 1, 1, 1, 1, 3, 1, 1, 0, 1, 1, 1, 2, 2, 1, 1, 1, 0, 1, 1, 3, 1, 1, 1, 1, 1, 1),
+        intArrayOf(1, 1, 1, 1, 1, 1, 3, 1, 1, 0, 1, 2, 2, 2, 2, 2, 2, 1, 0, 1, 1, 3, 1, 1, 1, 1, 1, 1),
+        intArrayOf(0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0),
+        intArrayOf(1, 1, 1, 1, 1, 1, 3, 1, 1, 0, 1, 2, 2, 2, 2, 2, 2, 1, 0, 1, 1, 3, 1, 1, 1, 1, 1, 1),
+        intArrayOf(1, 1, 1, 1, 1, 1, 3, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 3, 1, 1, 1, 1, 1, 1),
+        intArrayOf(1, 1, 1, 1, 1, 1, 3, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 3, 1, 1, 1, 1, 1, 1),
+        intArrayOf(1, 1, 1, 1, 1, 1, 3, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 3, 1, 1, 1, 1, 1, 1),
+        intArrayOf(1, 1, 1, 1, 1, 1, 3, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 3, 1, 1, 1, 1, 1, 1),
+        intArrayOf(1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1),
+        intArrayOf(1, 3, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 3, 1),
+        intArrayOf(1, 3, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 3, 1),
+        intArrayOf(1, 4, 3, 3, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 3, 3, 4, 1),
+        intArrayOf(1, 1, 1, 3, 1, 1, 3, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1, 3, 1, 1, 1),
+        intArrayOf(1, 1, 1, 3, 1, 1, 3, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1, 3, 1, 1, 1),
+        intArrayOf(1, 3, 3, 3, 3, 3, 3, 1, 1, 3, 3, 3, 3, 1, 1, 3, 3, 3, 3, 1, 1, 3, 3, 3, 3, 3, 3, 1),
+        intArrayOf(1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1),
+        intArrayOf(1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1),
+        intArrayOf(1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1),
+        intArrayOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     )
 
     private lateinit var dotViews: Array<Array<View>>
@@ -298,6 +337,17 @@ class PacmanActivity : AppCompatActivity(){
         intArrayOf(15, 14)
     )
     private lateinit var ghostBehaviors: Array<GhostBehavior>
+
+    // Ghost frightened logic
+    private var ghostStates = arrayOf(GhostState.NORMAL, GhostState.NORMAL, GhostState.NORMAL)
+    private var frightenedTimer: Timer? = null
+    private var frightenedTimeLeft = 0L
+    private val frightenedDuration = 7000L // ms
+    private val ghostStartPositions = arrayOf(
+        intArrayOf(13, 14),
+        intArrayOf(11, 14),
+        intArrayOf(15, 14)
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -354,7 +404,7 @@ class PacmanActivity : AppCompatActivity(){
         }, 100, ghostMovementDuration)
     }
 
-    private fun setupSwipeDetection(){
+    private fun setupSwipeDetection() {
         val delegate = TouchDelegate(
             Rect(0, 0, backgroundView.width, backgroundView.height),
             backgroundView
@@ -420,7 +470,7 @@ class PacmanActivity : AppCompatActivity(){
         return TypedValue.applyDimension(COMPLEX_UNIT_DIP, dp, resources.displayMetrics)
     }
 
-    private fun placeDotsAndEnergizers(){
+    private fun placeDotsAndEnergizers() {
         for (i in walls.indices) {
             for (j in walls[i].indices) {
                 if (walls[i][j] == 4) {
@@ -455,16 +505,62 @@ class PacmanActivity : AppCompatActivity(){
             dotViews[y][x] = View(this)
 
             score += 10
-        }
-        else if (walls[y][x] == 4) {
+        } else if (walls[y][x] == 4) {
             walls[y][x] = 0
             backgroundView.removeView(energizerViews[y][x])
             energizerViews[y][x] = View(this)
 
             score += 50
+            triggerFrightenedMode()
         }
 
         scoreView.text = "Score: $score"
+    }
+
+    private fun triggerFrightenedMode() {
+        // Set all ghosts to frightened unless already eaten
+        for (i in ghostStates.indices) {
+            if (ghostStates[i] != GhostState.EATEN) {
+                ghostStates[i] = GhostState.FRIGHTENED
+            }
+        }
+        // Change ghost images to frightened (if you have a blue ghost drawable, set it here)
+        runOnUiThread {
+            for (i in ghostViews.indices) {
+                if (ghostStates[i] == GhostState.FRIGHTENED) {
+                    ghostViews[i].setImageResource(android.R.drawable.ic_media_next)    // You need to add this drawable
+                }
+            }
+        }
+        // Reset timer
+        frightenedTimer?.cancel()
+        frightenedTimeLeft = frightenedDuration
+        frightenedTimer = Timer()
+        frightenedTimer?.schedule(object : java.util.TimerTask() {
+            override fun run() {
+                frightenedTimeLeft -= 100
+                if (frightenedTimeLeft <= 0) {
+                    endFrightenedMode()
+                }
+            }
+        }, 0, 100)
+    }
+
+    private fun endFrightenedMode() {
+        frightenedTimer?.cancel()
+        for (i in ghostStates.indices) {
+            if (ghostStates[i] == GhostState.FRIGHTENED) {
+                ghostStates[i] = GhostState.NORMAL
+            }
+        }
+        // Restore ghost images
+        runOnUiThread {
+            for (i in ghostViews.indices) {
+                if (ghostStates[i] == GhostState.NORMAL) {
+                    ghostViews[i].setImageResource(android.R.drawable.ic_media_play) // Your normal ghost drawable
+                }
+            }
+        }
     }
 
     private fun pacmanMoveTo(x: Int, y: Int) {
@@ -473,10 +569,14 @@ class PacmanActivity : AppCompatActivity(){
         val currentActualX = pacmanX * (gridWidth / gridCountX) + gridX
         val currentActualY = pacmanY * (gridHeight / gridCountY) + gridY
 
-        var xAnimator = ObjectAnimator.ofFloat(pacmanView, "translationX",
-            currentActualX, actualX)
-        var yAnimator = ObjectAnimator.ofFloat(pacmanView, "translationY",
-            currentActualY, actualY)
+        var xAnimator = ObjectAnimator.ofFloat(
+            pacmanView, "translationX",
+            currentActualX, actualX
+        )
+        var yAnimator = ObjectAnimator.ofFloat(
+            pacmanView, "translationY",
+            currentActualY, actualY
+        )
 
         xAnimator.interpolator = android.view.animation.LinearInterpolator()
         yAnimator.interpolator = android.view.animation.LinearInterpolator()
@@ -497,10 +597,10 @@ class PacmanActivity : AppCompatActivity(){
     }
 
     private fun pacmanMoveUntil(x: Int, y: Int) {
-        if (pacmanX + x < 0 || pacmanX + x >= walls[0].size || pacmanY + y < 0 || pacmanY + y >= walls.size){
+        if (pacmanX + x < 0 || pacmanX + x >= walls[0].size || pacmanY + y < 0 || pacmanY + y >= walls.size) {
             return
         }
-        if (walls[pacmanY+y][pacmanX+x] == 1 || walls[pacmanY+y][pacmanX+x] == 2){
+        if (walls[pacmanY + y][pacmanX + x] == 1 || walls[pacmanY + y][pacmanX + x] == 2) {
             return
         }
         if (x == 1) pacmanView.rotation = 0f
@@ -512,20 +612,20 @@ class PacmanActivity : AppCompatActivity(){
         pacmanMoveTimer = Timer()
         pacmanMoveTimer.schedule(object : java.util.TimerTask() {
             override fun run() {
-                if ((pacmanX == 0 && x == -1)){
-                    pacmanMoveTo(-1,pacmanY)
+                if ((pacmanX == 0 && x == -1)) {
+                    pacmanMoveTo(-1, pacmanY)
                     pacmanX = 28
                     pacmanMoveTo(27, pacmanY)
                     return
                 }
-                if ((pacmanX == 27 && x == 1)){
-                    pacmanMoveTo(28,pacmanY)
+                if ((pacmanX == 27 && x == 1)) {
+                    pacmanMoveTo(28, pacmanY)
                     pacmanX = -1
                     pacmanMoveTo(0, pacmanY)
                     return
                 }
 
-                if (walls[pacmanY+y][pacmanX+x] == 1){
+                if (walls[pacmanY + y][pacmanX + x] == 1) {
                     pacmanMoveTimer.cancel()
                     return
                 }
@@ -539,42 +639,115 @@ class PacmanActivity : AppCompatActivity(){
 
     private fun moveGhosts() {
         for (i in ghostPositions.indices) {
-            val (newX, newY) = ghostBehaviors[i].move(ghostPositions[i][0], ghostPositions[i][1], pacmanX, pacmanY, walls, ghostPositions)
+            // Choose behavior based on state
+            val behavior = when (ghostStates[i]) {
+                GhostState.FRIGHTENED -> FrightenedMovement()
+                GhostState.EATEN -> null // Eaten ghosts move to start
+                else -> ghostBehaviors[i]
+            }
+            val (newX, newY) = if (ghostStates[i] == GhostState.EATEN) {
+                // Move towards start position
+                val path = bfs(ghostPositions[i][0], ghostPositions[i][1], ghostStartPositions[i][0], ghostStartPositions[i][1], walls)
+                if (path.size > 1) path[1] else Pair(ghostPositions[i][0], ghostPositions[i][1])
+            } else {
+                behavior?.move(ghostPositions[i][0], ghostPositions[i][1], pacmanX, pacmanY, walls, ghostPositions)
+                    ?: Pair(ghostPositions[i][0], ghostPositions[i][1])
+            }
             if (newX != ghostPositions[i][0] || newY != ghostPositions[i][1]) {
                 val directionX = newX - ghostPositions[i][0]
                 val directionY = newY - ghostPositions[i][1]
-
                 val rotation = when {
-                    directionX > 0 -> 0f    // Right
-                    directionX < 0 -> 180f  // Left
-                    directionY > 0 -> 90f   // Down
-                    directionY < 0 -> 270f  // Up
+                    directionX > 0 -> 0f
+                    directionX < 0 -> 180f
+                    directionY > 0 -> 90f
+                    directionY < 0 -> 270f
                     else -> ghostViews[i].rotation
                 }
-
                 ghostPositions[i][0] = newX
                 ghostPositions[i][1] = newY
-
                 val actualX = newX * (gridWidth / gridCountX) + gridX
                 val actualY = newY * (gridHeight / gridCountY) + gridY
-
                 runOnUiThread {
                     val xAnimator = ObjectAnimator.ofFloat(ghostViews[i], "translationX", ghostViews[i].x, actualX)
                     val yAnimator = ObjectAnimator.ofFloat(ghostViews[i], "translationY", ghostViews[i].y, actualY)
-
                     xAnimator.interpolator = android.view.animation.LinearInterpolator()
                     yAnimator.interpolator = android.view.animation.LinearInterpolator()
                     xAnimator.duration = ghostMovementDuration
                     yAnimator.duration = ghostMovementDuration
-
                     xAnimator.start()
                     yAnimator.start()
                     ghostViews[i].rotation = rotation
                 }
             }
+            // Handle collision with Pacman
+            if (ghostPositions[i][0] == pacmanX && ghostPositions[i][1] == pacmanY) {
+                when (ghostStates[i]) {
+                    GhostState.FRIGHTENED -> {
+                        // Pacman eats ghost
+                        ghostStates[i] = GhostState.EATEN
+                        score += 200
+                        runOnUiThread {
+                            ghostViews[i].setImageResource(android.R.drawable.ic_media_pause) // Add this drawable for eaten ghost
+                            scoreView.text = "Score: $score"
+                        }
+                    }
+                    GhostState.NORMAL -> {
+                        // Pacman dies (implement game over logic if needed)
+                        runOnUiThread {
+                            passScore(score)
+                        }
+                    }
+                    GhostState.EATEN -> { /* do nothing */ }
+                }
+            }
+            // If eaten ghost reached start, revive it
+            if (ghostStates[i] == GhostState.EATEN &&
+                ghostPositions[i][0] == ghostStartPositions[i][0] &&
+                ghostPositions[i][1] == ghostStartPositions[i][1]) {
+                ghostStates[i] = GhostState.NORMAL
+                runOnUiThread {
+                    ghostViews[i].setImageResource(android.R.drawable.ic_media_play) // Normal ghost
+                }
+            }
         }
     }
 
+    // BFS for ghost respawn
+    private fun bfs(startX: Int, startY: Int, targetX: Int, targetY: Int, walls: Array<IntArray>): List<Pair<Int, Int>> {
+        val queue: Queue<Pair<Int, Int>> = LinkedList()
+        val visited = Array(walls.size) { BooleanArray(walls[0].size) }
+        val parent = mutableMapOf<Pair<Int, Int>, Pair<Int, Int>?>()
+        queue.add(Pair(startX, startY))
+        visited[startY][startX] = true
+        parent[Pair(startX, startY)] = null
+        val directions = arrayOf(
+            intArrayOf(0, 1), intArrayOf(0, -1),
+            intArrayOf(1, 0), intArrayOf(-1, 0)
+        )
+        while (queue.isNotEmpty()) {
+            val (x, y) = queue.remove()
+            if (x == targetX && y == targetY) {
+                val path = mutableListOf<Pair<Int, Int>>()
+                var current: Pair<Int, Int>? = Pair(x, y)
+                while (current != null) {
+                    path.add(current)
+                    current = parent[current]
+                }
+                path.reverse()
+                return path
+            }
+            for (direction in directions) {
+                val newX = x + direction[0]
+                val newY = y + direction[1]
+                if (newY in walls.indices && newX in walls[0].indices && !visited[newY][newX] && walls[newY][newX] != 1) {
+                    queue.add(Pair(newX, newY))
+                    visited[newY][newX] = true
+                    parent[Pair(newX, newY)] = Pair(x, y)
+                }
+            }
+        }
+        return emptyList()
+    }
 
     override fun onBackPressed() {
         passScore(score)
