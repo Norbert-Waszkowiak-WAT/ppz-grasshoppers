@@ -288,6 +288,7 @@ class PacmanActivity : AppCompatActivity() {
 
     private val movementDuration = 300L
     private val ghostMovementDuration = 280L
+    private val ghostFrightenedMovementDuration = 500L
 
     private var pacmanX = 0
     private var pacmanY = 0
@@ -342,7 +343,7 @@ class PacmanActivity : AppCompatActivity() {
     private var ghostStates = arrayOf(GhostState.NORMAL, GhostState.NORMAL, GhostState.NORMAL)
     private var frightenedTimer: Timer? = null
     private var frightenedTimeLeft = 0L
-    private val frightenedDuration = 7000L // ms
+    private val frightenedDuration = 20000L // ms
     private val ghostStartPositions = arrayOf(
         intArrayOf(13, 14),
         intArrayOf(11, 14),
@@ -402,6 +403,13 @@ class PacmanActivity : AppCompatActivity() {
                 moveGhosts()
             }
         }, 100, ghostMovementDuration)
+
+        val frightenedGhostMoveTimer = Timer()
+        frightenedGhostMoveTimer.schedule(object : java.util.TimerTask() {
+            override fun run() {
+                moveFrightenedGhosts()
+            }
+        }, 100, ghostFrightenedMovementDuration)
     }
 
     private fun setupSwipeDetection() {
@@ -563,6 +571,36 @@ class PacmanActivity : AppCompatActivity() {
         }
     }
 
+    private fun handleGhostCollisions() {
+        for (i in ghostPositions.indices) {
+            // Handle collision with Pacman
+            if (ghostPositions[i][0] == pacmanX && ghostPositions[i][1] == pacmanY) {
+                when (ghostStates[i]) {
+                    GhostState.FRIGHTENED -> {
+                        // Pacman eats ghost
+                        ghostStates[i] = GhostState.EATEN
+                        score += 200
+                        runOnUiThread {
+                            ghostViews[i].setImageResource(android.R.drawable.ic_media_pause) // Add this drawable for eaten ghost
+                            scoreView.text = "Score: $score"
+                        }
+                    }
+
+                    GhostState.NORMAL -> {
+                        // Pacman dies (implement game over logic if needed)
+                        runOnUiThread {
+                            passScore(score)
+                        }
+                    }
+
+                    GhostState.EATEN -> { /* do nothing */
+                    }
+                }
+            }
+        }
+    }
+
+
     private fun pacmanMoveTo(x: Int, y: Int) {
         var actualX = x * (gridWidth / gridCountX) + gridX
         var actualY = y * (gridHeight / gridCountY) + gridY
@@ -589,6 +627,8 @@ class PacmanActivity : AppCompatActivity() {
         if (pacmanX in walls[0].indices && pacmanY in walls.indices) {
             eatDotOrEnergizer(pacmanX, pacmanY)
         }
+
+        handleGhostCollisions()
 
         runOnUiThread {
             xAnimator.start()
@@ -637,69 +677,70 @@ class PacmanActivity : AppCompatActivity() {
         }, 0, movementDuration)
     }
 
+    private fun moveGhostTo(ghostIndex: Int, newX: Int, newY: Int, duration: Long = ghostMovementDuration) {
+        if (newX == ghostPositions[ghostIndex][0] && newY == ghostPositions[ghostIndex][1]) {
+            return // No movement needed
+        }
+
+        val directionX = newX - ghostPositions[ghostIndex][0]
+        val directionY = newY - ghostPositions[ghostIndex][1]
+        val rotation = when {
+            directionX > 0 -> 0f
+            directionX < 0 -> 180f
+            directionY > 0 -> 90f
+            directionY < 0 -> 270f
+            else -> ghostViews[ghostIndex].rotation
+        }
+
+        val actualX = newX * (gridWidth / gridCountX) + gridX
+        val actualY = newY * (gridHeight / gridCountY) + gridY
+
+        runOnUiThread {
+            val xAnimator = ObjectAnimator.ofFloat(ghostViews[ghostIndex], "translationX", ghostViews[ghostIndex].x, actualX)
+            val yAnimator = ObjectAnimator.ofFloat(ghostViews[ghostIndex], "translationY", ghostViews[ghostIndex].y, actualY)
+            xAnimator.interpolator = android.view.animation.LinearInterpolator()
+            yAnimator.interpolator = android.view.animation.LinearInterpolator()
+            xAnimator.duration = duration
+            yAnimator.duration = duration
+            xAnimator.start()
+            yAnimator.start()
+            ghostViews[ghostIndex].x = actualX
+            ghostViews[ghostIndex].y = actualY
+            ghostViews[ghostIndex].rotation = rotation
+        }
+
+        ghostPositions[ghostIndex][0] = newX
+        ghostPositions[ghostIndex][1] = newY
+    }
+
     private fun moveGhosts() {
         for (i in ghostPositions.indices) {
-            // Choose behavior based on state
-            val behavior = when (ghostStates[i]) {
-                GhostState.FRIGHTENED -> FrightenedMovement()
-                GhostState.EATEN -> null // Eaten ghosts move to start
-                else -> ghostBehaviors[i]
+            if (ghostStates[i] == GhostState.FRIGHTENED) {
+                // Skip moving frightened ghosts, they are handled separately
+                continue
             }
-            val (newX, newY) = if (ghostStates[i] == GhostState.EATEN) {
+
+            var (newX, newY) = ghostBehaviors[i].move(
+                ghostPositions[i][0], ghostPositions[i][1],
+                pacmanX, pacmanY, walls, ghostPositions
+            )
+
+
+            if (ghostStates[i] == GhostState.EATEN) {
                 // Move towards start position
                 val path = bfs(ghostPositions[i][0], ghostPositions[i][1], ghostStartPositions[i][0], ghostStartPositions[i][1], walls)
-                if (path.size > 1) path[1] else Pair(ghostPositions[i][0], ghostPositions[i][1])
-            } else {
-                behavior?.move(ghostPositions[i][0], ghostPositions[i][1], pacmanX, pacmanY, walls, ghostPositions)
-                    ?: Pair(ghostPositions[i][0], ghostPositions[i][1])
-            }
-            if (newX != ghostPositions[i][0] || newY != ghostPositions[i][1]) {
-                val directionX = newX - ghostPositions[i][0]
-                val directionY = newY - ghostPositions[i][1]
-                val rotation = when {
-                    directionX > 0 -> 0f
-                    directionX < 0 -> 180f
-                    directionY > 0 -> 90f
-                    directionY < 0 -> 270f
-                    else -> ghostViews[i].rotation
+                if (path.size > 1) {
+                    newX = path[1].first
+                    newY = path[1].second
                 }
-                ghostPositions[i][0] = newX
-                ghostPositions[i][1] = newY
-                val actualX = newX * (gridWidth / gridCountX) + gridX
-                val actualY = newY * (gridHeight / gridCountY) + gridY
-                runOnUiThread {
-                    val xAnimator = ObjectAnimator.ofFloat(ghostViews[i], "translationX", ghostViews[i].x, actualX)
-                    val yAnimator = ObjectAnimator.ofFloat(ghostViews[i], "translationY", ghostViews[i].y, actualY)
-                    xAnimator.interpolator = android.view.animation.LinearInterpolator()
-                    yAnimator.interpolator = android.view.animation.LinearInterpolator()
-                    xAnimator.duration = ghostMovementDuration
-                    yAnimator.duration = ghostMovementDuration
-                    xAnimator.start()
-                    yAnimator.start()
-                    ghostViews[i].rotation = rotation
+                else { // if path is empty, stay in place
+                    newX = ghostPositions[i][0]
+                    newY = ghostPositions[i][1]
                 }
             }
-            // Handle collision with Pacman
-            if (ghostPositions[i][0] == pacmanX && ghostPositions[i][1] == pacmanY) {
-                when (ghostStates[i]) {
-                    GhostState.FRIGHTENED -> {
-                        // Pacman eats ghost
-                        ghostStates[i] = GhostState.EATEN
-                        score += 200
-                        runOnUiThread {
-                            ghostViews[i].setImageResource(android.R.drawable.ic_media_pause) // Add this drawable for eaten ghost
-                            scoreView.text = "Score: $score"
-                        }
-                    }
-                    GhostState.NORMAL -> {
-                        // Pacman dies (implement game over logic if needed)
-                        runOnUiThread {
-                            passScore(score)
-                        }
-                    }
-                    GhostState.EATEN -> { /* do nothing */ }
-                }
-            }
+
+            moveGhostTo(i, newX, newY)
+
             // If eaten ghost reached start, revive it
             if (ghostStates[i] == GhostState.EATEN &&
                 ghostPositions[i][0] == ghostStartPositions[i][0] &&
@@ -708,6 +749,21 @@ class PacmanActivity : AppCompatActivity() {
                 runOnUiThread {
                     ghostViews[i].setImageResource(android.R.drawable.ic_media_play) // Normal ghost
                 }
+            }
+        }
+
+        handleGhostCollisions()
+    }
+
+    private fun moveFrightenedGhosts(){
+        for (i in ghostPositions.indices) {
+            if (ghostStates[i] == GhostState.FRIGHTENED) {
+                val behavior = FrightenedMovement()
+                val (newX, newY) = behavior.move(
+                    ghostPositions[i][0], ghostPositions[i][1],
+                    pacmanX, pacmanY, walls, ghostPositions
+                )
+                moveGhostTo(i, newX, newY, ghostFrightenedMovementDuration)
             }
         }
     }
