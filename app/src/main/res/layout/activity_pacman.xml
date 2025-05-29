@@ -17,39 +17,49 @@
 
     <ImageView
         android:id="@+id/pacman"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="13dp"
+        android:layout_height="18dp"
         android:layout_gravity="top|left"
         android:translationX="175dp"
         android:translationY="340dp"
-        app:srcCompat="@android:drawable/ic_media_ff" />
+        android:visibility="invisible"
+        app:srcCompat="@drawable/pacman" />
 
     <ImageView
         android:id="@+id/pacmanGhost0"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
         android:layout_gravity="top|left"
-        android:translationX="175dp"
+        android:translationX="172dp"
         android:translationY="225dp"
-        app:srcCompat="@android:drawable/ic_media_play" />
+        app:srcCompat="@drawable/pacman_ghost_red_up" />
 
     <ImageView
         android:id="@+id/pacmanGhost1"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
         android:layout_gravity="top|left"
         android:translationX="150dp"
         android:translationY="225dp"
-        app:srcCompat="@android:drawable/ic_media_play" />
+        app:srcCompat="@drawable/pacman_ghost_cyan_up" />
 
     <ImageView
         android:id="@+id/pacmanGhost2"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
         android:layout_gravity="top|left"
-        android:translationX="200dp"
+        android:translationX="190dp"
         android:translationY="225dp"
-        app:srcCompat="@android:drawable/ic_media_play" />
+        app:srcCompat="@drawable/pacman_ghost_pink_up" />
+
+    <ImageView
+        android:id="@+id/pacmanGhost3"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_gravity="top|left"
+        android:translationX="207dp"
+        android:translationY="225dp"
+        app:srcCompat="@drawable/pacman_ghost_yellow_up" />
 
     <TextView
         android:id="@+id/pacmanScore"

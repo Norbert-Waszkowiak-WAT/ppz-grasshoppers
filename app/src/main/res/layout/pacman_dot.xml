@@ -7,5 +7,5 @@
         android:id="@+id/pacmanDot"
         android:layout_width="12dp"
         android:layout_height="12dp"
-        app:srcCompat="@android:drawable/ic_notification_overlay" />
+        app:srcCompat="@drawable/pacman_dot" />
 </LinearLayout>

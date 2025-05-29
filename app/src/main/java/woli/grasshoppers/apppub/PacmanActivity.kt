@@ -290,8 +290,8 @@ class PacmanActivity : AppCompatActivity() {
     private val ghostMovementDuration = 280L
     private val ghostFrightenedMovementDuration = 500L
 
-    private var pacmanX = 0
-    private var pacmanY = 0
+    private var pacmanX = 13
+    private var pacmanY = 23
     private var pacmanMoveTimer: Timer = Timer()
 
     private var walls = arrayOf(
@@ -333,22 +333,36 @@ class PacmanActivity : AppCompatActivity() {
 
     private lateinit var ghostViews: Array<ImageView>
     private var ghostPositions = arrayOf(
-        intArrayOf(13, 14),
+        intArrayOf(12, 14),
         intArrayOf(11, 14),
-        intArrayOf(15, 14)
+        intArrayOf(14, 14),
+        intArrayOf(13, 14)
+    )
+    private val ghostStartPositions = arrayOf(
+        intArrayOf(12, 14),
+        intArrayOf(11, 14),
+        intArrayOf(14, 14),
+        intArrayOf(13, 14)
+    )
+    private val ghostAssets = arrayOf(
+        arrayOf(R.drawable.pacman_ghost_red_right, R.drawable.pacman_ghost_red_left, R.drawable.pacman_ghost_red_down, R.drawable.pacman_ghost_red_up),
+        arrayOf(R.drawable.pacman_ghost_cyan_right, R.drawable.pacman_ghost_cyan_left, R.drawable.pacman_ghost_cyan_down, R.drawable.pacman_ghost_cyan_up),
+        arrayOf(R.drawable.pacman_ghost_pink_right, R.drawable.pacman_ghost_pink_left, R.drawable.pacman_ghost_pink_down, R.drawable.pacman_ghost_pink_up),
+        arrayOf(R.drawable.pacman_ghost_yellow_right, R.drawable.pacman_ghost_yellow_left, R.drawable.pacman_ghost_yellow_down, R.drawable.pacman_ghost_yellow_up)
     )
     private lateinit var ghostBehaviors: Array<GhostBehavior>
 
     // Ghost frightened logic
-    private var ghostStates = arrayOf(GhostState.NORMAL, GhostState.NORMAL, GhostState.NORMAL)
+    private var ghostStates = arrayOf(
+        GhostState.NORMAL,
+        GhostState.NORMAL,
+        GhostState.NORMAL,
+        GhostState.NORMAL
+    )
     private var frightenedTimer: Timer? = null
     private var frightenedTimeLeft = 0L
     private val frightenedDuration = 20000L // ms
-    private val ghostStartPositions = arrayOf(
-        intArrayOf(13, 14),
-        intArrayOf(11, 14),
-        intArrayOf(15, 14)
-    )
+    private var frightenedBlinkCount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -365,12 +379,14 @@ class PacmanActivity : AppCompatActivity() {
         ghostViews = arrayOf(
             findViewById(R.id.pacmanGhost0),
             findViewById(R.id.pacmanGhost1),
-            findViewById(R.id.pacmanGhost2)
+            findViewById(R.id.pacmanGhost2),
+            findViewById(R.id.pacmanGhost3)
         )
         ghostBehaviors = arrayOf(
             RandomChase(50),
             RandomChase(5),
-            RandomChase(10)
+            RandomChase(10),
+            RandomChase(20)
         )
 
         dotViews = Array(walls.size) { Array<View>(walls[0].size) { View(this) } }
@@ -395,6 +411,8 @@ class PacmanActivity : AppCompatActivity() {
             }
 
             placeDotsAndEnergizers()
+
+            pacmanView.visibility = View.VISIBLE
         }
 
         val ghostMoveTimer = Timer()
@@ -410,6 +428,27 @@ class PacmanActivity : AppCompatActivity() {
                 moveFrightenedGhosts()
             }
         }, 100, ghostFrightenedMovementDuration)
+
+
+        val pacmanAnimationTimer = Timer()
+        pacmanAnimationTimer.schedule(object : java.util.TimerTask() {
+            override fun run() {
+                runOnUiThread {
+                    if (pacmanView.drawable == null) {
+                        pacmanView.setImageResource(R.drawable.pacman)
+                    } else {
+                        val currentDrawable = pacmanView.drawable
+                        val nextDrawable = when (currentDrawable.constantState) {
+                            getDrawable(R.drawable.pacman)?.constantState -> R.drawable.pacman_wide
+                            getDrawable(R.drawable.pacman_wide)?.constantState -> R.drawable.pacman_full
+                            getDrawable(R.drawable.pacman_full)?.constantState -> R.drawable.pacman
+                            else -> R.drawable.pacman
+                        }
+                        pacmanView.setImageResource(nextDrawable)
+                    }
+                }
+            }
+        }, 0, 150)
     }
 
     private fun setupSwipeDetection() {
@@ -490,6 +529,7 @@ class PacmanActivity : AppCompatActivity() {
 
                     energizer.x = j * (gridWidth / gridCountX) + gridX
                     energizer.y = i * (gridHeight / gridCountY) + gridY
+                    energizer.findViewById<ImageView>(R.id.pacmanDot).setImageResource(R.drawable.pacman_energizer)
                 }
                 if (walls[i][j] == 3) {
                     val params = FrameLayout.LayoutParams(dpToPx(10f).toInt(), dpToPx(10f).toInt())
@@ -500,7 +540,6 @@ class PacmanActivity : AppCompatActivity() {
 
                     dot.x = j * (gridWidth / gridCountX) + gridX
                     dot.y = i * (gridHeight / gridCountY) + gridY
-                    dot.findViewById<ImageView>(R.id.pacmanDot).setImageResource(R.drawable.baseline_settings_24)
                 }
             }
         }
@@ -532,11 +571,11 @@ class PacmanActivity : AppCompatActivity() {
                 ghostStates[i] = GhostState.FRIGHTENED
             }
         }
-        // Change ghost images to frightened (if you have a blue ghost drawable, set it here)
+        // Change ghost images to frightened
         runOnUiThread {
             for (i in ghostViews.indices) {
                 if (ghostStates[i] == GhostState.FRIGHTENED) {
-                    ghostViews[i].setImageResource(android.R.drawable.ic_media_next)    // You need to add this drawable
+                    ghostViews[i].setImageResource(R.drawable.pacman_ghost_dead_blue)
                 }
             }
         }
@@ -565,7 +604,7 @@ class PacmanActivity : AppCompatActivity() {
         runOnUiThread {
             for (i in ghostViews.indices) {
                 if (ghostStates[i] == GhostState.NORMAL) {
-                    ghostViews[i].setImageResource(android.R.drawable.ic_media_play) // Your normal ghost drawable
+                    ghostViews[i].setImageResource(ghostAssets[i][0])
                 }
             }
         }
@@ -581,7 +620,7 @@ class PacmanActivity : AppCompatActivity() {
                         ghostStates[i] = GhostState.EATEN
                         score += 200
                         runOnUiThread {
-                            ghostViews[i].setImageResource(android.R.drawable.ic_media_pause) // Add this drawable for eaten ghost
+                            ghostViews[i].setImageResource(R.drawable.pacman_ghost_eyes)
                             scoreView.text = "Score: $score"
                         }
                     }
@@ -684,12 +723,12 @@ class PacmanActivity : AppCompatActivity() {
 
         val directionX = newX - ghostPositions[ghostIndex][0]
         val directionY = newY - ghostPositions[ghostIndex][1]
-        val rotation = when {
-            directionX > 0 -> 0f
-            directionX < 0 -> 180f
-            directionY > 0 -> 90f
-            directionY < 0 -> 270f
-            else -> ghostViews[ghostIndex].rotation
+        val sprite = when {
+            directionX > 0 -> ghostAssets[ghostIndex][0] // Right
+            directionX < 0 -> ghostAssets[ghostIndex][1] // Left
+            directionY > 0 -> ghostAssets[ghostIndex][2] // Down
+            directionY < 0 -> ghostAssets[ghostIndex][3] // Up
+            else -> ghostAssets[ghostIndex][0] // Default to right if no movement
         }
 
         val actualX = newX * (gridWidth / gridCountX) + gridX
@@ -706,7 +745,9 @@ class PacmanActivity : AppCompatActivity() {
             yAnimator.start()
             ghostViews[ghostIndex].x = actualX
             ghostViews[ghostIndex].y = actualY
-            ghostViews[ghostIndex].rotation = rotation
+            if (ghostStates[ghostIndex] == GhostState.NORMAL) {
+                ghostViews[ghostIndex].setImageResource(sprite) // Update ghost sprite
+            }
         }
 
         ghostPositions[ghostIndex][0] = newX
@@ -747,7 +788,7 @@ class PacmanActivity : AppCompatActivity() {
                 ghostPositions[i][1] == ghostStartPositions[i][1]) {
                 ghostStates[i] = GhostState.NORMAL
                 runOnUiThread {
-                    ghostViews[i].setImageResource(android.R.drawable.ic_media_play) // Normal ghost
+                    ghostViews[i].setImageResource(ghostAssets[i][3])
                 }
             }
         }
