@@ -332,6 +332,7 @@ class PacmanActivity : AppCompatActivity() {
     private lateinit var energizerViews: Array<Array<View>>
 
     private var eatenDotsCounter = 0
+    private var allDots = 0
 
     private lateinit var ghostViews: Array<ImageView>
     private var ghostPositions = arrayOf(
@@ -520,6 +521,8 @@ class PacmanActivity : AppCompatActivity() {
     }
 
     private fun placeDotsAndEnergizers() {
+        allDots = 0
+
         for (i in walls.indices) {
             for (j in walls[i].indices) {
                 if (walls[i][j] == 4) {
@@ -532,6 +535,8 @@ class PacmanActivity : AppCompatActivity() {
                     energizer.x = j * (gridWidth / gridCountX) + gridX
                     energizer.y = i * (gridHeight / gridCountY) + gridY
                     energizer.findViewById<ImageView>(R.id.pacmanDot).setImageResource(R.drawable.pacman_energizer)
+
+                    allDots++
                 }
                 if (walls[i][j] == 3) {
                     val params = FrameLayout.LayoutParams(dpToPx(10f).toInt(), dpToPx(10f).toInt())
@@ -542,6 +547,8 @@ class PacmanActivity : AppCompatActivity() {
 
                     dot.x = j * (gridWidth / gridCountX) + gridX
                     dot.y = i * (gridHeight / gridCountY) + gridY
+
+                    allDots++
                 }
             }
         }
@@ -567,14 +574,17 @@ class PacmanActivity : AppCompatActivity() {
             triggerFrightenedMode()
         }
 
-        if (eatenDotsCounter == 246) {
+        if (eatenDotsCounter == allDots) {
             // All dots eaten, trigger win condition
+            eatenDotsCounter = 0
+            // todo: reset game and start new level
+            // temporary
             runOnUiThread {
                 passScore(score)
             }
         }
 
-        scoreView.text = "Score: $score"
+        scoreView.text = "Score: $score Eaten: $eatenDotsCounter of $allDots"
     }
 
     private fun triggerFrightenedMode() {
