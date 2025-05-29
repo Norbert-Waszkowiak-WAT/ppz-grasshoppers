@@ -331,6 +331,8 @@ class PacmanActivity : AppCompatActivity() {
     private lateinit var dotViews: Array<Array<View>>
     private lateinit var energizerViews: Array<Array<View>>
 
+    private var eatenDotsCounter = 0
+
     private lateinit var ghostViews: Array<ImageView>
     private var ghostPositions = arrayOf(
         intArrayOf(12, 14),
@@ -551,14 +553,25 @@ class PacmanActivity : AppCompatActivity() {
             backgroundView.removeView(dotViews[y][x])
             dotViews[y][x] = View(this)
 
+            eatenDotsCounter++
+
             score += 10
         } else if (walls[y][x] == 4) {
             walls[y][x] = 0
             backgroundView.removeView(energizerViews[y][x])
             energizerViews[y][x] = View(this)
 
+            eatenDotsCounter++
+
             score += 50
             triggerFrightenedMode()
+        }
+
+        if (eatenDotsCounter == 246) {
+            // All dots eaten, trigger win condition
+            runOnUiThread {
+                passScore(score)
+            }
         }
 
         scoreView.text = "Score: $score"
