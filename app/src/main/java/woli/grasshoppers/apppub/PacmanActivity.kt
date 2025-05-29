@@ -797,8 +797,12 @@ class PacmanActivity : AppCompatActivity() {
     }
 
     private fun moveFrightenedGhosts(){
+        var isFrightened = false
+
         for (i in ghostPositions.indices) {
             if (ghostStates[i] == GhostState.FRIGHTENED) {
+                isFrightened = true
+
                 val behavior = FrightenedMovement()
                 val (newX, newY) = behavior.move(
                     ghostPositions[i][0], ghostPositions[i][1],
@@ -806,6 +810,24 @@ class PacmanActivity : AppCompatActivity() {
                 )
                 moveGhostTo(i, newX, newY, ghostFrightenedMovementDuration)
             }
+        }
+
+        if (isFrightened){
+            // Handle blinking effect for frightened ghosts
+            frightenedBlinkCount++
+
+            val totalBlinkCount = frightenedDuration / ghostFrightenedMovementDuration
+            runOnUiThread {
+                for (i in ghostViews.indices) {
+                    if (ghostStates[i] == GhostState.FRIGHTENED) {
+                        if (frightenedBlinkCount % 2 == 0 || frightenedBlinkCount >= totalBlinkCount - 4)
+                            ghostViews[i].setImageResource(R.drawable.pacman_ghost_dead_blue)
+                        else
+                            ghostViews[i].setImageResource(R.drawable.pacman_ghost_dead_white)
+                    }
+                }
+            }
+
         }
     }
 
