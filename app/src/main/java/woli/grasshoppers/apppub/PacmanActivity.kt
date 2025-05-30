@@ -290,9 +290,9 @@ class PacmanActivity : AppCompatActivity() {
     private val gridCountX = 28
     private val gridCountY = 31
 
-    private val movementDuration = 300L
-    private val ghostMovementDuration = 280L
-    private val ghostFrightenedMovementDuration = 500L
+    private val movementDuration = 250L
+    private val ghostMovementDuration = 200L
+    private val ghostFrightenedMovementDuration = 400L
 
     private var pacmanX = 13
     private var pacmanY = 23
@@ -365,7 +365,7 @@ class PacmanActivity : AppCompatActivity() {
     )
     private var frightenedTimer: Timer? = null
     private var frightenedTimeLeft = 0L
-    private val frightenedDuration = 20000L // ms
+    private val frightenedDuration = ghostFrightenedMovementDuration * 25
     private var frightenedBlinkCount = 0
 
     private var ghostMoveTimer: Timer? = null
