@@ -66,7 +66,31 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/emulogic"
         android:textColor="#FFFF00"
-        android:text="0" />
+        android:text="Score: 0" />
 
+    <TextView
+        android:id="@+id/pacmanEaten"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|top"
+        android:fontFamily="@font/emulogic"
+        android:text="Eaten: 0 of 000"
+        android:textColor="#FFFF00" />
+
+    <TextView
+        android:id="@+id/pacmanLevel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/emulogic"
+        android:textColor="#FFFF00"
+        android:text="\nLevel: 1" />
+
+    <TextView
+        android:id="@+id/pacmanLives"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/emulogic"
+        android:textColor="#FFFF00"
+        android:text="\n\nLives: 1" />
 
 </FrameLayout>

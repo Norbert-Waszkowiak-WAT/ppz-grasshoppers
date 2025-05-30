@@ -274,6 +274,9 @@ class PacmanActivity : AppCompatActivity() {
     private lateinit var backgroundView: FrameLayout
     private lateinit var gameBoard: ImageView
     private lateinit var scoreView: TextView
+    private lateinit var levelView: TextView
+    private lateinit var livesView: TextView
+    private lateinit var eatenView: TextView
 
     private lateinit var gestureDetector: GestureDetector
 
@@ -380,6 +383,10 @@ class PacmanActivity : AppCompatActivity() {
         pacmanView = findViewById(R.id.pacman)
         gameBoard = findViewById(R.id.pacmanGameBoard)
         scoreView = findViewById(R.id.pacmanScore)
+        levelView = findViewById(R.id.pacmanLevel)
+//        livesView = findViewById(R.id.pacmanLives)
+        eatenView = findViewById(R.id.pacmanEaten)
+        gameoverView = findViewById(R.id.pacmanGameOver)
 
         ghostViews = arrayOf(
             findViewById(R.id.pacmanGhost0),
@@ -424,8 +431,19 @@ class PacmanActivity : AppCompatActivity() {
                         pacmanView.setImageResource(nextDrawable)
                     }
                 }
+
+                updateStateStrings()
             }
         }, 0, 150)
+    }
+
+    private fun updateStateStrings(){
+        runOnUiThread {
+            scoreView.text = "Score: $score"
+            levelView.text = "\nLevel: $level"
+            eatenView.text = "Eaten: $eatenDotsCounter of $allDots"
+            // livesView.text = "\n\nLives: $lives" // Uncomment if lives are implemented
+        }
     }
 
     private fun startGame(){
@@ -619,8 +637,6 @@ class PacmanActivity : AppCompatActivity() {
                 startGame()
             }
         }
-
-        scoreView.text = "Score: $score Eaten: $eatenDotsCounter of $allDots\nLevel: $level"
     }
 
     private fun triggerFrightenedMode() {
@@ -682,7 +698,6 @@ class PacmanActivity : AppCompatActivity() {
                         score += 200
                         runOnUiThread {
                             ghostViews[i].setImageResource(R.drawable.pacman_ghost_eyes)
-                            scoreView.text = "Score: $score"
                         }
                     }
 
