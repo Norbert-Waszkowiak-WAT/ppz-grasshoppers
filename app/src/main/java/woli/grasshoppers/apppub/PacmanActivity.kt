@@ -277,6 +277,7 @@ class PacmanActivity : AppCompatActivity() {
     private lateinit var levelView: TextView
     private lateinit var livesView: TextView
     private lateinit var eatenView: TextView
+    private lateinit var gameoverView: TextView
 
     private lateinit var gestureDetector: GestureDetector
 
@@ -296,6 +297,7 @@ class PacmanActivity : AppCompatActivity() {
     private var pacmanX = 13
     private var pacmanY = 23
     private var pacmanMoveTimer: Timer? = null
+    private var pacmanAnimationTimer: Timer? = null
 
     private var wallsStart = arrayOf(
         intArrayOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
@@ -414,8 +416,8 @@ class PacmanActivity : AppCompatActivity() {
             startGame()
         }
 
-        val pacmanAnimationTimer = Timer()
-        pacmanAnimationTimer.schedule(object : java.util.TimerTask() {
+        pacmanAnimationTimer = Timer()
+        pacmanAnimationTimer?.schedule(object : java.util.TimerTask() {
             override fun run() {
                 runOnUiThread {
                     if (pacmanView.drawable == null) {
@@ -502,6 +504,81 @@ class PacmanActivity : AppCompatActivity() {
             }
         }
         placeDotsAndEnergizers()
+    }
+
+    private fun gameOver() {
+        pacmanMoveTimer?.cancel()
+        pacmanAnimationTimer?.cancel()
+        ghostMoveTimer?.cancel()
+        ghostFrightenedMoveTimer?.cancel()
+
+        runOnUiThread {
+            for (i in ghostViews.indices) {
+                ghostViews[i].visibility = View.INVISIBLE
+            }
+
+            gameoverView.visibility = View.VISIBLE
+        }
+
+        Timer().schedule(object : java.util.TimerTask() {
+            override fun run() {
+                runOnUiThread {
+                    pacmanView.setImageResource(R.drawable.pacman_dying_1)
+                }
+            }
+        }, 200)
+        Timer().schedule(object : java.util.TimerTask() {
+            override fun run() {
+                runOnUiThread {
+                    pacmanView.setImageResource(R.drawable.pacman_dying_2)
+                }
+            }
+        }, 400)
+        Timer().schedule(object : java.util.TimerTask() {
+            override fun run() {
+                runOnUiThread {
+                    pacmanView.setImageResource(R.drawable.pacman_dying_3)
+                }
+            }
+        }, 600)
+        Timer().schedule(object : java.util.TimerTask() {
+            override fun run() {
+                runOnUiThread {
+                    pacmanView.setImageResource(R.drawable.pacman_dying_4)
+                }
+            }
+        }, 800)
+        Timer().schedule(object : java.util.TimerTask() {
+            override fun run() {
+                runOnUiThread {
+                    pacmanView.setImageResource(R.drawable.pacman_dying_5)
+                }
+            }
+        }, 1000)
+        Timer().schedule(object : java.util.TimerTask() {
+            override fun run() {
+                runOnUiThread {
+                    pacmanView.setImageResource(R.drawable.pacman_dead)
+                }
+            }
+        }, 1200)
+        Timer().schedule(object : java.util.TimerTask() {
+            override fun run() {
+                runOnUiThread {
+                    pacmanView.visibility = View.INVISIBLE
+                    pacmanView.setImageResource(R.drawable.pacman)
+                }
+            }
+        }, 1500)
+
+
+        Timer().schedule(object : java.util.TimerTask() {
+            override fun run() {
+                runOnUiThread {
+                    passScore(score)
+                }
+            }
+        }, 2000)
     }
 
 
@@ -703,9 +780,7 @@ class PacmanActivity : AppCompatActivity() {
 
                     GhostState.NORMAL -> {
                         // Pacman dies (implement game over logic if needed)
-                        runOnUiThread {
-                            passScore(score)
-                        }
+                        gameOver()
                     }
 
                     GhostState.EATEN -> { /* do nothing */

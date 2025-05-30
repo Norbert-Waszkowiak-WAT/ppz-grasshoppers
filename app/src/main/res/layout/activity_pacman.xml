@@ -93,4 +93,15 @@
         android:textColor="#FFFF00"
         android:text="\n\nLives: 1" />
 
+    <TextView
+        android:id="@+id/pacmanGameOver"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:translationX="126dp"
+        android:translationY="265dp"
+        android:visibility="invisible"
+        android:fontFamily="@font/emulogic"
+        android:textColor="#FFFF00"
+        android:text="Game Over" />
+
 </FrameLayout>
