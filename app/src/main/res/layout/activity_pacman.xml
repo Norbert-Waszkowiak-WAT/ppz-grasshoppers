@@ -65,6 +65,8 @@
         android:id="@+id/pacmanScore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/emulogic"
+        android:textColor="#FFFF00"
         android:text="0" />
 
 
