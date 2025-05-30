@@ -372,7 +372,7 @@ class PacmanActivity : AppCompatActivity() {
     private var ghostFrightenedMoveTimer: Timer? = null
 
     private var level = 1
-
+    private var lives = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -386,7 +386,7 @@ class PacmanActivity : AppCompatActivity() {
         gameBoard = findViewById(R.id.pacmanGameBoard)
         scoreView = findViewById(R.id.pacmanScore)
         levelView = findViewById(R.id.pacmanLevel)
-//        livesView = findViewById(R.id.pacmanLives)
+        livesView = findViewById(R.id.pacmanLives)
         eatenView = findViewById(R.id.pacmanEaten)
         gameoverView = findViewById(R.id.pacmanGameOver)
 
@@ -444,7 +444,7 @@ class PacmanActivity : AppCompatActivity() {
             scoreView.text = "Score: $score"
             levelView.text = "\nLevel: $level"
             eatenView.text = "Eaten: $eatenDotsCounter of $allDots"
-            // livesView.text = "\n\nLives: $lives" // Uncomment if lives are implemented
+            livesView.text = "\n\nLives: $lives"
         }
     }
 
@@ -779,8 +779,20 @@ class PacmanActivity : AppCompatActivity() {
                     }
 
                     GhostState.NORMAL -> {
-                        // Pacman dies (implement game over logic if needed)
-                        gameOver()
+                        lives--
+                        if (lives < 0) {
+                            gameOver()
+                        } else {
+                            pacmanMoveTo(13, 23) // Reset Pacman position
+                            for (j in ghostPositions.indices) { // Reset ghost positions
+                                ghostPositions[j][0] = ghostStartPositions[j][0]
+                                ghostPositions[j][1] = ghostStartPositions[j][1]
+                                ghostViews[j].x = ghostPositions[j][0] * (gridWidth / gridCountX) + gridX
+                                ghostViews[j].y = ghostPositions[j][1] * (gridHeight / gridCountY) + gridY
+                                ghostStates[j] = GhostState.NORMAL
+                                ghostViews[j].setImageResource(ghostAssets[j][0])
+                            }
+                        }
                     }
 
                     GhostState.EATEN -> { /* do nothing */
