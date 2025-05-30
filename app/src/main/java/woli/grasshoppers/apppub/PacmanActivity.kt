@@ -292,9 +292,9 @@ class PacmanActivity : AppCompatActivity() {
 
     private var pacmanX = 13
     private var pacmanY = 23
-    private var pacmanMoveTimer: Timer = Timer()
+    private var pacmanMoveTimer: Timer? = null
 
-    private var walls = arrayOf(
+    private var wallsStart = arrayOf(
         intArrayOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
         intArrayOf(1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1),
         intArrayOf(1, 3, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 3, 1),
@@ -318,7 +318,7 @@ class PacmanActivity : AppCompatActivity() {
         intArrayOf(1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1),
         intArrayOf(1, 3, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 3, 1),
         intArrayOf(1, 3, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 3, 1),
-        intArrayOf(1, 4, 3, 3, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 3, 3, 4, 1),
+        intArrayOf(1, 4, 3, 3, 1, 1, 3, 3, 3, 3, 3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 3, 3, 4, 1),
         intArrayOf(1, 1, 1, 3, 1, 1, 3, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1, 3, 1, 1, 1),
         intArrayOf(1, 1, 1, 3, 1, 1, 3, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1, 3, 1, 1, 1),
         intArrayOf(1, 3, 3, 3, 3, 3, 3, 1, 1, 3, 3, 3, 3, 1, 1, 3, 3, 3, 3, 1, 1, 3, 3, 3, 3, 3, 3, 1),
@@ -327,26 +327,22 @@ class PacmanActivity : AppCompatActivity() {
         intArrayOf(1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1),
         intArrayOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     )
+    private val walls = Array(wallsStart.size) { IntArray(wallsStart[0].size) }
 
-    private lateinit var dotViews: Array<Array<View>>
-    private lateinit var energizerViews: Array<Array<View>>
+    private lateinit var dotViews: Array<Array<View?>>
 
     private var eatenDotsCounter = 0
     private var allDots = 0
 
     private lateinit var ghostViews: Array<ImageView>
-    private var ghostPositions = arrayOf(
-        intArrayOf(12, 14),
-        intArrayOf(11, 14),
-        intArrayOf(14, 14),
-        intArrayOf(13, 14)
-    )
     private val ghostStartPositions = arrayOf(
         intArrayOf(12, 14),
         intArrayOf(11, 14),
         intArrayOf(14, 14),
         intArrayOf(13, 14)
     )
+    private var ghostPositions = Array(4) { IntArray(2) }
+
     private val ghostAssets = arrayOf(
         arrayOf(R.drawable.pacman_ghost_red_right, R.drawable.pacman_ghost_red_left, R.drawable.pacman_ghost_red_down, R.drawable.pacman_ghost_red_up),
         arrayOf(R.drawable.pacman_ghost_cyan_right, R.drawable.pacman_ghost_cyan_left, R.drawable.pacman_ghost_cyan_down, R.drawable.pacman_ghost_cyan_up),
@@ -366,6 +362,12 @@ class PacmanActivity : AppCompatActivity() {
     private var frightenedTimeLeft = 0L
     private val frightenedDuration = 20000L // ms
     private var frightenedBlinkCount = 0
+
+    private var ghostMoveTimer: Timer? = null
+    private var ghostFrightenedMoveTimer: Timer? = null
+
+    private var level = 1
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -392,46 +394,18 @@ class PacmanActivity : AppCompatActivity() {
             RandomChase(20)
         )
 
-        dotViews = Array(walls.size) { Array<View>(walls[0].size) { View(this) } }
-        energizerViews = Array(walls.size) { Array<View>(walls[0].size) { View(this) } }
+        dotViews = Array(walls.size) { Array<View?>(walls[0].size) { null } }
 
         setupSwipeDetection()
 
         gameBoard.post {
-            pacmanView.x = 0f
-            pacmanView.y = 0f
-
             gridX = gameBoard.x
             gridY = gameBoard.y
             gridWidth = gameBoard.width
             gridHeight = gameBoard.height
 
-            pacmanMoveTo(13, 23)
-
-            for (i in ghostPositions.indices) {
-                ghostViews[i].x = ghostPositions[i][0] * (gridWidth / gridCountX) + gridX
-                ghostViews[i].y = ghostPositions[i][1] * (gridHeight / gridCountY) + gridY
-            }
-
-            placeDotsAndEnergizers()
-
-            pacmanView.visibility = View.VISIBLE
+            startGame()
         }
-
-        val ghostMoveTimer = Timer()
-        ghostMoveTimer.schedule(object : java.util.TimerTask() {
-            override fun run() {
-                moveGhosts()
-            }
-        }, 100, ghostMovementDuration)
-
-        val frightenedGhostMoveTimer = Timer()
-        frightenedGhostMoveTimer.schedule(object : java.util.TimerTask() {
-            override fun run() {
-                moveFrightenedGhosts()
-            }
-        }, 100, ghostFrightenedMovementDuration)
-
 
         val pacmanAnimationTimer = Timer()
         pacmanAnimationTimer.schedule(object : java.util.TimerTask() {
@@ -453,6 +427,65 @@ class PacmanActivity : AppCompatActivity() {
             }
         }, 0, 150)
     }
+
+    private fun startGame(){
+        // stop any existing timers
+        ghostMoveTimer?.cancel()
+        ghostFrightenedMoveTimer?.cancel()
+        pacmanMoveTimer?.cancel()
+
+        eatenDotsCounter = 0
+
+        // start timers
+        ghostMoveTimer = Timer()
+        ghostMoveTimer?.schedule(object : java.util.TimerTask() {
+            override fun run() {
+                moveGhosts()
+            }
+        }, 100, ghostMovementDuration)
+
+        ghostFrightenedMoveTimer = Timer()
+        ghostFrightenedMoveTimer?.schedule(object : java.util.TimerTask() {
+            override fun run() {
+                moveFrightenedGhosts()
+            }
+        }, 100, ghostFrightenedMovementDuration)
+
+        // move everything to starting positions
+        pacmanMoveTo(13, 23)
+        pacmanMoveUntil(1,0)
+
+        for (i in ghostStartPositions.indices) {
+            ghostPositions[i][0] = ghostStartPositions[i][0]
+            ghostPositions[i][1] = ghostStartPositions[i][1]
+        }
+
+        for (i in ghostPositions.indices) {
+            ghostViews[i].x = ghostPositions[i][0] * (gridWidth / gridCountX) + gridX
+            ghostViews[i].y = ghostPositions[i][1] * (gridHeight / gridCountY) + gridY
+        }
+
+        // reset ghost states
+        ghostStates = arrayOf(
+            GhostState.NORMAL,
+            GhostState.NORMAL,
+            GhostState.NORMAL,
+            GhostState.NORMAL
+        )
+
+        for (i in ghostViews.indices) {
+            ghostViews[i].setImageResource(ghostAssets[i][0])
+        }
+
+        // reset walls and dots
+        for (i in wallsStart.indices) {
+            for (j in wallsStart[i].indices) {
+                walls[i][j] = wallsStart[i][j]
+            }
+        }
+        placeDotsAndEnergizers()
+    }
+
 
     private fun setupSwipeDetection() {
         val delegate = TouchDelegate(
@@ -525,12 +558,17 @@ class PacmanActivity : AppCompatActivity() {
 
         for (i in walls.indices) {
             for (j in walls[i].indices) {
+                if (dotViews[i][j] != null) {
+                    backgroundView.removeView(dotViews[i][j])
+                    dotViews[i][j] = null
+                }
+
                 if (walls[i][j] == 4) {
                     val params = FrameLayout.LayoutParams(dpToPx(25f).toInt(), dpToPx(25f).toInt())
                     val energizer = LayoutInflater.from(this).inflate(R.layout.pacman_dot, null)
 
                     backgroundView.addView(energizer, params)
-                    energizerViews[i][j] = energizer
+                    dotViews[i][j] = energizer
 
                     energizer.x = j * (gridWidth / gridCountX) + gridX
                     energizer.y = i * (gridHeight / gridCountY) + gridY
@@ -558,15 +596,15 @@ class PacmanActivity : AppCompatActivity() {
         if (walls[y][x] == 3) {
             walls[y][x] = 0
             backgroundView.removeView(dotViews[y][x])
-            dotViews[y][x] = View(this)
+            dotViews[y][x] = null
 
             eatenDotsCounter++
 
             score += 10
         } else if (walls[y][x] == 4) {
             walls[y][x] = 0
-            backgroundView.removeView(energizerViews[y][x])
-            energizerViews[y][x] = View(this)
+            backgroundView.removeView(dotViews[y][x])
+            dotViews[y][x] = null
 
             eatenDotsCounter++
 
@@ -574,20 +612,20 @@ class PacmanActivity : AppCompatActivity() {
             triggerFrightenedMode()
         }
 
-        if (eatenDotsCounter == allDots) {
+        if (eatenDotsCounter == allDots && allDots > 0) {
             // All dots eaten, trigger win condition
-            eatenDotsCounter = 0
-            // todo: reset game and start new level
-            // temporary
+            level++
             runOnUiThread {
-                passScore(score)
+                startGame()
             }
         }
 
-        scoreView.text = "Score: $score Eaten: $eatenDotsCounter of $allDots"
+        scoreView.text = "Score: $score Eaten: $eatenDotsCounter of $allDots\nLevel: $level"
     }
 
     private fun triggerFrightenedMode() {
+        frightenedBlinkCount = 0
+
         // Set all ghosts to frightened unless already eaten
         for (i in ghostStates.indices) {
             if (ghostStates[i] != GhostState.EATEN) {
@@ -710,9 +748,9 @@ class PacmanActivity : AppCompatActivity() {
         if (y == 1) pacmanView.rotation = 90f
         if (y == -1) pacmanView.rotation = 270f
 
-        pacmanMoveTimer.cancel()
+        pacmanMoveTimer?.cancel()
         pacmanMoveTimer = Timer()
-        pacmanMoveTimer.schedule(object : java.util.TimerTask() {
+        pacmanMoveTimer?.schedule(object : java.util.TimerTask() {
             override fun run() {
                 if ((pacmanX == 0 && x == -1)) {
                     pacmanMoveTo(-1, pacmanY)
@@ -728,7 +766,7 @@ class PacmanActivity : AppCompatActivity() {
                 }
 
                 if (walls[pacmanY + y][pacmanX + x] == 1) {
-                    pacmanMoveTimer.cancel()
+                    pacmanMoveTimer?.cancel()
                     return
                 }
 
