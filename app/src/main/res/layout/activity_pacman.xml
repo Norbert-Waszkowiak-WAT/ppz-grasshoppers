@@ -22,7 +22,6 @@
         android:layout_gravity="top|left"
         android:translationX="175dp"
         android:translationY="340dp"
-        android:visibility="invisible"
         app:srcCompat="@drawable/pacman" />
 
     <ImageView
