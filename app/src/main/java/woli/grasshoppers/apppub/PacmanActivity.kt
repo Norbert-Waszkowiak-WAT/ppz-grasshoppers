@@ -444,7 +444,7 @@ class PacmanActivity : AppCompatActivity() {
             scoreView.text = "Score: $score"
             levelView.text = "\nLevel: $level"
             eatenView.text = "Eaten: $eatenDotsCounter of $allDots"
-            livesView.text = "\n\nLives: $lives"
+            livesView.text = "\nLives: $lives"
         }
     }
 
