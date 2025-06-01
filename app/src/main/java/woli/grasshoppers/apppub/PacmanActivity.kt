@@ -290,9 +290,9 @@ class PacmanActivity : AppCompatActivity() {
     private val gridCountX = 28
     private val gridCountY = 31
 
-    private val movementDuration = 250L
-    private val ghostMovementDuration = 200L
-    private val ghostFrightenedMovementDuration = 400L
+    private var movementDuration = 250L
+    private var ghostMovementDuration = 200L
+    private var ghostFrightenedMovementDuration = 400L
 
     private var pacmanX = 13
     private var pacmanY = 23
@@ -379,7 +379,7 @@ class PacmanActivity : AppCompatActivity() {
         setContentView(R.layout.activity_pacman)
 
         hideSystemBars()
-        val diffLevel = getDiff()
+        setDifficulty()
 
         backgroundView = findViewById(R.id.pacmanBackground)
         pacmanView = findViewById(R.id.pacman)
@@ -437,6 +437,39 @@ class PacmanActivity : AppCompatActivity() {
                 updateStateStrings()
             }
         }, 0, 150)
+    }
+
+    private fun setDifficulty(){
+        val diff = getDiff()
+
+        lives = when {
+            diff < 20 -> 5
+            diff < 40 -> 4
+            diff < 60 -> 3
+            else -> 1
+        }
+
+        movementDuration = when {
+            diff < 20 -> 300L
+            diff < 40 -> 250L
+            diff < 60 -> 200L
+            else -> 150L // fastest
+        }
+
+        ghostMovementDuration = when {
+            diff < 20 -> 400L
+            diff < 40 -> 300L
+            diff < 60 -> 200L
+            else -> 100L // fastest
+        }
+
+        ghostFrightenedMovementDuration = when {
+            diff < 20 -> 800L
+            diff < 40 -> 600L
+            diff < 60 -> 400L
+            else -> 200L // fastest
+        }
+
     }
 
     private fun updateStateStrings(){
@@ -580,7 +613,6 @@ class PacmanActivity : AppCompatActivity() {
             }
         }, 4000)
     }
-
 
     private fun setupSwipeDetection() {
         val delegate = TouchDelegate(
