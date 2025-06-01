@@ -727,7 +727,7 @@ class PacmanActivity : AppCompatActivity() {
 
             eatenDotsCounter++
 
-            score += 10
+            score += 1
         } else if (walls[y][x] == 4) {
             walls[y][x] = 0
             backgroundView.removeView(dotViews[y][x])
@@ -735,7 +735,7 @@ class PacmanActivity : AppCompatActivity() {
 
             eatenDotsCounter++
 
-            score += 50
+            score += 5
             triggerFrightenedMode()
         }
 
@@ -804,7 +804,7 @@ class PacmanActivity : AppCompatActivity() {
                     GhostState.FRIGHTENED -> {
                         // Pacman eats ghost
                         ghostStates[i] = GhostState.EATEN
-                        score += 200
+                        score += 20
                         runOnUiThread {
                             ghostViews[i].setImageResource(R.drawable.pacman_ghost_eyes)
                         }
