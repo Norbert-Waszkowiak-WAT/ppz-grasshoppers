@@ -69,12 +69,12 @@
         android:text="Score: 0" />
 
     <TextView
-        android:id="@+id/pacmanEaten"
+        android:id="@+id/pacmanProgress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|top"
         android:fontFamily="@font/emulogic"
-        android:text="Eaten: 0 of 000"
+        android:text="Progress: 0%"
         android:textColor="#FFFF00" />
 
     <TextView

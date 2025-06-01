@@ -276,7 +276,7 @@ class PacmanActivity : AppCompatActivity() {
     private lateinit var scoreView: TextView
     private lateinit var levelView: TextView
     private lateinit var livesView: TextView
-    private lateinit var eatenView: TextView
+    private lateinit var progressView: TextView
     private lateinit var gameoverView: TextView
 
     private lateinit var gestureDetector: GestureDetector
@@ -387,7 +387,7 @@ class PacmanActivity : AppCompatActivity() {
         scoreView = findViewById(R.id.pacmanScore)
         levelView = findViewById(R.id.pacmanLevel)
         livesView = findViewById(R.id.pacmanLives)
-        eatenView = findViewById(R.id.pacmanEaten)
+        progressView = findViewById(R.id.pacmanProgress)
         gameoverView = findViewById(R.id.pacmanGameOver)
 
         ghostViews = arrayOf(
@@ -473,10 +473,13 @@ class PacmanActivity : AppCompatActivity() {
     }
 
     private fun updateStateStrings(){
+        val progress = if (allDots == 0) 0
+                       else (eatenDotsCounter / allDots.toFloat() * 100).toInt()
+
         runOnUiThread {
             scoreView.text = "Score: $score"
             levelView.text = "\nLevel: $level"
-            eatenView.text = "Eaten: $eatenDotsCounter of $allDots"
+            progressView.text = "Progress: $progress%"
             livesView.text = "\nLives: $lives"
         }
     }
