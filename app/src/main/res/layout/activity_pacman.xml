@@ -81,6 +81,7 @@
         android:id="@+id/pacmanLevel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
         android:fontFamily="@font/emulogic"
         android:textColor="#FFFF00"
         android:text="\nLevel: 1" />
@@ -90,7 +91,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/emulogic"
-        android:layout_gravity="top|right"
+        android:layout_gravity="top|left"
         android:textColor="#FFFF00"
         android:text="\nLives: 1" />
 
