@@ -124,12 +124,15 @@ Grupą docelową są wszyscy ludzie, którzy chcą grać w proste gry arkadowe. 
      - optymalizacja poruszania kolumn, poprzez zastosowanie animacji
      - poprawki drobnych buggów
 
-**Etap 2**
-	- Gra Pacman
-		![Pacman_gameplay](screenshots/pacman-gameplay.jpg)
-		![Pacman_frightened](screenshots/pacman-frightened.jpg)
-		![Pacman_eaten](screenshots/pacman-eaten.jpg)
-		![Pacman_gameOver](screenshots/pacman-gameover.jpg)
+**Etap 3**
+- Gra Pacman
+	![Pacman_gameplay](screenshots/pacman-gameplay.jpg)
+	![Pacman_frightened](screenshots/pacman-frightened.jpg)
+	![Pacman_eaten](screenshots/pacman-eaten.jpg)
+	![Pacman_gameOver](screenshots/pacman-gameover.jpg)
+- drobne poprawki w grze Knife Hit
+    - dodanie konfetti przy zakończeniu gry
+    - poprawki bugów 
 		
 <!-- ### 10. Potencjalne ryzyka
    - Problemy z synchronizacją kolejki (mitigacja: regularne testowanie serwera).
