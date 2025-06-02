@@ -123,6 +123,14 @@ Grupą docelową są wszyscy ludzie, którzy chcą grać w proste gry arkadowe. 
      - dostosowanie wartości wpływających na trudność gry
      - optymalizacja poruszania kolumn, poprzez zastosowanie animacji
      - poprawki drobnych buggów
+
+**Etap 2**
+	- Gra Pacman
+		![Pacman_gameplay](screenshots/pacman-gameplay.jpg)
+		![Pacman_frightened](screenshots/pacman-frightened.jpg)
+		![Pacman_eaten](screenshots/pacman-eaten.jpg)
+		![Pacman_gameOver](screenshots/pacman-gameover.jpg)
+		
 <!-- ### 10. Potencjalne ryzyka
    - Problemy z synchronizacją kolejki (mitigacja: regularne testowanie serwera).
    - Awaria systemu powiadomień (mitigacja: backupowe rozwiązanie oparte na SMS-ach).
